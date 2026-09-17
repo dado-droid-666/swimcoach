@@ -1,0 +1,460 @@
+// Session View
+async function renderSession(app, dateParam) {
+    const date = dateParam === 'today' ? new Date().toISOString().split('T')[0] : dateParam;
+    
+    let sessionData;
+    try {
+        if (dateParam === 'today') {
+            sessionData = await api.getTodayPlan();
+        } else {
+            const weekStart = new Date(date);
+            weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+            const weekPlan = await api.getWeekPlan(weekStart.toISOString().split('T')[0]);
+            sessionData = {
+                swim: weekPlan.swim_sessions.find(s => s.date === date) || null,
+                strength: weekPlan.strength_sessions.find(s => s.date === date) || null
+            };
+        }
+    } catch (error) {
+        app.showError('Failed to load session');
+        return;
+    }
+    
+    const sessionDate = new Date(date);
+    const dayName = sessionDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    
+    const swim = sessionData.swim;
+    const strength = sessionData.strength;
+    
+    const html = `
+        <div class="session-view" style="max-width: 800px; margin: 0 auto;">
+            <header style="margin-bottom: 1.5rem;">
+                <a href="#/dashboard" class="secondary" style="text-decoration: none; font-size: 0.875rem;">← Back to Dashboard</a>
+                <h1 style="margin: 0.5rem 0 0;">${dayName}</h1>
+                <p style="color: var(--muted-color); margin: 0;">${swim?.phase_name || strength?.phase_name || 'Training'} • Week ${swim?.week_relative || strength?.week_relative || '?'}</p>
+            </header>
+            
+            <div class="tabs" style="display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem;" role="tablist">
+                <button role="tab" class="tab-btn ${swim ? 'active' : ''}" data-tab="swim" ${!swim ? 'disabled' : ''} onclick="switchTab('swim')">
+                    🏊 Swim ${swim ? `<span class="badge">${swim.total_meters.toLocaleString()}m</span>` : ''}
+                </button>
+                <button role="tab" class="tab-btn ${!swim && strength ? 'active' : ''}" data-tab="strength" ${!strength ? 'disabled' : ''} onclick="switchTab('strength')">
+                    💪 Strength ${strength ? `<span class="badge">${strength.exercises?.length || 0} ex</span>` : ''}
+                </button>
+            </div>
+            
+            ${(swim || strength) ? `<button class="big-btn" id="start-player-btn" style="margin-bottom: 1.5rem;">▶ Start guided session</button>` : ''}
+
+            <div id="player-view" style="display: none;">
+                <div class="topbar"><span class="brand">Guided <b>session</b></span><span class="player-progress" id="player-progress"></span></div>
+                <div class="progressbar-track"><div id="player-progress-bar" style="width: 0%;"></div></div>
+                <div class="player-body" id="player-block"></div>
+                <div class="rest-timer" id="rest-timer-wrap">
+                    <div class="rest-timer-row">
+                        <div id="timer-display">--:--</div>
+                        <button id="timer-stop">stop</button>
+                    </div>
+                    <div class="timer-btns" id="timer-btns"></div>
+                    <div class="timer-sound-hint">🔇 Enable sound (unmute) to hear the alarm</div>
+                </div>
+                <div class="player-nav">
+                    <button class="big-btn secondary" id="btn-anterior">←</button>
+                    <button class="big-btn" id="btn-siguiente">Next →</button>
+                </div>
+                <button class="big-btn secondary" id="btn-exit-player">Exit player</button>
+            </div>
+
+            <div id="tab-content">
+                ${swim ? renderSwimTab(swim) : ''}
+                ${strength ? renderStrengthTab(strength) : ''}
+            </div>
+            
+            ${app.state.tier === 'free' ? `
+                <div id="ad-banner" style="margin-top: 2rem; text-align: center; min-height: 90px;">
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-XXXXXXXXXXXX"
+                         data-ad-slot="1234567890"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                </div>
+            ` : ''}
+        </div>
+    `;
+    
+    document.getElementById('app').innerHTML = html;
+    
+    // Show correct tab by default (null-safe: day may have only swim or only strength)
+    const swimTab = document.getElementById('swim-tab');
+    const strengthTab = document.getElementById('strength-tab');
+    if (swimTab && strengthTab) {
+        if (swim) {
+            swimTab.style.display = 'block';
+            strengthTab.style.display = 'none';
+        } else {
+            swimTab.style.display = 'none';
+            strengthTab.style.display = 'block';
+        }
+    } else if (swimTab) {
+        swimTab.style.display = 'block';
+    } else if (strengthTab) {
+        strengthTab.style.display = 'block';
+    }
+
+    wirePlayer(swim, strength);
+}
+
+function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+    });
+    const swimTab = document.getElementById('swim-tab');
+    const strengthTab = document.getElementById('strength-tab');
+    if (swimTab) swimTab.style.display = tab === 'swim' ? 'block' : 'none';
+    if (strengthTab) strengthTab.style.display = tab === 'strength' ? 'block' : 'none';
+}
+
+function renderSwimTab(swim) {
+    const paceStr = swim.main_set?.[0]?.target_pace_per_100 
+        ? `${Math.floor(swim.main_set[0].target_pace_per_100 / 60)}:${String(swim.main_set[0].target_pace_per_100 % 60).padStart(2, '0')}/100m`
+        : '—';
+    
+    return `
+        <div id="swim-tab" style="display: block;">
+            <article class="card" style="margin-bottom: 1rem;">
+                <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <h2 style="margin: 0;">🏊 Swim Session</h2>
+                        <p style="margin: 0; color: var(--muted-color);">${swim.focus} • RPE ${swim.rpe_target}/10</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary);">${swim.total_meters.toLocaleString()}m</div>
+                        <div style="color: var(--muted-color); font-size: 0.875rem;">~${swim.estimated_duration_min} min</div>
+                    </div>
+                </header>
+                
+                <section style="margin-bottom: 1.5rem;">
+                    <h3 style="margin: 0 0 0.5rem; color: var(--primary);">🏁 Warmup (${swim.warmup?.meters || 0}m)</h3>
+                    <p style="margin: 0; color: var(--muted-color);">${swim.warmup?.description || '—'}</p>
+                    ${swim.warmup?.drills?.length ? `
+                        <ul style="margin: 0.5rem 0 0; padding-left: 1.5rem; color: var(--muted-color);">
+                            ${swim.warmup.drills.map(d => `<li>${d}</li>`).join('')}
+                        </ul>
+                    ` : ''}
+                </section>
+                
+                <section style="margin-bottom: 1.5rem;">
+                    <h3 style="margin: 0 0 0.5rem; color: var(--primary);">🎯 Main Set (${swim.main_set?.reduce((sum, s) => sum + (s.meters || 0), 0) || 0}m)</h3>
+                    <p style="margin: 0 0 0.5rem; font-size: 0.875rem; color: var(--muted-color);">Target pace: ~${swim.main_set?.[0]?.target_pace_per_100 ? formatPace(swim.main_set[0].target_pace_per_100) : '—'}</p>
+                    
+                    ${swim.main_set?.map((set, i) => `
+                        <article class="card" style="margin-bottom: 0.75rem; padding: 1rem;">
+                            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <h4 style="margin: 0;">Set ${i + 1}: ${set.description}</h4>
+                                <span style="background: var(--primary-background); color: var(--primary); padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.75rem;">${set.intensity_zone || 'Z2'}</span>
+                            </header>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.5rem; font-size: 0.875rem; color: var(--muted-color);">
+                                <div><strong>${set.reps}×${set.distance}m</strong> ${set.stroke}</div>
+                                <div>Rest: ${set.rest_seconds}s</div>
+                                <div>Pace: ${set.target_pace_per_100 ? formatPace(set.target_pace_per_100) : '—'}</div>
+                                <div>Equip: ${set.equipment?.join(', ') || 'None'}</div>
+                            </div>
+                            ${set.notes ? `<p style="margin: 0.5rem 0 0; font-size: 0.875rem; color: var(--muted-color);">${set.notes}</p>` : ''}
+                        </article>
+                    `).join('') || '<p style="color: var(--muted-color);">No main sets defined</p>'}
+                </section>
+                
+                <section>
+                    <h3 style="margin: 0 0 0.5rem; color: var(--primary);">🧘 Cooldown (${swim.cooldown?.meters || 0}m)</h3>
+                    <p style="margin: 0; color: var(--muted-color);">${swim.cooldown?.description || '—'}</p>
+                </section>
+                
+                <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+                    <button class="primary" onclick="completeSession('swim')">✅ Mark Complete</button>
+                    <button class="secondary" onclick="logFeedback('swim')">📝 Log Feedback</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderStrengthTab(strength) {
+    return `
+        <div id="strength-tab" style="display: none;">
+            <article class="card" style="margin-bottom: 1rem;">
+                <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <h2 style="margin: 0;">💪 Strength Session</h2>
+                        <p style="margin: 0; color: var(--muted-color);">${strength.focus} • ${strength.exercises?.length || 0} exercises</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 1.5rem; font-weight: bold; color: var(--warning-color);">${strength.estimated_duration_min} min</div>
+                        <div style="color: var(--muted-color); font-size: 0.875rem;">Estimated</div>
+                    </div>
+                </header>
+                
+                ${strength.exercises?.map((ex, i) => `
+                    <article class="card" style="margin-bottom: 0.75rem; padding: 1rem;">
+                        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0;">${ex.name}</h4>
+                            <span style="background: var(--warning-background); color: var(--warning-color); padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.75rem;">RPE ${ex.rpe}</span>
+                        </header>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 0.5rem; font-size: 0.875rem; color: var(--muted-color);">
+                            <div><strong>${ex.sets} sets</strong> × ${ex.reps || ex.duration + 's'}</div>
+                            <div>Rest: ${ex.rest}s</div>
+                            <div>Tempo: ${ex.tempo || '—'}</div>
+                        </div>
+                        ${ex.progression ? `<p style="margin: 0.5rem 0 0; font-size: 0.875rem; color: var(--muted-color);">Progression: ${ex.progression}</p>` : ''}
+                    </article>
+                `).join('') || '<p style="color: var(--muted-color);">No exercises defined</p>'}
+                
+                <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+                    <button class="primary" onclick="completeSession('strength')">✅ Mark Complete</button>
+                    <button class="secondary" onclick="logFeedback('strength')">📝 Log Feedback</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function formatPace(seconds) {
+    if (!seconds) return '—';
+    const min = Math.floor(seconds / 60);
+    const sec = seconds % 60;
+    return `${min}:${String(sec).padStart(2, '0')}/100m`;
+}
+
+// ---------- Guided player (fused from entrenamiento-app) ----------
+let _player = null;
+let _timerId = null;
+let _timerLeft = 0;
+
+function buildPlayerBlocks(swim, strength) {
+    const blocks = [];
+    if (swim) {
+        if (swim.warmup) blocks.push({ kind: 'swim', tag: 'Warmup', title: `Warmup · ${swim.warmup.meters || 0}m`, desc: swim.warmup.description || 'Easy swimming', sub: (swim.warmup.drills || []).join(' · ') });
+        (swim.main_set || []).forEach((s, i) => {
+            blocks.push({
+                kind: 'swim', tag: `Main set ${i + 1}/${swim.main_set.length}`,
+                title: s.description || `Set ${i + 1}`,
+                desc: `${s.reps}×${s.distance}m ${s.stroke || ''}`.trim(),
+                sub: [`Rest ${s.rest_seconds || 0}s`, s.target_pace_per_100 ? `Pace ${formatPace(s.target_pace_per_100)}` : null, (s.equipment || []).length ? `Gear: ${s.equipment.join(', ')}` : null, s.notes || null].filter(Boolean).join(' · ')
+            });
+        });
+        if (swim.cooldown) blocks.push({ kind: 'swim', tag: 'Cooldown', title: `Cooldown · ${swim.cooldown.meters || 0}m`, desc: swim.cooldown.description || 'Very easy' });
+    }
+    if (strength) {
+        (strength.exercises || []).forEach((ex, i) => {
+            blocks.push({
+                kind: 'strength', tag: `Exercise ${i + 1}/${strength.exercises.length}`,
+                title: ex.name, desc: `${ex.sets} sets × ${ex.reps || (ex.duration + 's')}`,
+                sub: [`Rest ${ex.rest || 60}s`, ex.tempo ? `Tempo ${ex.tempo}` : null, `RPE ${ex.rpe}`, ex.progression || null].filter(Boolean).join(' · '),
+                rest: ex.rest || 60
+            });
+        });
+    }
+    return blocks;
+}
+
+function renderPlayerBlock() {
+    const total = _player.blocks.length;
+    const b = _player.blocks[_player.idx];
+    document.getElementById('player-progress').textContent = `Block ${_player.idx + 1} of ${total}${_player.mlLabel ? ` · ${_player.mlLabel}` : ''}`;
+    document.getElementById('player-progress-bar').style.width = `${((_player.idx + 1) / total) * 100}%`;
+    document.getElementById('player-block').innerHTML = `
+        <div class="block-title">${b.kind === 'swim' ? '🏊' : '💪'} ${b.tag}</div>
+        <div class="block-desc">${b.title}</div>
+        <div style="color: var(--muted-color); font-size: 15px;">${b.desc || ''}</div>
+        ${b.sub ? `<div style="color: var(--muted-color); font-size: 13px; margin-top: 8px;">${b.sub}</div>` : ''}
+    `;
+    document.getElementById('btn-anterior').disabled = _player.idx === 0;
+    document.getElementById('btn-siguiente').textContent = _player.idx === total - 1 ? 'Finish ✓' : 'Next →';
+    setupRestTimer(b.kind === 'strength' ? (b.rest || 60) : 0);
+}
+
+function setupRestTimer(suggested) {
+    stopTimer();
+    const wrap = document.getElementById('rest-timer-wrap');
+    const btns = document.getElementById('timer-btns');
+    if (!wrap || !btns) return;
+    if (!suggested) { wrap.classList.remove('open'); btns.innerHTML = ''; return; }
+    wrap.classList.add('open');
+    const presets = [15, 30, 45, 60, 90, 120];
+    btns.innerHTML = '';
+    presets.forEach(sec => {
+        const b = document.createElement('button');
+        b.className = 'timer-btn' + (sec === suggested ? ' suggested' : '');
+        b.textContent = sec >= 60 ? `${sec / 60}m` : `${sec}s`;
+        b.addEventListener('click', () => startTimer(sec));
+        btns.appendChild(b);
+    });
+    document.getElementById('timer-display').textContent = 'Rest';
+    document.getElementById('timer-stop').onclick = stopTimer;
+}
+
+function startTimer(seconds) {
+    stopTimer();
+    _timerLeft = seconds;
+    const disp = document.getElementById('timer-display');
+    const tick = () => {
+        const m = Math.floor(_timerLeft / 60);
+        const s = _timerLeft % 60;
+        disp.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        if (_timerLeft <= 0) { stopTimer(); beep(); flashScreen(3); disp.textContent = 'Go!'; return; }
+        _timerLeft -= 1;
+        _timerId = setTimeout(tick, 1000);
+    };
+    tick();
+}
+
+function stopTimer() {
+    if (_timerId) { clearTimeout(_timerId); _timerId = null; }
+}
+
+function beep() {
+    try {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (!Ctx) return;
+        const ctx = new Ctx();
+        [0, 0.25, 0.5].forEach((t, i) => {
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.connect(g); g.connect(ctx.destination);
+            o.frequency.value = i === 2 ? 880 : 660;
+            o.start(ctx.currentTime + t);
+            o.stop(ctx.currentTime + t + 0.2);
+        });
+    } catch (e) { /* silent devices fall back to flash */ }
+}
+
+async function finishPlayer() {
+    const hasSwim = _player.blocks.some(b => b.kind === 'swim');
+    const hasStrength = _player.blocks.some(b => b.kind === 'strength');
+    const effort = await askEffort('How did the session feel?');
+    if (!effort) return;
+    try {
+        await api.submitFeedback({
+            date: new Date().toLocaleDateString('en-CA'),
+            swim_completed: hasSwim,
+            strength_completed: hasStrength,
+            swim_feeling: hasSwim ? effort : null,
+            strength_feeling: hasStrength ? effort : null,
+            comments: ''
+        });
+        window.app.showSuccess('Session complete! Feedback saved.');
+        exitPlayer();
+    } catch (err) {
+        window.app.showError(err.message || 'Could not save feedback');
+    }
+}
+
+function exitPlayer() {
+    stopTimer();
+    _player = null;
+    document.getElementById('player-view').style.display = 'none';
+    document.getElementById('tab-content').style.display = 'block';
+    const btn = document.getElementById('start-player-btn');
+    if (btn) btn.style.display = 'block';
+}
+
+// ---------- ML load suggestion (Model 2, applied softly) ----------
+function scaleReps(reps, factor) {
+    if (reps == null) return reps;
+    return String(reps).replace(/\d+/g, n => Math.max(1, Math.round(parseInt(n, 10) * factor)));
+}
+
+async function enrichStrengthWithMl(strength) {
+    if (!strength || !strength.exercises) return { label: null };
+    if (!window.combinedSuggestion) return { label: null };
+    try {
+        const [hist, stats] = await Promise.all([
+            api.getFeedbackHistory(1, 10).catch(() => ({ items: [] })),
+            api.getStatsSummary().catch(() => null),
+        ]);
+        const items = (hist.items || []).slice().reverse(); // oldest -> newest
+        const efforts = items.flatMap(f => [f.swim_feeling, f.strength_feeling].filter(v => v != null));
+        const last3 = efforts.slice(-3);
+        const avg3 = last3.length ? last3.reduce((a, b) => a + b, 0) / last3.length : 3;
+        const prev3 = efforts.slice(-6, -3);
+        const prevAvg = prev3.length ? prev3.reduce((a, b) => a + b, 0) / prev3.length : avg3;
+        const tierA = window.getTierAssessment ? getTierAssessment() : null;
+        const features = {
+            tier: tierA ? tierA.tier : 2,
+            esfuerzo_promedio_3: avg3,
+            tendencia_esfuerzo: avg3 - prevAvg,
+            adherencia_reciente: stats ? stats.completion_rate : 0.7,
+            semana_plan: Math.abs(strength.week_relative || 0),
+        };
+        const recentHistory = items.map(f => !!(f.swim_completed || f.strength_completed));
+        const { factor, source, reason } = combinedSuggestion(features, recentHistory);
+        const isMl = source && !String(source).includes('conservative') && !String(source).includes('heuristic');
+        strength.exercises.forEach(ex => {
+            ex.reps = scaleReps(ex.reps, factor);
+            ex.ml_factor = Math.round(factor * 100) / 100;
+        });
+        return { label: isMl ? `ML ×${factor.toFixed(2)}` : `Coach's call ×${factor.toFixed(2)}${reason ? ` (${reason})` : ''}` };
+    } catch {
+        return { label: null };
+    }
+}
+
+function wirePlayer(swim, strength) {
+    const startBtn = document.getElementById('start-player-btn');
+    if (!startBtn) return;
+    startBtn.addEventListener('click', async () => {
+        startBtn.disabled = true;
+        startBtn.textContent = 'Loading ML suggestion…';
+        const ml = await enrichStrengthWithMl(strength);
+        startBtn.disabled = false;
+        startBtn.textContent = '▶ Start guided session';
+        _player = { blocks: buildPlayerBlocks(swim, strength), idx: 0, mlLabel: ml.label };
+        if (!_player.blocks.length) { window.app.showError('No blocks in this session'); return; }
+        document.getElementById('tab-content').style.display = 'none';
+        startBtn.style.display = 'none';
+        document.getElementById('player-view').style.display = 'block';
+        renderPlayerBlock();
+    });
+    document.getElementById('btn-anterior').addEventListener('click', () => {
+        if (_player && _player.idx > 0) { _player.idx -= 1; renderPlayerBlock(); }
+    });
+    document.getElementById('btn-siguiente').addEventListener('click', () => {
+        if (!_player) return;
+        if (_player.idx < _player.blocks.length - 1) { _player.idx += 1; renderPlayerBlock(); }
+        else finishPlayer();
+    });
+    document.getElementById('btn-exit-player').addEventListener('click', exitPlayer);
+}
+
+async function completeSession(type) {
+    const date = new Date().toISOString().split('T')[0];
+    const data = {
+        date,
+        swim_completed: type === 'swim',
+        strength_completed: type === 'strength',
+        comments: ''
+    };
+    try {
+        if (type === 'swim') {
+            const swimTab = document.querySelector('#swim-tab');
+            const metersText = swimTab ? swimTab.textContent.match(/([\d,]+)m/) : null;
+            if (metersText) data.swim_completed_meters = parseInt(metersText[1].replace(/,/g, ''), 10) || null;
+            data.swim_feeling = 4;
+        } else {
+            data.strength_feeling = 4;
+        }
+        await api.submitFeedback(data);
+        window.app.showSuccess(`${type === 'swim' ? 'Swim' : 'Strength'} session marked complete!`);
+    } catch (err) {
+        window.app.showError(err.message || 'Could not mark session complete');
+    }
+}
+
+function logFeedback(type) {
+    window.location.hash = `#/feedback?date=${new Date().toISOString().split('T')[0]}&type=${type}`;
+}
+
+// Export
+window.renderSession = renderSession;
+window.switchTab = switchTab;
+window.completeSession = completeSession;
+window.logFeedback = logFeedback;

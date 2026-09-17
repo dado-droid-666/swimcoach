@@ -1,0 +1,127 @@
+{
+  "event_type": "ow_long",
+  "description": "Open Water 5-10km - continuous aerobic, feeding practice, mental resilience",
+  "warmup_drills": [
+    "500 swim easy",
+    "300 sighting + drafting drill",
+    "200 kick",
+    "4x100 build with feeding practice"
+  ],
+  "cooldown": "400 very easy + 200 backstroke",
+  "main_sets": {
+    "base": [
+      {
+        "set_id": "ms1",
+        "description": "Long continuous aerobic",
+        "meters": 3000,
+        "reps": 1,
+        "distance": 3000,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 0,
+        "equipment": [],
+        "intensity_zone": "Z2",
+        "notes": "Continuous, sight every 8 strokes, practice feeding every 20min"
+      },
+      {
+        "set_id": "ms2",
+        "description": "Tempo intervals",
+        "meters": 1500,
+        "reps": 5,
+        "distance": 300,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 25,
+        "equipment": [],
+        "intensity_zone": "Z3",
+        "notes": "Threshold pace, practice race rhythm"
+      }
+    ],
+    "build": [
+      {
+        "set_id": "ms1",
+        "description": "Race pace long",
+        "meters": 4000,
+        "reps": 1,
+        "distance": 4000,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 0,
+        "equipment": [],
+        "intensity_zone": "Z3",
+        "notes": "Target race pace, full feeding protocol"
+      },
+      {
+        "set_id": "ms2",
+        "description": "Speed intervals",
+        "meters": 1200,
+        "reps": 6,
+        "distance": 200,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 20,
+        "equipment": [],
+        "intensity_zone": "Z3",
+        "notes": "Slightly faster than race pace"
+      }
+    ],
+    "peak": [
+      {
+        "set_id": "ms1",
+        "description": "Full race simulation",
+        "meters": 5000,
+        "reps": 1,
+        "distance": 5000,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 0,
+        "equipment": [],
+        "intensity_zone": "Z3",
+        "notes": "Full target distance at race pace, all race protocols"
+      },
+      {
+        "set_id": "ms2",
+        "description": "Surge practice",
+        "meters": 800,
+        "reps": 4,
+        "distance": 200,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 30,
+        "equipment": [],
+        "intensity_zone": "Z4",
+        "notes": "Practice surges for buoy turns/packs"
+      }
+    ],
+    "taper": [
+      {
+        "set_id": "ms1",
+        "description": "Taper continuous",
+        "meters": 2000,
+        "reps": 1,
+        "distance": 2000,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 0,
+        "equipment": [],
+        "intensity_zone": "Z2",
+        "notes": "Easy continuous, mental rehearsal"
+      }
+    ],
+    "race": [
+      {
+        "set_id": "ms1",
+        "description": "Pre-race",
+        "meters": 600,
+        "reps": 3,
+        "distance": 200,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 60,
+        "equipment": [],
+        "intensity_zone": "Z2",
+        "notes": "Easy, visualize race, last at race pace"
+      }
+    ]
+  }
+}

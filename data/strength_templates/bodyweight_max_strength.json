@@ -1,0 +1,78 @@
+{
+  "focus": "max_strength",
+  "phase": "Build",
+  "equipment": ["bodyweight", "bands"],
+  "exercises": [
+    {
+      "name": "Pike Push-ups",
+      "muscle": "shoulders/upper chest",
+      "sets": 4,
+      "reps": "6-8",
+      "rpe": 8,
+      "tempo": "3010",
+      "rest": 120,
+      "equipment": ["bodyweight"],
+      "progression": "feet_elevated → handstand_pushup_negatives → full_hspu",
+      "notes": "Hips high, head to floor"
+    },
+    {
+      "name": "Band-Assisted Pull-ups",
+      "muscle": "lats/biceps",
+      "sets": 4,
+      "reps": "5-8",
+      "rpe": 8,
+      "tempo": "3010",
+      "rest": 120,
+      "equipment": ["bands", "pull_up_bar"],
+      "progression": "thinner_band → negatives → weighted",
+      "notes": "Full hang, chest to bar"
+    },
+    {
+      "name": "Bulgarian Split Squats",
+      "muscle": "quads/glutes unilateral",
+      "sets": 3,
+      "reps": "6-8/leg",
+      "rpe": 8,
+      "tempo": "3010",
+      "rest": 90,
+      "equipment": ["bodyweight"],
+      "progression": "weighted → deficit → pause_reps",
+      "notes": "Front knee behind toes"
+    },
+    {
+      "name": "Single-Leg RDL (Band)",
+      "muscle": "hamstrings/glutes",
+      "sets": 3,
+      "reps": "8-10/leg",
+      "rpe": 7,
+      "tempo": "3010",
+      "rest": 90,
+      "equipment": ["bands"],
+      "progression": "bodyweight → banded → weighted",
+      "notes": "Hinge at hips, flat back"
+    },
+    {
+      "name": "Hollow Body Hold",
+      "muscle": "core/anterior chain",
+      "sets": 3,
+      "duration": 30,
+      "rpe": 8,
+      "rest": 60,
+      "equipment": ["bodyweight"],
+      "progression": "hollow_rocks → weighted → hollow_to_arch",
+      "notes": "Lower back pressed to floor"
+    },
+    {
+      "name": "Band Resisted Push-ups",
+      "muscle": "chest/triceps/shoulders",
+      "sets": 3,
+      "reps": "6-10",
+      "rpe": 8,
+      "tempo": "2010",
+      "rest": 90,
+      "equipment": ["bands"],
+      "progression": "thicker_band → feet_elevated → plyo",
+      "notes": "Band across upper back"
+    }
+  ]
+}

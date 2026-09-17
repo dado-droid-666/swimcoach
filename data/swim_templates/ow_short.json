@@ -1,0 +1,128 @@
+{
+  "event_type": "ow_short",
+  "description": "Open Water 1.5-3km - race pace intervals, sighting practice, pack swimming",
+  "warmup_drills": [
+    "400 swim easy",
+    "200 sighting drill (every 6 strokes)",
+    "200 kick",
+    "4x50 build with sighting",
+    "4x25 fast"
+  ],
+  "cooldown": "300 easy + 100 backstroke",
+  "main_sets": {
+    "base": [
+      {
+        "set_id": "ms1",
+        "description": "Aerobic with sighting",
+        "meters": 1600,
+        "reps": 4,
+        "distance": 400,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 30,
+        "equipment": [],
+        "intensity_zone": "Z2",
+        "notes": "Sight every 6 strokes, practice drafting"
+      },
+      {
+        "set_id": "ms2",
+        "description": "Tempo intervals",
+        "meters": 1000,
+        "reps": 10,
+        "distance": 100,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 20,
+        "equipment": [],
+        "intensity_zone": "Z3",
+        "notes": "Race pace, practice turns/buoys"
+      }
+    ],
+    "build": [
+      {
+        "set_id": "ms1",
+        "description": "Race pace simulation",
+        "meters": 1500,
+        "reps": 3,
+        "distance": 500,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 60,
+        "equipment": [],
+        "intensity_zone": "Z3",
+        "notes": "Target race pace, practice feeding"
+      },
+      {
+        "set_id": "ms2",
+        "description": "Speed endurance",
+        "meters": 800,
+        "reps": 8,
+        "distance": 100,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 15,
+        "equipment": [],
+        "intensity_zone": "Z4",
+        "notes": "Fast starts, settle into rhythm"
+      }
+    ],
+    "peak": [
+      {
+        "set_id": "ms1",
+        "description": "Race simulation",
+        "meters": 2000,
+        "reps": 1,
+        "distance": 2000,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 0,
+        "equipment": [],
+        "intensity_zone": "Z4",
+        "notes": "Full race distance, practice everything"
+      },
+      {
+        "set_id": "ms2",
+        "description": "Start speed",
+        "meters": 400,
+        "reps": 8,
+        "distance": 50,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 45,
+        "equipment": [],
+        "intensity_zone": "Z4",
+        "notes": "Explosive starts, first 200m pace"
+      }
+    ],
+    "taper": [
+      {
+        "set_id": "ms1",
+        "description": "Taper swim",
+        "meters": 800,
+        "reps": 4,
+        "distance": 200,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 45,
+        "equipment": [],
+        "intensity_zone": "Z2",
+        "notes": "Easy, practice sighting rhythm"
+      }
+    ],
+    "race": [
+      {
+        "set_id": "ms1",
+        "description": "Pre-race warmup",
+        "meters": 400,
+        "reps": 4,
+        "distance": 100,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 30,
+        "equipment": [],
+        "intensity_zone": "Z2",
+        "notes": "Easy, last 2 at race pace with sighting"
+      }
+    ]
+  }
+}

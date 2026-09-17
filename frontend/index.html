@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="SwimCoach - Competition-focused periodization for swimmers">
+    <meta name="theme-color" content="#061a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="SwimCoach">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/icons/icon-512.png">
+    <link rel="stylesheet" href="/css/pico.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- AdSense - loaded async for all pages, ads rendered conditionally -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXX"
+         crossorigin="anonymous"></script>
+    <title>SwimCoach</title>
+</head>
+<body>
+    <div class="waves-bg" aria-hidden="true">
+        <svg class="wave3" viewBox="0 0 1600 200" preserveAspectRatio="none"><path d="M0,100 C200,180 400,20 600,100 C800,180 1000,20 1200,100 C1400,180 1600,20 1800,100 L1800,200 L0,200 Z" fill="#0e5c86"/></svg>
+        <svg class="wave2" viewBox="0 0 1600 200" preserveAspectRatio="none"><path d="M0,110 C220,30 420,190 620,110 C820,30 1020,190 1220,110 C1420,30 1620,190 1820,110 L1820,200 L0,200 Z" fill="#146f9e"/></svg>
+        <svg class="wave1" viewBox="0 0 1600 200" preserveAspectRatio="none"><path d="M0,120 C240,60 440,180 640,120 C840,60 1040,180 1240,120 C1440,60 1640,180 1840,120 L1840,200 L0,200 Z" fill="#1c86ba"/></svg>
+    </div>
+
+    <nav class="container-fluid" id="navbar">
+        <ul>
+            <li><strong><a href="#/dashboard">SwimCoach</a></strong></li>
+        </ul>
+        <ul id="nav-links" style="display: none;">
+            <li><a href="#/dashboard">Dashboard</a></li>
+            <li><a href="#/macrocycle">Macrocycle</a></li>
+            <li><a href="#/session/today">Today</a></li>
+            <li><a href="#/feedback">Feedback</a></li>
+            <li><a href="#/profile">Profile</a></li>
+        </ul>
+    </nav>
+
+    <main class="container" id="app">
+        <!-- Content rendered by router -->
+    </main>
+
+    <nav class="bottomnav" id="bottomnav" style="display: none;">
+        <button class="navbtn" data-route="#/dashboard"><span class="ico">🏠</span>Today</button>
+        <button class="navbtn" data-route="#/macrocycle"><span class="ico">📅</span>Plan</button>
+        <button class="navbtn" data-route="#/session/today"><span class="ico">🏊</span>Session</button>
+        <button class="navbtn" data-route="#/feedback"><span class="ico">📝</span>Log</button>
+        <button class="navbtn" data-route="#/profile"><span class="ico">⚙️</span>Profile</button>
+    </nav>
+
+    <div id="flash-overlay" aria-hidden="true"></div>
+
+    <div id="rpe-overlay" class="registro-overlay" aria-hidden="true">
+        <div class="registro-modal">
+            <h3 id="rpe-title">How did it feel?</h3>
+            <div class="esfuerzo-opciones" id="rpe-options" style="margin: 1rem 0;"></div>
+            <p id="rpe-error" style="display: none; color: var(--error-color); font-size: 13px; text-align: center;">Select an effort level to continue.</p>
+            <button class="big-btn" id="rpe-confirm">Confirm and continue</button>
+        </div>
+    </div>
+
+    <footer class="container" style="margin-top: 3rem; padding: 1rem; text-align: center; color: var(--muted-color); font-size: 0.875rem;">
+        SwimCoach v1.0 | <a href="#/upgrade">Upgrade to Pro</a>
+    </footer>
+
+    <!-- AdSense placeholder -->
+    <div id="ad-banner" class="container" style="margin-top: 1rem; text-align: center; min-height: 90px;" hidden>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-XXXXXXXXXXXX"
+             data-ad-slot="1234567890"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/utils.js"></script>
+    <script src="/js/trees.js"></script>
+    <script src="/js/tier_model.js"></script>
+    <script src="/js/load_model.js"></script>
+    <script src="/js/login.js"></script>
+    <script src="/js/register.js"></script>
+    <script src="/js/onboarding.js"></script>
+    <script src="/js/dashboard.js"></script>
+    <script src="/js/session.js"></script>
+    <script src="/js/macrocycle.js"></script>
+    <script src="/js/feedback.js"></script>
+    <script src="/js/profile.js"></script>
+    <script src="/js/upgrade.js"></script>
+    <script src="/js/settings.js"></script>
+    <script src="/js/app.js"></script>
+    <script>
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('SW registered:', reg.scope))
+                    .catch(err => console.log('SW registration failed:', err));
+            });
+        }
+    </script>
+</body>
+</html>

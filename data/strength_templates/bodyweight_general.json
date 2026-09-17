@@ -1,0 +1,99 @@
+{
+  "focus": "general",
+  "phase": "Base",
+  "equipment": ["bodyweight", "bands"],
+  "exercises": [
+    {
+      "name": "Push-ups",
+      "muscle": "chest/triceps/shoulders",
+      "sets": 3,
+      "reps": "10-15",
+      "rpe": 6,
+      "tempo": "2010",
+      "rest": 60,
+      "equipment": ["bodyweight"],
+      "progression": "feet_elevated → weighted → one_arm",
+      "notes": "Full range, core engaged"
+    },
+    {
+      "name": "Band Rows",
+      "muscle": "upper back/lats",
+      "sets": 3,
+      "reps": "12-15",
+      "rpe": 6,
+      "tempo": "2010",
+      "rest": 60,
+      "equipment": ["bands"],
+      "progression": "thicker_band → single_arm → pause_reps",
+      "notes": "Squeeze shoulder blades"
+    },
+    {
+      "name": "Air Squats",
+      "muscle": "quads/glutes",
+      "sets": 3,
+      "reps": "15-20",
+      "rpe": 6,
+      "tempo": "2010",
+      "rest": 60,
+      "equipment": ["bodyweight"],
+      "progression": "jump_squat → pistol → weighted",
+      "notes": "Hip crease below knee"
+    },
+    {
+      "name": "Walking Lunges",
+      "muscle": "legs/unilateral",
+      "sets": 3,
+      "reps": "10/leg",
+      "rpe": 6,
+      "tempo": "2010",
+      "rest": 60,
+      "equipment": ["bodyweight"],
+      "progression": "reverse → bulgarian → weighted",
+      "notes": "Knee tracks over toes"
+    },
+    {
+      "name": "Plank",
+      "muscle": "core/anterior chain",
+      "sets": 3,
+      "duration": 45,
+      "rpe": 6,
+      "rest": 60,
+      "equipment": ["bodyweight"],
+      "progression": "side_plank → plank_reach → weighted",
+      "notes": "Neutral spine, breathe"
+    },
+    {
+      "name": "Dead Bug",
+      "muscle": "core/stability",
+      "sets": 3,
+      "reps": "10/side",
+      "rpe": 6,
+      "rest": 60,
+      "equipment": ["bodyweight"],
+      "progression": "banded → straight_leg → hollow_hold",
+      "notes": "Lower back pressed to floor"
+    },
+    {
+      "name": "Band Pull-aparts",
+      "muscle": "rear delts/rhomboids",
+      "sets": 3,
+      "reps": "15-20",
+      "rpe": 6,
+      "rest": 45,
+      "equipment": ["bands"],
+      "progression": "thicker_band → pause → slower_tempo",
+      "notes": "Keep shoulders down"
+    },
+    {
+      "name": "Band Face Pulls",
+      "muscle": "rear delts/rotator cuff",
+      "sets": 3,
+      "reps": "12-15",
+      "rpe": 6,
+      "rest": 45,
+      "equipment": ["bands"],
+      "progression": "thicker_band → external_rotation → slower_eccentric",
+      "notes": "High elbows, rotate out"
+    }
+  ]
+}

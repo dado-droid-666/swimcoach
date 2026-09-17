@@ -1,0 +1,2833 @@
+{
+ "version": "modelo2_v1_2026-09-16",
+ "trained_at": "2026-09-17T04:56:25.110646+00:00",
+ "features": [
+  "tier",
+  "esfuerzo_promedio_3",
+  "tendencia_esfuerzo",
+  "adherencia_reciente",
+  "semana_plan"
+ ],
+ "n_estimators": 15,
+ "mae_test": 0.023,
+ "fuente_datos": "sintetico de bootstrap (sin historial real todavia, ver docstring)",
+ "trees": [
+  {
+   "feature": "adherencia_reciente",
+   "threshold": 0.805,
+   "left": {
+    "feature": "esfuerzo_promedio_3",
+    "threshold": 4.01,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.505,
+     "left": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.285,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.095,
+       "left": {
+        "valor": 0.9532
+       },
+       "right": {
+        "valor": 0.9432
+       }
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 2.16,
+       "left": {
+        "valor": 0.9462
+       },
+       "right": {
+        "valor": 0.959
+       }
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": -0.71,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.655,
+       "left": {
+        "valor": 1.016
+       },
+       "right": {
+        "valor": 0.999
+       }
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 1.41,
+       "left": {
+        "valor": 1.0088
+       },
+       "right": {
+        "valor": 0.9958
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "tendencia_esfuerzo",
+     "threshold": -0.005,
+     "left": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.495,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 4.615,
+       "left": {
+        "valor": 0.9445
+       },
+       "right": {
+        "valor": 0.9581
+       }
+      },
+      "right": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.605,
+       "left": {
+        "valor": 0.9897
+       },
+       "right": {
+        "valor": 1.0094
+       }
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": 0.735,
+      "left": {
+       "feature": "tier",
+       "threshold": 1.5,
+       "left": {
+        "valor": 0.8443
+       },
+       "right": {
+        "valor": 0.8534
+       }
+      },
+      "right": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.19,
+       "left": {
+        "valor": 0.8488
+       },
+       "right": {
+        "valor": 0.867
+       }
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "esfuerzo_promedio_3",
+    "threshold": 2.505,
+    "left": {
+     "feature": "tendencia_esfuerzo",
+     "threshold": 0.905,
+     "left": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 1.945,
+      "left": {
+       "feature": "semana_plan",
+       "threshold": 3.5,
+       "left": {
+        "valor": 1.1173
+       },
+       "right": {
+        "valor": 1.1277
+       }
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 2.205,
+       "left": {
+        "valor": 1.1016
+       },
+       "right": {
+        "valor": 1.1228
+       }
+      }
+     },
+     "right": {
+      "valor": 1.1459
+     }
+    },
+    "right": {
+     "feature": "esfuerzo_promedio_3",
+     "threshold": 4.025,
+     "left": {
+      "feature": "semana_plan",
+      "threshold": 6.5,
+      "left": {
+       "feature": "tier",
+       "threshold": 2.5,
+       "left": {
+        "valor": 0.9919
+       },
+       "right": {
+        "valor": 1.0051
+       }
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -0.13,
+       "left": {
+        "valor": 1.0012
+       },
+       "right": {
+        "valor": 1.0111
+       }
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": 0.01,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -0.78,
+       "left": {
+        "valor": 0.9883
+       },
+       "right": {
+        "valor": 1.0073
+       }
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.805,
+       "left": {
+        "valor": 0.8683
+       },
+       "right": {
+        "valor": 0.8504
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "feature": "esfuerzo_promedio_3",
+   "threshold": 4.005,
+   "left": {
+    "feature": "adherencia_reciente",
+    "threshold": 0.805,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.495,
+     "left": {
+      "feature": "tier",
+      "threshold": 1.5,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.64,
+       "left": {
+        "valor": 0.9521
+       },
+       "right": {
+        "valor": 0.9658
+       }
+      },
+      "right": {
+       "feature": "semana_plan",
+       "threshold": 8.5,
+       "left": {
+        "valor": 0.9495
+       },
+       "right": {
+        "valor": 0.9361
+       }
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": -0.565,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.635,
+       "left": {
+        "valor": 1.0105
+       },
+       "right": {
+        "valor": 0.9993
+       }
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -0.185,
+       "left": {
+        "valor": 0.979
+       },
+       "right": {
+        "valor": 0.9965
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "esfuerzo_promedio_3",
+     "threshold": 2.5,
+     "left": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": 0.935,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 1.425,
+       "left": {
+        "valor": 1.1284
+       },
+       "right": {
+        "valor": 1.1148
+       }
+      },
+      "right": {
+       "valor": 1.1395
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": 0.655,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 3.265,
+       "left": {
+        "valor": 0.9872
+       },
+       "right": {
+        "valor": 0.9996
+       }
+      },
+      "right": {
+       "valor": 1.0115
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "tendencia_esfuerzo",
+    "threshold": 0.0,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.495,
+     "left": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.145,
+      "left": {
+       "valor": 0.935
+      },
+      "right": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.315,
+       "left": {
+        "valor": 0.9581
+       },
+       "right": {
+        "valor": 0.9431
+       }
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": -0.315,
+      "left": {
+       "feature": "semana_plan",
+       "threshold": 6.5,
+       "left": {
+        "valor": 1.0068
+       },
+       "right": {
+        "valor": 0.9936
+       }
+      },
+      "right": {
+       "valor": 0.9849
+      }
+     }
+    },
+    "right": {
+     "feature": "semana_plan",
+     "threshold": 2.5,
+     "left": {
+      "valor": 0.8442
+     },
+     "right": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.785,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.825,
+       "left": {
+        "valor": 0.8467
+       },
+       "right": {
+        "valor": 0.8576
+       }
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 4.525,
+       "left": {
+        "valor": 0.861
+       },
+       "right": {
+        "valor": 0.869
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "feature": "adherencia_reciente",
+   "threshold": 0.505,
+   "left": {
+    "feature": "esfuerzo_promedio_3",
+    "threshold": 4.025,
+    "left": {
+     "feature": "esfuerzo_promedio_3",
+     "threshold": 1.615,
+     "left": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 1.235,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.315,
+       "left": {
+        "valor": 0.9549
+       },
+       "right": {
+        "valor": 0.945
+       }
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.75,
+       "left": {
+        "valor": 0.9408
+       },
+       "right": {
+        "valor": 0.9269
+       }
+      }
+     },
+     "right": {
+      "feature": "tier",
+      "threshold": 1.5,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.285,
+       "left": {
+        "valor": 0.9539
+       },
+       "right": {
+        "valor": 0.963
+       }
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 3.365,
+       "left": {
+        "valor": 0.9457
+       },
+       "right": {
+        "valor": 0.9552
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "tendencia_esfuerzo",
+     "threshold": -0.005,
+     "left": {
+      "feature": "semana_plan",
+      "threshold": 4.5,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.24,
+       "left": {
+        "valor": 0.9512
+       },
+       "right": {
+        "valor": 0.96
+       }
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 4.61,
+       "left": {
+        "valor": 0.9375
+       },
+       "right": {
+        "valor": 0.9521
+       }
+      }
+     },
+     "right": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 4.775,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.545,
+       "left": {
+        "valor": 0.8477
+       },
+       "right": {
+        "valor": 0.8601
+       }
+      },
+      "right": {
+       "valor": 0.839
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "esfuerzo_promedio_3",
+    "threshold": 4.005,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.805,
+     "left": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 2.605,
+      "left": {
+       "feature": "semana_plan",
+       "threshold": 5.5,
+       "left": {
+        "valor": 1.0076
+       },
+       "right": {
+        "valor": 0.996
+       }
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 3.625,
+       "left": {
+        "valor": 0.991
+       },
+       "right": {
+        "valor": 1.0032
+       }
+      }
+     },
+     "right": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 2.51,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.205,
+       "left": {
+        "valor": 1.1169
+       },
+       "right": {
+        "valor": 1.1335
+       }
+      },
+      "right": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.925,
+       "left": {
+        "valor": 1.0039
+       },
+       "right": {
+        "valor": 0.9898
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "tendencia_esfuerzo",
+     "threshold": 0.0,
+     "left": {
+      "feature": "semana_plan",
+      "threshold": 7.5,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.645,
+       "left": {
+        "valor": 1.0153
+       },
+       "right": {
+        "valor": 0.9978
+       }
+      },
+      "right": {
+       "valor": 0.9858
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": 1.04,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.615,
+       "left": {
+        "valor": 0.8545
+       },
+       "right": {
+        "valor": 0.8707
+       }
+      },
+      "right": {
+       "valor": 0.8478
+      }
+     }
+    }
+   }
+  },
+  {
+   "feature": "adherencia_reciente",
+   "threshold": 0.505,
+   "left": {
+    "feature": "esfuerzo_promedio_3",
+    "threshold": 4.025,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.215,
+     "left": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.145,
+      "left": {
+       "feature": "tier",
+       "threshold": 2.5,
+       "left": {
+        "valor": 0.9439
+       },
+       "right": {
+        "valor": 0.9602
+       }
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.315,
+       "left": {
+        "valor": 0.9473
+       },
+       "right": {
+        "valor": 0.9277
+       }
+      }
+     },
+     "right": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.485,
+      "left": {
+       "feature": "tier",
+       "threshold": 1.5,
+       "left": {
+        "valor": 0.9601
+       },
+       "right": {
+        "valor": 0.9493
+       }
+      },
+      "right": {
+       "valor": 0.9726
+      }
+     }
+    },
+    "right": {
+     "feature": "tendencia_esfuerzo",
+     "threshold": -0.005,
+     "left": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": -0.82,
+      "left": {
+       "valor": 0.9611
+      },
+      "right": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.22,
+       "left": {
+        "valor": 0.9396
+       },
+       "right": {
+        "valor": 0.9521
+       }
+      }
+     },
+     "right": {
+      "feature": "semana_plan",
+      "threshold": 5.5,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 4.44,
+       "left": {
+        "valor": 0.8357
+       },
+       "right": {
+        "valor": 0.8565
+       }
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 4.545,
+       "left": {
+        "valor": 0.8607
+       },
+       "right": {
+        "valor": 0.8687
+       }
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "esfuerzo_promedio_3",
+    "threshold": 4.01,
+    "left": {
+     "feature": "esfuerzo_promedio_3",
+     "threshold": 2.505,
+     "left": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.805,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -0.34,
+       "left": {
+        "valor": 1.0129
+       },
+       "right": {
+        "valor": 1.0022
+       }
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.85,
+       "left": {
+        "valor": 1.119
+       },
+       "right": {
+        "valor": 1.1374
+       }
+      }
+     },
+     "right": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 3.17,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.2,
+       "left": {
+        "valor": 0.9953
+       },
+       "right": {
+        "valor": 0.9869
+       }
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -1.055,
+       "left": {
+        "valor": 1.0155
+       },
+       "right": {
+        "valor": 1.0008
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "tendencia_esfuerzo",
+     "threshold": 0.01,
+     "left": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 4.505,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 4.315,
+       "left": {
+        "valor": 0.999
+       },
+       "right": {
+        "valor": 1.0146
+       }
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 4.765,
+       "left": {
+        "valor": 0.9856
+       },
+       "right": {
+        "valor": 0.9959
+       }
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": 0.865,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.595,
+       "left": {
+        "valor": 0.8567
+       },
+       "right": {
+        "valor": 0.8723
+       }
+      },
+      "right": {
+       "valor": 0.8446
+      }
+     }
+    }
+   }
+  },
+  {
+   "feature": "esfuerzo_promedio_3",
+   "threshold": 4.015,
+   "left": {
+    "feature": "adherencia_reciente",
+    "threshold": 0.805,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.495,
+     "left": {
+      "feature": "semana_plan",
+      "threshold": 3.5,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.215,
+       "left": {
+        "valor": 0.9353
+       },
+       "right": {
+        "valor": 0.9495
+       }
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 1.225,
+       "left": {
+        "valor": 0.9633
+       },
+       "right": {
+        "valor": 0.9512
+       }
+      }
+     },
+     "right": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.685,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.655,
+       "left": {
+        "valor": 0.9982
+       },
+       "right": {
+        "valor": 0.9841
+       }
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -0.84,
+       "left": {
+        "valor": 1.0134
+       },
+       "right": {
+        "valor": 1.0
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "esfuerzo_promedio_3",
+     "threshold": 2.5,
+     "left": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": 0.79,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 1.425,
+       "left": {
+        "valor": 1.1281
+       },
+       "right": {
+        "valor": 1.1121
+       }
+      },
+      "right": {
+       "valor": 1.1394
+      }
+     },
+     "right": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 2.8,
+      "left": {
+       "valor": 0.989
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 3.74,
+       "left": {
+        "valor": 1.0035
+       },
+       "right": {
+        "valor": 0.9909
+       }
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "tendencia_esfuerzo",
+    "threshold": -0.005,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.495,
+     "left": {
+      "feature": "tier",
+      "threshold": 2.5,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -0.96,
+       "left": {
+        "valor": 0.9513
+       },
+       "right": {
+        "valor": 0.934
+       }
+      },
+      "right": {
+       "valor": 0.9523
+      }
+     },
+     "right": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.655,
+      "left": {
+       "valor": 1.0039
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -1.085,
+       "left": {
+        "valor": 0.9812
+       },
+       "right": {
+        "valor": 0.9937
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "esfuerzo_promedio_3",
+     "threshold": 4.705,
+     "left": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 4.31,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.375,
+       "left": {
+        "valor": 0.8398
+       },
+       "right": {
+        "valor": 0.8547
+       }
+      },
+      "right": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.715,
+       "left": {
+        "valor": 0.8719
+       },
+       "right": {
+        "valor": 0.8556
+       }
+      }
+     },
+     "right": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.5,
+      "left": {
+       "valor": 0.8397
+      },
+      "right": {
+       "valor": 0.8531
+      }
+     }
+    }
+   }
+  },
+  {
+   "feature": "adherencia_reciente",
+   "threshold": 0.795,
+   "left": {
+    "feature": "esfuerzo_promedio_3",
+    "threshold": 3.995,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.495,
+     "left": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": 0.545,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 3.83,
+       "left": {
+        "valor": 0.9513
+       },
+       "right": {
+        "valor": 0.9701
+       }
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 1.035,
+       "left": {
+        "valor": 0.9375
+       },
+       "right": {
+        "valor": 0.9498
+       }
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": -0.71,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 2.97,
+       "left": {
+        "valor": 1.0056
+       },
+       "right": {
+        "valor": 0.9947
+       }
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -0.225,
+       "left": {
+        "valor": 0.9835
+       },
+       "right": {
+        "valor": 0.9963
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "tendencia_esfuerzo",
+     "threshold": -0.005,
+     "left": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.5,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 4.295,
+       "left": {
+        "valor": 0.9356
+       },
+       "right": {
+        "valor": 0.9562
+       }
+      },
+      "right": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.605,
+       "left": {
+        "valor": 1.0112
+       },
+       "right": {
+        "valor": 0.991
+       }
+      }
+     },
+     "right": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 4.17,
+      "left": {
+       "valor": 0.8435
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 4.665,
+       "left": {
+        "valor": 0.8624
+       },
+       "right": {
+        "valor": 0.8525
+       }
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "esfuerzo_promedio_3",
+    "threshold": 2.505,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.835,
+     "left": {
+      "valor": 1.1013
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": 0.84,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 2.145,
+       "left": {
+        "valor": 1.1143
+       },
+       "right": {
+        "valor": 1.1347
+       }
+      },
+      "right": {
+       "valor": 1.1382
+      }
+     }
+    },
+    "right": {
+     "feature": "esfuerzo_promedio_3",
+     "threshold": 4.005,
+     "left": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 3.73,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 3.235,
+       "left": {
+        "valor": 0.9971
+       },
+       "right": {
+        "valor": 1.0119
+       }
+      },
+      "right": {
+       "valor": 0.9849
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": 0.015,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -0.78,
+       "left": {
+        "valor": 0.9929
+       },
+       "right": {
+        "valor": 1.0062
+       }
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 4.55,
+       "left": {
+        "valor": 0.8545
+       },
+       "right": {
+        "valor": 0.8666
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "feature": "adherencia_reciente",
+   "threshold": 0.515,
+   "left": {
+    "feature": "esfuerzo_promedio_3",
+    "threshold": 3.995,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.375,
+     "left": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 3.385,
+      "left": {
+       "feature": "tier",
+       "threshold": 1.5,
+       "left": {
+        "valor": 0.9531
+       },
+       "right": {
+        "valor": 0.942
+       }
+      },
+      "right": {
+       "feature": "semana_plan",
+       "threshold": 6.5,
+       "left": {
+        "valor": 0.9531
+       },
+       "right": {
+        "valor": 0.9724
+       }
+      }
+     },
+     "right": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.475,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.83,
+       "left": {
+        "valor": 0.9611
+       },
+       "right": {
+        "valor": 0.9501
+       }
+      },
+      "right": {
+       "valor": 0.9701
+      }
+     }
+    },
+    "right": {
+     "feature": "tendencia_esfuerzo",
+     "threshold": -0.005,
+     "left": {
+      "feature": "tier",
+      "threshold": 2.5,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -0.52,
+       "left": {
+        "valor": 0.9512
+       },
+       "right": {
+        "valor": 0.9403
+       }
+      },
+      "right": {
+       "valor": 0.959
+      }
+     },
+     "right": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.395,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 4.735,
+       "left": {
+        "valor": 0.8553
+       },
+       "right": {
+        "valor": 0.8393
+       }
+      },
+      "right": {
+       "valor": 0.8723
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "esfuerzo_promedio_3",
+    "threshold": 4.005,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.815,
+     "left": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 3.735,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 1.39,
+       "left": {
+        "valor": 1.0116
+       },
+       "right": {
+        "valor": 0.9951
+       }
+      },
+      "right": {
+       "valor": 1.0193
+      }
+     },
+     "right": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 2.505,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -0.14,
+       "left": {
+        "valor": 1.1101
+       },
+       "right": {
+        "valor": 1.1298
+       }
+      },
+      "right": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.965,
+       "left": {
+        "valor": 1.0014
+       },
+       "right": {
+        "valor": 0.9873
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "tendencia_esfuerzo",
+     "threshold": 0.01,
+     "left": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": -0.695,
+      "left": {
+       "feature": "semana_plan",
+       "threshold": 5.5,
+       "left": {
+        "valor": 0.9981
+       },
+       "right": {
+        "valor": 1.0083
+       }
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -0.37,
+       "left": {
+        "valor": 0.9822
+       },
+       "right": {
+        "valor": 0.9996
+       }
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": 1.04,
+      "left": {
+       "feature": "semana_plan",
+       "threshold": 4.5,
+       "left": {
+        "valor": 0.8698
+       },
+       "right": {
+        "valor": 0.8541
+       }
+      },
+      "right": {
+       "valor": 0.8479
+      }
+     }
+    }
+   }
+  },
+  {
+   "feature": "adherencia_reciente",
+   "threshold": 0.565,
+   "left": {
+    "feature": "esfuerzo_promedio_3",
+    "threshold": 4.025,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.505,
+     "left": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.215,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.195,
+       "left": {
+        "valor": 0.945
+       },
+       "right": {
+        "valor": 0.9239
+       }
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.865,
+       "left": {
+        "valor": 0.9554
+       },
+       "right": {
+        "valor": 0.9439
+       }
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": -0.3,
+      "left": {
+       "valor": 0.991
+      },
+      "right": {
+       "valor": 1.0107
+      }
+     }
+    },
+    "right": {
+     "feature": "tendencia_esfuerzo",
+     "threshold": -0.02,
+     "left": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.465,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -0.82,
+       "left": {
+        "valor": 0.9548
+       },
+       "right": {
+        "valor": 0.9427
+       }
+      },
+      "right": {
+       "valor": 0.985
+      }
+     },
+     "right": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.305,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.765,
+       "left": {
+        "valor": 0.8334
+       },
+       "right": {
+        "valor": 0.8511
+       }
+      },
+      "right": {
+       "feature": "semana_plan",
+       "threshold": 5.5,
+       "left": {
+        "valor": 0.8505
+       },
+       "right": {
+        "valor": 0.8645
+       }
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "esfuerzo_promedio_3",
+    "threshold": 2.495,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.805,
+     "left": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 1.365,
+      "left": {
+       "valor": 1.0144
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 1.725,
+       "left": {
+        "valor": 0.9942
+       },
+       "right": {
+        "valor": 1.0056
+       }
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": 0.935,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 1.425,
+       "left": {
+        "valor": 1.1204
+       },
+       "right": {
+        "valor": 1.1095
+       }
+      },
+      "right": {
+       "valor": 1.137
+      }
+     }
+    },
+    "right": {
+     "feature": "esfuerzo_promedio_3",
+     "threshold": 4.015,
+     "left": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 2.875,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.745,
+       "left": {
+        "valor": 1.0043
+       },
+       "right": {
+        "valor": 0.985
+       }
+      },
+      "right": {
+       "feature": "semana_plan",
+       "threshold": 7.5,
+       "left": {
+        "valor": 1.003
+       },
+       "right": {
+        "valor": 0.9912
+       }
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": 0.0,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.925,
+       "left": {
+        "valor": 1.0046
+       },
+       "right": {
+        "valor": 0.9888
+       }
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 4.635,
+       "left": {
+        "valor": 0.8537
+       },
+       "right": {
+        "valor": 0.871
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "feature": "esfuerzo_promedio_3",
+   "threshold": 4.025,
+   "left": {
+    "feature": "adherencia_reciente",
+    "threshold": 0.795,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.495,
+     "left": {
+      "feature": "semana_plan",
+      "threshold": 3.5,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.245,
+       "left": {
+        "valor": 0.9379
+       },
+       "right": {
+        "valor": 0.9526
+       }
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 1.36,
+       "left": {
+        "valor": 0.9636
+       },
+       "right": {
+        "valor": 0.9522
+       }
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": -1.095,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.605,
+       "left": {
+        "valor": 1.0144
+       },
+       "right": {
+        "valor": 0.9984
+       }
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 1.4,
+       "left": {
+        "valor": 1.0034
+       },
+       "right": {
+        "valor": 0.9926
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "esfuerzo_promedio_3",
+     "threshold": 2.5,
+     "left": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.845,
+      "left": {
+       "valor": 1.1022
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.85,
+       "left": {
+        "valor": 1.1183
+       },
+       "right": {
+        "valor": 1.1381
+       }
+      }
+     },
+     "right": {
+      "feature": "semana_plan",
+      "threshold": 7.5,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 3.73,
+       "left": {
+        "valor": 1.001
+       },
+       "right": {
+        "valor": 0.9896
+       }
+      },
+      "right": {
+       "valor": 1.0094
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "tendencia_esfuerzo",
+    "threshold": 0.005,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.455,
+     "left": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": -0.96,
+      "left": {
+       "valor": 0.9582
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -0.445,
+       "left": {
+        "valor": 0.9358
+       },
+       "right": {
+        "valor": 0.9491
+       }
+      }
+     },
+     "right": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 4.365,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.84,
+       "left": {
+        "valor": 1.0001
+       },
+       "right": {
+        "valor": 1.0167
+       }
+      },
+      "right": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.84,
+       "left": {
+        "valor": 0.9844
+       },
+       "right": {
+        "valor": 0.9955
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "esfuerzo_promedio_3",
+     "threshold": 4.205,
+     "left": {
+      "valor": 0.8426
+     },
+     "right": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 4.68,
+      "left": {
+       "feature": "tier",
+       "threshold": 2.5,
+       "left": {
+        "valor": 0.8633
+       },
+       "right": {
+        "valor": 0.8509
+       }
+      },
+      "right": {
+       "feature": "semana_plan",
+       "threshold": 6.5,
+       "left": {
+        "valor": 0.8447
+       },
+       "right": {
+        "valor": 0.8623
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "feature": "adherencia_reciente",
+   "threshold": 0.495,
+   "left": {
+    "feature": "esfuerzo_promedio_3",
+    "threshold": 4.025,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.215,
+     "left": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.145,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 3.46,
+       "left": {
+        "valor": 0.9456
+       },
+       "right": {
+        "valor": 0.9661
+       }
+      },
+      "right": {
+       "feature": "semana_plan",
+       "threshold": 4.5,
+       "left": {
+        "valor": 0.9249
+       },
+       "right": {
+        "valor": 0.9454
+       }
+      }
+     },
+     "right": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 2.2,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 1.785,
+       "left": {
+        "valor": 0.9543
+       },
+       "right": {
+        "valor": 0.9391
+       }
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 2.415,
+       "left": {
+        "valor": 0.9715
+       },
+       "right": {
+        "valor": 0.9554
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "tendencia_esfuerzo",
+     "threshold": -0.01,
+     "left": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.325,
+      "left": {
+       "feature": "semana_plan",
+       "threshold": 5.5,
+       "left": {
+        "valor": 0.9666
+       },
+       "right": {
+        "valor": 0.9502
+       }
+      },
+      "right": {
+       "valor": 0.9426
+      }
+     },
+     "right": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.175,
+      "left": {
+       "valor": 0.8453
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.93,
+       "left": {
+        "valor": 0.8507
+       },
+       "right": {
+        "valor": 0.87
+       }
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "esfuerzo_promedio_3",
+    "threshold": 4.025,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.805,
+     "left": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 2.695,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 2.45,
+       "left": {
+        "valor": 0.9985
+       },
+       "right": {
+        "valor": 1.017
+       }
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 3.745,
+       "left": {
+        "valor": 0.9887
+       },
+       "right": {
+        "valor": 1.0089
+       }
+      }
+     },
+     "right": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 2.5,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.915,
+       "left": {
+        "valor": 1.1285
+       },
+       "right": {
+        "valor": 1.1148
+       }
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 3.735,
+       "left": {
+        "valor": 1.0004
+       },
+       "right": {
+        "valor": 0.9884
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "tendencia_esfuerzo",
+     "threshold": 0.01,
+     "left": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.675,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 4.435,
+       "left": {
+        "valor": 1.0199
+       },
+       "right": {
+        "valor": 0.998
+       }
+      },
+      "right": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.835,
+       "left": {
+        "valor": 0.9878
+       },
+       "right": {
+        "valor": 0.9993
+       }
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": 1.04,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.34,
+       "left": {
+        "valor": 0.8532
+       },
+       "right": {
+        "valor": 0.8664
+       }
+      },
+      "right": {
+       "valor": 0.8469
+      }
+     }
+    }
+   }
+  },
+  {
+   "feature": "adherencia_reciente",
+   "threshold": 0.495,
+   "left": {
+    "feature": "esfuerzo_promedio_3",
+    "threshold": 3.995,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.365,
+     "left": {
+      "feature": "tier",
+      "threshold": 1.5,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.075,
+       "left": {
+        "valor": 0.9436
+       },
+       "right": {
+        "valor": 0.9631
+       }
+      },
+      "right": {
+       "feature": "tier",
+       "threshold": 2.5,
+       "left": {
+        "valor": 0.9384
+       },
+       "right": {
+        "valor": 0.9488
+       }
+      }
+     },
+     "right": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 1.585,
+      "left": {
+       "valor": 0.9392
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 3.565,
+       "left": {
+        "valor": 0.9641
+       },
+       "right": {
+        "valor": 0.9417
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "tendencia_esfuerzo",
+     "threshold": -0.01,
+     "left": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": -0.815,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -1.245,
+       "left": {
+        "valor": 0.9522
+       },
+       "right": {
+        "valor": 0.9599
+       }
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -0.28,
+       "left": {
+        "valor": 0.9286
+       },
+       "right": {
+        "valor": 0.9582
+       }
+      }
+     },
+     "right": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 4.705,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 4.415,
+       "left": {
+        "valor": 0.8533
+       },
+       "right": {
+        "valor": 0.87
+       }
+      },
+      "right": {
+       "valor": 0.8372
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "esfuerzo_promedio_3",
+    "threshold": 4.015,
+    "left": {
+     "feature": "esfuerzo_promedio_3",
+     "threshold": 2.495,
+     "left": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.805,
+      "left": {
+       "feature": "tier",
+       "threshold": 2.5,
+       "left": {
+        "valor": 1.0043
+       },
+       "right": {
+        "valor": 0.9949
+       }
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.905,
+       "left": {
+        "valor": 1.1159
+       },
+       "right": {
+        "valor": 1.1347
+       }
+      }
+     },
+     "right": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 3.17,
+      "left": {
+       "feature": "semana_plan",
+       "threshold": 2.5,
+       "left": {
+        "valor": 0.9833
+       },
+       "right": {
+        "valor": 0.9964
+       }
+      },
+      "right": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.74,
+       "left": {
+        "valor": 0.9946
+       },
+       "right": {
+        "valor": 1.004
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "tendencia_esfuerzo",
+     "threshold": 0.01,
+     "left": {
+      "feature": "semana_plan",
+      "threshold": 2.5,
+      "left": {
+       "valor": 1.0176
+      },
+      "right": {
+       "feature": "semana_plan",
+       "threshold": 5.5,
+       "left": {
+        "valor": 0.9808
+       },
+       "right": {
+        "valor": 1.0058
+       }
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": 0.94,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.615,
+       "left": {
+        "valor": 0.8513
+       },
+       "right": {
+        "valor": 0.8758
+       }
+      },
+      "right": {
+       "valor": 0.8437
+      }
+     }
+    }
+   }
+  },
+  {
+   "feature": "adherencia_reciente",
+   "threshold": 0.495,
+   "left": {
+    "feature": "esfuerzo_promedio_3",
+    "threshold": 4.01,
+    "left": {
+     "feature": "esfuerzo_promedio_3",
+     "threshold": 2.165,
+     "left": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": 0.325,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.095,
+       "left": {
+        "valor": 0.9302
+       },
+       "right": {
+        "valor": 0.9497
+       }
+      },
+      "right": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.115,
+       "left": {
+        "valor": 0.9514
+       },
+       "right": {
+        "valor": 0.9344
+       }
+      }
+     },
+     "right": {
+      "feature": "tier",
+      "threshold": 1.5,
+      "left": {
+       "feature": "semana_plan",
+       "threshold": 3.5,
+       "left": {
+        "valor": 0.9681
+       },
+       "right": {
+        "valor": 0.9549
+       }
+      },
+      "right": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.215,
+       "left": {
+        "valor": 0.9434
+       },
+       "right": {
+        "valor": 0.9535
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "tendencia_esfuerzo",
+     "threshold": -0.01,
+     "left": {
+      "feature": "semana_plan",
+      "threshold": 5.5,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.185,
+       "left": {
+        "valor": 0.9472
+       },
+       "right": {
+        "valor": 0.9664
+       }
+      },
+      "right": {
+       "valor": 0.9439
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": 0.78,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.275,
+       "left": {
+        "valor": 0.8515
+       },
+       "right": {
+        "valor": 0.8392
+       }
+      },
+      "right": {
+       "feature": "semana_plan",
+       "threshold": 6.5,
+       "left": {
+        "valor": 0.8552
+       },
+       "right": {
+        "valor": 0.8716
+       }
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "esfuerzo_promedio_3",
+    "threshold": 4.005,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.845,
+     "left": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.805,
+      "left": {
+       "feature": "semana_plan",
+       "threshold": 8.5,
+       "left": {
+        "valor": 0.9982
+       },
+       "right": {
+        "valor": 1.0128
+       }
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 2.63,
+       "left": {
+        "valor": 1.0952
+       },
+       "right": {
+        "valor": 0.9929
+       }
+      }
+     },
+     "right": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 2.505,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 1.435,
+       "left": {
+        "valor": 1.1304
+       },
+       "right": {
+        "valor": 1.1187
+       }
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.69,
+       "left": {
+        "valor": 1.0054
+       },
+       "right": {
+        "valor": 0.9903
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "tendencia_esfuerzo",
+     "threshold": 0.0,
+     "left": {
+      "feature": "tier",
+      "threshold": 1.5,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -0.945,
+       "left": {
+        "valor": 0.9954
+       },
+       "right": {
+        "valor": 1.0061
+       }
+      },
+      "right": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.855,
+       "left": {
+        "valor": 0.9864
+       },
+       "right": {
+        "valor": 0.9983
+       }
+      }
+     },
+     "right": {
+      "feature": "semana_plan",
+      "threshold": 2.5,
+      "left": {
+       "valor": 0.8392
+      },
+      "right": {
+       "feature": "semana_plan",
+       "threshold": 4.5,
+       "left": {
+        "valor": 0.8675
+       },
+       "right": {
+        "valor": 0.854
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "feature": "adherencia_reciente",
+   "threshold": 0.505,
+   "left": {
+    "feature": "esfuerzo_promedio_3",
+    "threshold": 4.015,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.215,
+     "left": {
+      "feature": "semana_plan",
+      "threshold": 3.5,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.135,
+       "left": {
+        "valor": 0.944
+       },
+       "right": {
+        "valor": 0.9246
+       }
+      },
+      "right": {
+       "feature": "semana_plan",
+       "threshold": 4.5,
+       "left": {
+        "valor": 0.9609
+       },
+       "right": {
+        "valor": 0.9466
+       }
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": -0.975,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -1.23,
+       "left": {
+        "valor": 0.9535
+       },
+       "right": {
+        "valor": 0.9739
+       }
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 1.22,
+       "left": {
+        "valor": 0.9511
+       },
+       "right": {
+        "valor": 0.9624
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "tendencia_esfuerzo",
+     "threshold": -0.01,
+     "left": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": -1.08,
+      "left": {
+       "valor": 0.9552
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 4.605,
+       "left": {
+        "valor": 0.9377
+       },
+       "right": {
+        "valor": 0.9519
+       }
+      }
+     },
+     "right": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 4.765,
+      "left": {
+       "feature": "semana_plan",
+       "threshold": 5.5,
+       "left": {
+        "valor": 0.8433
+       },
+       "right": {
+        "valor": 0.8555
+       }
+      },
+      "right": {
+       "valor": 0.8354
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "esfuerzo_promedio_3",
+    "threshold": 2.515,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.805,
+     "left": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 1.935,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.135,
+       "left": {
+        "valor": 1.0038
+       },
+       "right": {
+        "valor": 0.9932
+       }
+      },
+      "right": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.645,
+       "left": {
+        "valor": 1.0158
+       },
+       "right": {
+        "valor": 1.0036
+       }
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": 0.935,
+      "left": {
+       "feature": "tier",
+       "threshold": 2.5,
+       "left": {
+        "valor": 1.1225
+       },
+       "right": {
+        "valor": 1.1129
+       }
+      },
+      "right": {
+       "valor": 1.1383
+      }
+     }
+    },
+    "right": {
+     "feature": "esfuerzo_promedio_3",
+     "threshold": 4.015,
+     "left": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.965,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.975,
+       "left": {
+        "valor": 0.9988
+       },
+       "right": {
+        "valor": 0.989
+       }
+      },
+      "right": {
+       "valor": 0.9813
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": 0.01,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 4.565,
+       "left": {
+        "valor": 1.006
+       },
+       "right": {
+        "valor": 0.99
+       }
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.875,
+       "left": {
+        "valor": 0.8608
+       },
+       "right": {
+        "valor": 0.8443
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "feature": "esfuerzo_promedio_3",
+   "threshold": 4.065,
+   "left": {
+    "feature": "adherencia_reciente",
+    "threshold": 0.795,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.495,
+     "left": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 2.165,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.045,
+       "left": {
+        "valor": 0.9561
+       },
+       "right": {
+        "valor": 0.9431
+       }
+      },
+      "right": {
+       "feature": "tier",
+       "threshold": 1.5,
+       "left": {
+        "valor": 0.9625
+       },
+       "right": {
+        "valor": 0.9496
+       }
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": -1.01,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -1.215,
+       "left": {
+        "valor": 1.0002
+       },
+       "right": {
+        "valor": 1.0208
+       }
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -0.105,
+       "left": {
+        "valor": 0.9916
+       },
+       "right": {
+        "valor": 0.9999
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "esfuerzo_promedio_3",
+     "threshold": 2.5,
+     "left": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.835,
+      "left": {
+       "valor": 1.0974
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.92,
+       "left": {
+        "valor": 1.1195
+       },
+       "right": {
+        "valor": 1.1387
+       }
+      }
+     },
+     "right": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 3.865,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 2.8,
+       "left": {
+        "valor": 0.9906
+       },
+       "right": {
+        "valor": 1.0037
+       }
+      },
+      "right": {
+       "valor": 0.976
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "tendencia_esfuerzo",
+    "threshold": -0.005,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.505,
+     "left": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.145,
+      "left": {
+       "valor": 0.9373
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 4.755,
+       "left": {
+        "valor": 0.9494
+       },
+       "right": {
+        "valor": 0.9668
+       }
+      }
+     },
+     "right": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.615,
+      "left": {
+       "valor": 1.0228
+      },
+      "right": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 4.49,
+       "left": {
+        "valor": 1.0095
+       },
+       "right": {
+        "valor": 0.9905
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.905,
+     "left": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": 0.655,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.675,
+       "left": {
+        "valor": 0.84
+       },
+       "right": {
+        "valor": 0.854
+       }
+      },
+      "right": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.615,
+       "left": {
+        "valor": 0.8625
+       },
+       "right": {
+        "valor": 0.8452
+       }
+      }
+     },
+     "right": {
+      "valor": 0.8707
+     }
+    }
+   }
+  },
+  {
+   "feature": "adherencia_reciente",
+   "threshold": 0.505,
+   "left": {
+    "feature": "esfuerzo_promedio_3",
+    "threshold": 3.995,
+    "left": {
+     "feature": "tendencia_esfuerzo",
+     "threshold": 0.475,
+     "left": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 3.805,
+      "left": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.335,
+       "left": {
+        "valor": 0.9462
+       },
+       "right": {
+        "valor": 0.959
+       }
+      },
+      "right": {
+       "valor": 0.9746
+      }
+     },
+     "right": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.145,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 2.275,
+       "left": {
+        "valor": 0.9458
+       },
+       "right": {
+        "valor": 0.9582
+       }
+      },
+      "right": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.215,
+       "left": {
+        "valor": 0.9228
+       },
+       "right": {
+        "valor": 0.944
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "tendencia_esfuerzo",
+     "threshold": -0.01,
+     "left": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.185,
+      "left": {
+       "valor": 0.9402
+      },
+      "right": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -0.86,
+       "left": {
+        "valor": 0.965
+       },
+       "right": {
+        "valor": 0.9494
+       }
+      }
+     },
+     "right": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 4.705,
+      "left": {
+       "feature": "esfuerzo_promedio_3",
+       "threshold": 4.335,
+       "left": {
+        "valor": 0.8444
+       },
+       "right": {
+        "valor": 0.8692
+       }
+      },
+      "right": {
+       "valor": 0.84
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "esfuerzo_promedio_3",
+    "threshold": 4.005,
+    "left": {
+     "feature": "adherencia_reciente",
+     "threshold": 0.805,
+     "left": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.615,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": -0.71,
+       "left": {
+        "valor": 1.0193
+       },
+       "right": {
+        "valor": 1.0024
+       }
+      },
+      "right": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.715,
+       "left": {
+        "valor": 0.9909
+       },
+       "right": {
+        "valor": 1.003
+       }
+      }
+     },
+     "right": {
+      "feature": "esfuerzo_promedio_3",
+      "threshold": 2.505,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 1.02,
+       "left": {
+        "valor": 1.1171
+       },
+       "right": {
+        "valor": 1.1431
+       }
+      },
+      "right": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.955,
+       "left": {
+        "valor": 1.0034
+       },
+       "right": {
+        "valor": 0.9851
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "tendencia_esfuerzo",
+     "threshold": 0.01,
+     "left": {
+      "feature": "adherencia_reciente",
+      "threshold": 0.595,
+      "left": {
+       "valor": 1.0148
+      },
+      "right": {
+       "feature": "adherencia_reciente",
+       "threshold": 0.835,
+       "left": {
+        "valor": 0.9913
+       },
+       "right": {
+        "valor": 1.0022
+       }
+      }
+     },
+     "right": {
+      "feature": "tendencia_esfuerzo",
+      "threshold": 0.965,
+      "left": {
+       "feature": "tendencia_esfuerzo",
+       "threshold": 0.605,
+       "left": {
+        "valor": 0.8513
+       },
+       "right": {
+        "valor": 0.8698
+       }
+      },
+      "right": {
+       "valor": 0.8466
+      }
+     }
+    }
+   }
+  }
+ ]
+}

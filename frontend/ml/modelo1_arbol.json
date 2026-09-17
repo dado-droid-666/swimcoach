@@ -1,0 +1,1693 @@
+{
+ "version": "rf_v1_2026-09-16",
+ "trained_at": "2026-09-17T04:56:22.767865+00:00",
+ "features": [
+  "edad",
+  "peso_kg",
+  "altura_cm",
+  "css_pace",
+  "tiempo_50_seg",
+  "nivel_experiencia_num"
+ ],
+ "n_estimators": 15,
+ "accuracy_test_sintetico": 0.995,
+ "fuente_datos": "Ancla de elite: Olympic Swimming Results 1912-2020 (datasciencedonut, mismo dataset publicado en Kaggle). Bandas de nivel recreativo: sinteticas, calibradas con el ancla real. Ver train_modelo1.py.",
+ "trees": [
+  {
+   "feature": "css_pace",
+   "threshold": 126.05,
+   "left": {
+    "feature": "tiempo_50_seg",
+    "threshold": 47.85,
+    "left": {
+     "feature": "tiempo_50_seg",
+     "threshold": 46.95,
+     "left": {
+      "feature": "peso_kg",
+      "threshold": 85.75,
+      "left": {
+       "feature": "tiempo_50_seg",
+       "threshold": 45.95,
+       "left": {
+        "feature": "tiempo_50_seg",
+        "threshold": 45.55,
+        "left": {
+         "tier": 3
+        },
+        "right": {
+         "tier": 3
+        }
+       },
+       "right": {
+        "feature": "css_pace",
+        "threshold": 100.8,
+        "left": {
+         "tier": 3
+        },
+        "right": {
+         "tier": 2
+        }
+       }
+      },
+      "right": {
+       "tier": 3
+      }
+     },
+     "right": {
+      "feature": "edad",
+      "threshold": 38.5,
+      "left": {
+       "feature": "edad",
+       "threshold": 31.0,
+       "left": {
+        "tier": 3
+       },
+       "right": {
+        "tier": 2
+       }
+      },
+      "right": {
+       "tier": 3
+      }
+     }
+    },
+    "right": {
+     "feature": "tiempo_50_seg",
+     "threshold": 49.05,
+     "left": {
+      "feature": "nivel_experiencia_num",
+      "threshold": 2.5,
+      "left": {
+       "feature": "edad",
+       "threshold": 36.5,
+       "left": {
+        "tier": 2
+       },
+       "right": {
+        "tier": 2
+       }
+      },
+      "right": {
+       "tier": 3
+      }
+     },
+     "right": {
+      "feature": "css_pace",
+      "threshold": 102.65,
+      "left": {
+       "tier": 2
+      },
+      "right": {
+       "tier": 2
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "nivel_experiencia_num",
+    "threshold": 1.5,
+    "left": {
+     "feature": "tiempo_50_seg",
+     "threshold": 63.15,
+     "left": {
+      "feature": "tiempo_50_seg",
+      "threshold": 62.55,
+      "left": {
+       "tier": 1
+      },
+      "right": {
+       "tier": 1
+      }
+     },
+     "right": {
+      "tier": 1
+     }
+    },
+    "right": {
+     "feature": "tiempo_50_seg",
+     "threshold": 59.95,
+     "left": {
+      "tier": 1
+     },
+     "right": {
+      "feature": "tiempo_50_seg",
+      "threshold": 61.65,
+      "left": {
+       "tier": 1
+      },
+      "right": {
+       "tier": 1
+      }
+     }
+    }
+   }
+  },
+  {
+   "feature": "nivel_experiencia_num",
+   "threshold": 1.5,
+   "left": {
+    "feature": "tiempo_50_seg",
+    "threshold": 58.75,
+    "left": {
+     "feature": "tiempo_50_seg",
+     "threshold": 57.65,
+     "left": {
+      "feature": "tiempo_50_seg",
+      "threshold": 48.2,
+      "left": {
+       "tier": 2
+      },
+      "right": {
+       "feature": "css_pace",
+       "threshold": 120.15,
+       "left": {
+        "tier": 2
+       },
+       "right": {
+        "tier": 2
+       }
+      }
+     },
+     "right": {
+      "tier": 2
+     }
+    },
+    "right": {
+     "feature": "css_pace",
+     "threshold": 126.4,
+     "left": {
+      "tier": 2
+     },
+     "right": {
+      "feature": "edad",
+      "threshold": 50.5,
+      "left": {
+       "tier": 1
+      },
+      "right": {
+       "tier": 1
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "edad",
+    "threshold": 14.5,
+    "left": {
+     "feature": "peso_kg",
+     "threshold": 61.7,
+     "left": {
+      "tier": 2
+     },
+     "right": {
+      "feature": "peso_kg",
+      "threshold": 68.6,
+      "left": {
+       "tier": 2
+      },
+      "right": {
+       "tier": 2
+      }
+     }
+    },
+    "right": {
+     "feature": "nivel_experiencia_num",
+     "threshold": 2.5,
+     "left": {
+      "feature": "edad",
+      "threshold": 28.5,
+      "left": {
+       "feature": "tiempo_50_seg",
+       "threshold": 59.75,
+       "left": {
+        "feature": "css_pace",
+        "threshold": 100.85,
+        "left": {
+         "tier": 3
+        },
+        "right": {
+         "tier": 2
+        }
+       },
+       "right": {
+        "feature": "tiempo_50_seg",
+        "threshold": 63.6,
+        "left": {
+         "tier": 1
+        },
+        "right": {
+         "tier": 1
+        }
+       }
+      },
+      "right": {
+       "feature": "altura_cm",
+       "threshold": 163.95,
+       "left": {
+        "feature": "tiempo_50_seg",
+        "threshold": 60.25,
+        "left": {
+         "tier": 2
+        },
+        "right": {
+         "tier": 1
+        }
+       },
+       "right": {
+        "feature": "tiempo_50_seg",
+        "threshold": 59.6,
+        "left": {
+         "tier": 2
+        },
+        "right": {
+         "tier": 1
+        }
+       }
+      }
+     },
+     "right": {
+      "feature": "tiempo_50_seg",
+      "threshold": 48.25,
+      "left": {
+       "feature": "peso_kg",
+       "threshold": 43.6,
+       "left": {
+        "tier": 3
+       },
+       "right": {
+        "feature": "css_pace",
+        "threshold": 100.75,
+        "left": {
+         "tier": 3
+        },
+        "right": {
+         "tier": 2
+        }
+       }
+      },
+      "right": {
+       "feature": "css_pace",
+       "threshold": 103.45,
+       "left": {
+        "tier": 2
+       },
+       "right": {
+        "feature": "tiempo_50_seg",
+        "threshold": 59.3,
+        "left": {
+         "tier": 2
+        },
+        "right": {
+         "tier": 2
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "feature": "css_pace",
+   "threshold": 126.05,
+   "left": {
+    "feature": "tiempo_50_seg",
+    "threshold": 47.75,
+    "left": {
+     "feature": "css_pace",
+     "threshold": 101.05,
+     "left": {
+      "tier": 3
+     },
+     "right": {
+      "feature": "altura_cm",
+      "threshold": 170.5,
+      "left": {
+       "tier": 2
+      },
+      "right": {
+       "tier": 2
+      }
+     }
+    },
+    "right": {
+     "feature": "nivel_experiencia_num",
+     "threshold": 2.5,
+     "left": {
+      "feature": "css_pace",
+      "threshold": 101.7,
+      "left": {
+       "tier": 3
+      },
+      "right": {
+       "tier": 2
+      }
+     },
+     "right": {
+      "feature": "tiempo_50_seg",
+      "threshold": 48.75,
+      "left": {
+       "tier": 3
+      },
+      "right": {
+       "feature": "css_pace",
+       "threshold": 105.15,
+       "left": {
+        "tier": 2
+       },
+       "right": {
+        "tier": 2
+       }
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "css_pace",
+    "threshold": 127.65,
+    "left": {
+     "feature": "edad",
+     "threshold": 32.5,
+     "left": {
+      "tier": 1
+     },
+     "right": {
+      "tier": 1
+     }
+    },
+    "right": {
+     "feature": "edad",
+     "threshold": 51.5,
+     "left": {
+      "tier": 1
+     },
+     "right": {
+      "tier": 1
+     }
+    }
+   }
+  },
+  {
+   "feature": "nivel_experiencia_num",
+   "threshold": 1.5,
+   "left": {
+    "feature": "css_pace",
+    "threshold": 126.0,
+    "left": {
+     "feature": "tiempo_50_seg",
+     "threshold": 48.45,
+     "left": {
+      "tier": 2
+     },
+     "right": {
+      "feature": "edad",
+      "threshold": 44.5,
+      "left": {
+       "tier": 2
+      },
+      "right": {
+       "tier": 2
+      }
+     }
+    },
+    "right": {
+     "feature": "altura_cm",
+     "threshold": 174.35,
+     "left": {
+      "tier": 1
+     },
+     "right": {
+      "feature": "edad",
+      "threshold": 46.5,
+      "left": {
+       "tier": 1
+      },
+      "right": {
+       "tier": 1
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "tiempo_50_seg",
+    "threshold": 47.25,
+    "left": {
+     "feature": "css_pace",
+     "threshold": 100.95,
+     "left": {
+      "tier": 3
+     },
+     "right": {
+      "tier": 2
+     }
+    },
+    "right": {
+     "feature": "css_pace",
+     "threshold": 127.3,
+     "left": {
+      "feature": "css_pace",
+      "threshold": 101.05,
+      "left": {
+       "tier": 3
+      },
+      "right": {
+       "feature": "peso_kg",
+       "threshold": 81.6,
+       "left": {
+        "feature": "peso_kg",
+        "threshold": 66.25,
+        "left": {
+         "tier": 2
+        },
+        "right": {
+         "tier": 2
+        }
+       },
+       "right": {
+        "feature": "peso_kg",
+        "threshold": 83.45,
+        "left": {
+         "tier": 2
+        },
+        "right": {
+         "tier": 2
+        }
+       }
+      }
+     },
+     "right": {
+      "feature": "tiempo_50_seg",
+      "threshold": 61.3,
+      "left": {
+       "tier": 1
+      },
+      "right": {
+       "tier": 1
+      }
+     }
+    }
+   }
+  },
+  {
+   "feature": "nivel_experiencia_num",
+   "threshold": 1.5,
+   "left": {
+    "feature": "css_pace",
+    "threshold": 126.0,
+    "left": {
+     "feature": "altura_cm",
+     "threshold": 166.95,
+     "left": {
+      "tier": 2
+     },
+     "right": {
+      "feature": "peso_kg",
+      "threshold": 73.2,
+      "left": {
+       "feature": "css_pace",
+       "threshold": 104.95,
+       "left": {
+        "tier": 2
+       },
+       "right": {
+        "tier": 2
+       }
+      },
+      "right": {
+       "feature": "edad",
+       "threshold": 32.5,
+       "left": {
+        "tier": 2
+       },
+       "right": {
+        "tier": 2
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "peso_kg",
+     "threshold": 61.85,
+     "left": {
+      "feature": "edad",
+      "threshold": 48.0,
+      "left": {
+       "tier": 1
+      },
+      "right": {
+       "tier": 1
+      }
+     },
+     "right": {
+      "tier": 1
+     }
+    }
+   },
+   "right": {
+    "feature": "css_pace",
+    "threshold": 101.05,
+    "left": {
+     "tier": 3
+    },
+    "right": {
+     "feature": "altura_cm",
+     "threshold": 165.25,
+     "left": {
+      "feature": "css_pace",
+      "threshold": 126.7,
+      "left": {
+       "feature": "tiempo_50_seg",
+       "threshold": 49.8,
+       "left": {
+        "tier": 2
+       },
+       "right": {
+        "tier": 2
+       }
+      },
+      "right": {
+       "feature": "peso_kg",
+       "threshold": 47.95,
+       "left": {
+        "tier": 1
+       },
+       "right": {
+        "tier": 1
+       }
+      }
+     },
+     "right": {
+      "feature": "tiempo_50_seg",
+      "threshold": 61.55,
+      "left": {
+       "feature": "altura_cm",
+       "threshold": 175.45,
+       "left": {
+        "feature": "altura_cm",
+        "threshold": 165.75,
+        "left": {
+         "tier": 2
+        },
+        "right": {
+         "tier": 2
+        }
+       },
+       "right": {
+        "feature": "tiempo_50_seg",
+        "threshold": 58.75,
+        "left": {
+         "tier": 2
+        },
+        "right": {
+         "tier": 2
+        }
+       }
+      },
+      "right": {
+       "tier": 1
+      }
+     }
+    }
+   }
+  },
+  {
+   "feature": "css_pace",
+   "threshold": 126.05,
+   "left": {
+    "feature": "nivel_experiencia_num",
+    "threshold": 2.5,
+    "left": {
+     "feature": "peso_kg",
+     "threshold": 82.2,
+     "left": {
+      "feature": "tiempo_50_seg",
+      "threshold": 46.0,
+      "left": {
+       "feature": "css_pace",
+       "threshold": 93.05,
+       "left": {
+        "tier": 3
+       },
+       "right": {
+        "tier": 3
+       }
+      },
+      "right": {
+       "feature": "tiempo_50_seg",
+       "threshold": 47.25,
+       "left": {
+        "tier": 2
+       },
+       "right": {
+        "feature": "tiempo_50_seg",
+        "threshold": 49.05,
+        "left": {
+         "tier": 2
+        },
+        "right": {
+         "tier": 2
+        }
+       }
+      }
+     },
+     "right": {
+      "feature": "tiempo_50_seg",
+      "threshold": 51.3,
+      "left": {
+       "tier": 2
+      },
+      "right": {
+       "tier": 2
+      }
+     }
+    },
+    "right": {
+     "feature": "css_pace",
+     "threshold": 101.1,
+     "left": {
+      "tier": 3
+     },
+     "right": {
+      "feature": "peso_kg",
+      "threshold": 76.1,
+      "left": {
+       "feature": "css_pace",
+       "threshold": 103.65,
+       "left": {
+        "tier": 2
+       },
+       "right": {
+        "tier": 2
+       }
+      },
+      "right": {
+       "tier": 2
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "peso_kg",
+    "threshold": 42.35,
+    "left": {
+     "tier": 1
+    },
+    "right": {
+     "feature": "css_pace",
+     "threshold": 129.2,
+     "left": {
+      "feature": "css_pace",
+      "threshold": 127.15,
+      "left": {
+       "tier": 1
+      },
+      "right": {
+       "feature": "edad",
+       "threshold": 33.5,
+       "left": {
+        "tier": 1
+       },
+       "right": {
+        "tier": 1
+       }
+      }
+     },
+     "right": {
+      "tier": 1
+     }
+    }
+   }
+  },
+  {
+   "feature": "tiempo_50_seg",
+   "threshold": 59.95,
+   "left": {
+    "feature": "tiempo_50_seg",
+    "threshold": 47.25,
+    "left": {
+     "feature": "peso_kg",
+     "threshold": 85.75,
+     "left": {
+      "feature": "nivel_experiencia_num",
+      "threshold": 2.5,
+      "left": {
+       "feature": "css_pace",
+       "threshold": 101.05,
+       "left": {
+        "tier": 3
+       },
+       "right": {
+        "tier": 2
+       }
+      },
+      "right": {
+       "feature": "css_pace",
+       "threshold": 99.95,
+       "left": {
+        "tier": 3
+       },
+       "right": {
+        "tier": 3
+       }
+      }
+     },
+     "right": {
+      "tier": 3
+     }
+    },
+    "right": {
+     "feature": "css_pace",
+     "threshold": 101.05,
+     "left": {
+      "tier": 3
+     },
+     "right": {
+      "feature": "peso_kg",
+      "threshold": 62.65,
+      "left": {
+       "feature": "nivel_experiencia_num",
+       "threshold": 1.5,
+       "left": {
+        "feature": "css_pace",
+        "threshold": 123.8,
+        "left": {
+         "tier": 2
+        },
+        "right": {
+         "tier": 1
+        }
+       },
+       "right": {
+        "feature": "peso_kg",
+        "threshold": 60.75,
+        "left": {
+         "tier": 2
+        },
+        "right": {
+         "tier": 2
+        }
+       }
+      },
+      "right": {
+       "feature": "tiempo_50_seg",
+       "threshold": 58.55,
+       "left": {
+        "feature": "css_pace",
+        "threshold": 124.0,
+        "left": {
+         "tier": 2
+        },
+        "right": {
+         "tier": 2
+        }
+       },
+       "right": {
+        "feature": "nivel_experiencia_num",
+        "threshold": 1.5,
+        "left": {
+         "tier": 1
+        },
+        "right": {
+         "tier": 2
+        }
+       }
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "tiempo_50_seg",
+    "threshold": 60.65,
+    "left": {
+     "feature": "peso_kg",
+     "threshold": 64.9,
+     "left": {
+      "tier": 1
+     },
+     "right": {
+      "tier": 1
+     }
+    },
+    "right": {
+     "feature": "tiempo_50_seg",
+     "threshold": 61.65,
+     "left": {
+      "feature": "edad",
+      "threshold": 30.5,
+      "left": {
+       "tier": 1
+      },
+      "right": {
+       "feature": "css_pace",
+       "threshold": 129.9,
+       "left": {
+        "tier": 1
+       },
+       "right": {
+        "tier": 1
+       }
+      }
+     },
+     "right": {
+      "feature": "edad",
+      "threshold": 50.5,
+      "left": {
+       "tier": 1
+      },
+      "right": {
+       "tier": 1
+      }
+     }
+    }
+   }
+  },
+  {
+   "feature": "nivel_experiencia_num",
+   "threshold": 2.5,
+   "left": {
+    "feature": "tiempo_50_seg",
+    "threshold": 60.55,
+    "left": {
+     "feature": "css_pace",
+     "threshold": 100.95,
+     "left": {
+      "tier": 3
+     },
+     "right": {
+      "feature": "altura_cm",
+      "threshold": 152.0,
+      "left": {
+       "tier": 2
+      },
+      "right": {
+       "feature": "tiempo_50_seg",
+       "threshold": 58.85,
+       "left": {
+        "feature": "edad",
+        "threshold": 14.5,
+        "left": {
+         "tier": 2
+        },
+        "right": {
+         "tier": 2
+        }
+       },
+       "right": {
+        "feature": "css_pace",
+        "threshold": 125.9,
+        "left": {
+         "tier": 2
+        },
+        "right": {
+         "tier": 1
+        }
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "peso_kg",
+     "threshold": 61.75,
+     "left": {
+      "tier": 1
+     },
+     "right": {
+      "feature": "css_pace",
+      "threshold": 129.45,
+      "left": {
+       "tier": 1
+      },
+      "right": {
+       "tier": 1
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "css_pace",
+    "threshold": 102.15,
+    "left": {
+     "feature": "peso_kg",
+     "threshold": 55.45,
+     "left": {
+      "feature": "css_pace",
+      "threshold": 98.15,
+      "left": {
+       "tier": 3
+      },
+      "right": {
+       "tier": 3
+      }
+     },
+     "right": {
+      "feature": "css_pace",
+      "threshold": 100.2,
+      "left": {
+       "tier": 3
+      },
+      "right": {
+       "tier": 3
+      }
+     }
+    },
+    "right": {
+     "feature": "edad",
+     "threshold": 44.5,
+     "left": {
+      "feature": "tiempo_50_seg",
+      "threshold": 58.05,
+      "left": {
+       "tier": 2
+      },
+      "right": {
+       "tier": 2
+      }
+     },
+     "right": {
+      "tier": 2
+     }
+    }
+   }
+  },
+  {
+   "feature": "tiempo_50_seg",
+   "threshold": 60.05,
+   "left": {
+    "feature": "css_pace",
+    "threshold": 101.05,
+    "left": {
+     "feature": "peso_kg",
+     "threshold": 86.75,
+     "left": {
+      "tier": 3
+     },
+     "right": {
+      "tier": 3
+     }
+    },
+    "right": {
+     "feature": "nivel_experiencia_num",
+     "threshold": 1.5,
+     "left": {
+      "feature": "css_pace",
+      "threshold": 126.0,
+      "left": {
+       "tier": 2
+      },
+      "right": {
+       "tier": 1
+      }
+     },
+     "right": {
+      "feature": "tiempo_50_seg",
+      "threshold": 58.55,
+      "left": {
+       "feature": "nivel_experiencia_num",
+       "threshold": 2.5,
+       "left": {
+        "feature": "peso_kg",
+        "threshold": 77.45,
+        "left": {
+         "tier": 2
+        },
+        "right": {
+         "tier": 2
+        }
+       },
+       "right": {
+        "feature": "altura_cm",
+        "threshold": 176.2,
+        "left": {
+         "tier": 2
+        },
+        "right": {
+         "tier": 2
+        }
+       }
+      },
+      "right": {
+       "feature": "altura_cm",
+       "threshold": 165.45,
+       "left": {
+        "tier": 2
+       },
+       "right": {
+        "feature": "css_pace",
+        "threshold": 125.3,
+        "left": {
+         "tier": 2
+        },
+        "right": {
+         "tier": 1
+        }
+       }
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "altura_cm",
+    "threshold": 186.65,
+    "left": {
+     "feature": "tiempo_50_seg",
+     "threshold": 60.75,
+     "left": {
+      "tier": 1
+     },
+     "right": {
+      "feature": "tiempo_50_seg",
+      "threshold": 61.65,
+      "left": {
+       "feature": "peso_kg",
+       "threshold": 61.15,
+       "left": {
+        "tier": 1
+       },
+       "right": {
+        "tier": 1
+       }
+      },
+      "right": {
+       "feature": "tiempo_50_seg",
+       "threshold": 63.15,
+       "left": {
+        "feature": "tiempo_50_seg",
+        "threshold": 62.65,
+        "left": {
+         "tier": 1
+        },
+        "right": {
+         "tier": 1
+        }
+       },
+       "right": {
+        "tier": 1
+       }
+      }
+     }
+    },
+    "right": {
+     "tier": 1
+    }
+   }
+  },
+  {
+   "feature": "css_pace",
+   "threshold": 126.05,
+   "left": {
+    "feature": "css_pace",
+    "threshold": 101.05,
+    "left": {
+     "tier": 3
+    },
+    "right": {
+     "feature": "nivel_experiencia_num",
+     "threshold": 2.5,
+     "left": {
+      "tier": 2
+     },
+     "right": {
+      "feature": "css_pace",
+      "threshold": 102.4,
+      "left": {
+       "tier": 2
+      },
+      "right": {
+       "tier": 2
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "css_pace",
+    "threshold": 127.65,
+    "left": {
+     "feature": "altura_cm",
+     "threshold": 172.95,
+     "left": {
+      "tier": 1
+     },
+     "right": {
+      "tier": 1
+     }
+    },
+    "right": {
+     "feature": "edad",
+     "threshold": 50.5,
+     "left": {
+      "tier": 1
+     },
+     "right": {
+      "tier": 1
+     }
+    }
+   }
+  },
+  {
+   "feature": "tiempo_50_seg",
+   "threshold": 60.45,
+   "left": {
+    "feature": "css_pace",
+    "threshold": 101.05,
+    "left": {
+     "feature": "peso_kg",
+     "threshold": 86.7,
+     "left": {
+      "tier": 3
+     },
+     "right": {
+      "tier": 3
+     }
+    },
+    "right": {
+     "feature": "css_pace",
+     "threshold": 126.05,
+     "left": {
+      "feature": "nivel_experiencia_num",
+      "threshold": 2.5,
+      "left": {
+       "tier": 2
+      },
+      "right": {
+       "feature": "edad",
+       "threshold": 45.5,
+       "left": {
+        "tier": 2
+       },
+       "right": {
+        "tier": 2
+       }
+      }
+     },
+     "right": {
+      "feature": "peso_kg",
+      "threshold": 56.45,
+      "left": {
+       "tier": 1
+      },
+      "right": {
+       "tier": 1
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "tiempo_50_seg",
+    "threshold": 60.85,
+    "left": {
+     "tier": 1
+    },
+    "right": {
+     "feature": "css_pace",
+     "threshold": 127.45,
+     "left": {
+      "tier": 1
+     },
+     "right": {
+      "tier": 1
+     }
+    }
+   }
+  },
+  {
+   "feature": "nivel_experiencia_num",
+   "threshold": 1.5,
+   "left": {
+    "feature": "tiempo_50_seg",
+    "threshold": 58.75,
+    "left": {
+     "feature": "peso_kg",
+     "threshold": 73.05,
+     "left": {
+      "feature": "peso_kg",
+      "threshold": 50.25,
+      "left": {
+       "tier": 2
+      },
+      "right": {
+       "feature": "css_pace",
+       "threshold": 120.4,
+       "left": {
+        "tier": 2
+       },
+       "right": {
+        "tier": 2
+       }
+      }
+     },
+     "right": {
+      "tier": 2
+     }
+    },
+    "right": {
+     "feature": "tiempo_50_seg",
+     "threshold": 60.6,
+     "left": {
+      "feature": "css_pace",
+      "threshold": 126.6,
+      "left": {
+       "tier": 2
+      },
+      "right": {
+       "tier": 1
+      }
+     },
+     "right": {
+      "feature": "peso_kg",
+      "threshold": 68.55,
+      "left": {
+       "tier": 1
+      },
+      "right": {
+       "feature": "css_pace",
+       "threshold": 132.95,
+       "left": {
+        "tier": 1
+       },
+       "right": {
+        "tier": 1
+       }
+      }
+     }
+    }
+   },
+   "right": {
+    "feature": "css_pace",
+    "threshold": 101.05,
+    "left": {
+     "feature": "tiempo_50_seg",
+     "threshold": 46.65,
+     "left": {
+      "tier": 3
+     },
+     "right": {
+      "feature": "css_pace",
+      "threshold": 100.35,
+      "left": {
+       "tier": 3
+      },
+      "right": {
+       "tier": 3
+      }
+     }
+    },
+    "right": {
+     "feature": "tiempo_50_seg",
+     "threshold": 61.15,
+     "left": {
+      "feature": "edad",
+      "threshold": 18.5,
+      "left": {
+       "feature": "tiempo_50_seg",
+       "threshold": 56.45,
+       "left": {
+        "tier": 2
+       },
+       "right": {
+        "tier": 2
+       }
+      },
+      "right": {
+       "feature": "edad",
+       "threshold": 49.5,
+       "left": {
+        "feature": "tiempo_50_seg",
+        "threshold": 58.55,
+        "left": {
+         "tier": 2
+        },
+        "right": {
+         "tier": 2
+        }
+       },
+       "right": {
+        "feature": "css_pace",
+        "threshold": 113.7,
+        "left": {
+         "tier": 2
+        },
+        "right": {
+         "tier": 2
+        }
+       }
+      }
+     },
+     "right": {
+      "feature": "peso_kg",
+      "threshold": 61.6,
+      "left": {
+       "feature": "tiempo_50_seg",
+       "threshold": 66.85,
+       "left": {
+        "tier": 1
+       },
+       "right": {
+        "tier": 1
+       }
+      },
+      "right": {
+       "tier": 1
+      }
+     }
+    }
+   }
+  },
+  {
+   "feature": "edad",
+   "threshold": 23.5,
+   "left": {
+    "feature": "altura_cm",
+    "threshold": 184.0,
+    "left": {
+     "feature": "css_pace",
+     "threshold": 126.15,
+     "left": {
+      "feature": "nivel_experiencia_num",
+      "threshold": 2.5,
+      "left": {
+       "feature": "altura_cm",
+       "threshold": 172.7,
+       "left": {
+        "feature": "css_pace",
+        "threshold": 103.55,
+        "left": {
+         "tier": 3
+        },
+        "right": {
+         "tier": 2
+        }
+       },
+       "right": {
+        "tier": 2
+       }
+      },
+      "right": {
+       "feature": "edad",
+       "threshold": 17.5,
+       "left": {
+        "feature": "css_pace",
+        "threshold": 99.2,
+        "left": {
+         "tier": 3
+        },
+        "right": {
+         "tier": 2
+        }
+       },
+       "right": {
+        "feature": "tiempo_50_seg",
+        "threshold": 45.8,
+        "left": {
+         "tier": 3
+        },
+        "right": {
+         "tier": 3
+        }
+       }
+      }
+     },
+     "right": {
+      "tier": 1
+     }
+    },
+    "right": {
+     "tier": 3
+    }
+   },
+   "right": {
+    "feature": "tiempo_50_seg",
+    "threshold": 60.55,
+    "left": {
+     "feature": "tiempo_50_seg",
+     "threshold": 47.25,
+     "left": {
+      "feature": "altura_cm",
+      "threshold": 180.45,
+      "left": {
+       "feature": "css_pace",
+       "threshold": 100.95,
+       "left": {
+        "tier": 3
+       },
+       "right": {
+        "tier": 2
+       }
+      },
+      "right": {
+       "feature": "tiempo_50_seg",
+       "threshold": 45.75,
+       "left": {
+        "tier": 3
+       },
+       "right": {
+        "tier": 3
+       }
+      }
+     },
+     "right": {
+      "feature": "altura_cm",
+      "threshold": 188.65,
+      "left": {
+       "feature": "tiempo_50_seg",
+       "threshold": 59.15,
+       "left": {
+        "feature": "tiempo_50_seg",
+        "threshold": 48.95,
+        "left": {
+         "tier": 2
+        },
+        "right": {
+         "tier": 2
+        }
+       },
+       "right": {
+        "feature": "edad",
+        "threshold": 29.5,
+        "left": {
+         "tier": 1
+        },
+        "right": {
+         "tier": 2
+        }
+       }
+      },
+      "right": {
+       "tier": 2
+      }
+     }
+    },
+    "right": {
+     "feature": "css_pace",
+     "threshold": 127.2,
+     "left": {
+      "tier": 2
+     },
+     "right": {
+      "tier": 1
+     }
+    }
+   }
+  },
+  {
+   "feature": "peso_kg",
+   "threshold": 84.1,
+   "left": {
+    "feature": "tiempo_50_seg",
+    "threshold": 60.55,
+    "left": {
+     "feature": "css_pace",
+     "threshold": 101.05,
+     "left": {
+      "tier": 3
+     },
+     "right": {
+      "feature": "altura_cm",
+      "threshold": 151.5,
+      "left": {
+       "tier": 2
+      },
+      "right": {
+       "feature": "css_pace",
+       "threshold": 126.0,
+       "left": {
+        "feature": "nivel_experiencia_num",
+        "threshold": 2.5,
+        "left": {
+         "tier": 2
+        },
+        "right": {
+         "tier": 2
+        }
+       },
+       "right": {
+        "feature": "css_pace",
+        "threshold": 127.05,
+        "left": {
+         "tier": 1
+        },
+        "right": {
+         "tier": 1
+        }
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "css_pace",
+     "threshold": 127.9,
+     "left": {
+      "tier": 1
+     },
+     "right": {
+      "tier": 1
+     }
+    }
+   },
+   "right": {
+    "feature": "altura_cm",
+    "threshold": 181.75,
+    "left": {
+     "tier": 1
+    },
+    "right": {
+     "feature": "css_pace",
+     "threshold": 122.4,
+     "left": {
+      "tier": 3
+     },
+     "right": {
+      "tier": 1
+     }
+    }
+   }
+  },
+  {
+   "feature": "altura_cm",
+   "threshold": 155.05,
+   "left": {
+    "feature": "css_pace",
+    "threshold": 100.85,
+    "left": {
+     "tier": 3
+    },
+    "right": {
+     "feature": "css_pace",
+     "threshold": 126.5,
+     "left": {
+      "feature": "altura_cm",
+      "threshold": 151.55,
+      "left": {
+       "tier": 2
+      },
+      "right": {
+       "tier": 2
+      }
+     },
+     "right": {
+      "tier": 1
+     }
+    }
+   },
+   "right": {
+    "feature": "tiempo_50_seg",
+    "threshold": 60.55,
+    "left": {
+     "feature": "css_pace",
+     "threshold": 101.05,
+     "left": {
+      "feature": "nivel_experiencia_num",
+      "threshold": 2.5,
+      "left": {
+       "feature": "css_pace",
+       "threshold": 99.15,
+       "left": {
+        "tier": 3
+       },
+       "right": {
+        "tier": 3
+       }
+      },
+      "right": {
+       "tier": 3
+      }
+     },
+     "right": {
+      "feature": "css_pace",
+      "threshold": 126.05,
+      "left": {
+       "feature": "css_pace",
+       "threshold": 101.5,
+       "left": {
+        "tier": 2
+       },
+       "right": {
+        "feature": "edad",
+        "threshold": 51.5,
+        "left": {
+         "tier": 2
+        },
+        "right": {
+         "tier": 2
+        }
+       }
+      },
+      "right": {
+       "feature": "peso_kg",
+       "threshold": 57.35,
+       "left": {
+        "tier": 1
+       },
+       "right": {
+        "tier": 1
+       }
+      }
+     }
+    },
+    "right": {
+     "feature": "peso_kg",
+     "threshold": 61.25,
+     "left": {
+      "feature": "altura_cm",
+      "threshold": 162.05,
+      "left": {
+       "feature": "altura_cm",
+       "threshold": 161.15,
+       "left": {
+        "tier": 1
+       },
+       "right": {
+        "tier": 1
+       }
+      },
+      "right": {
+       "tier": 1
+      }
+     },
+     "right": {
+      "feature": "css_pace",
+      "threshold": 127.5,
+      "left": {
+       "tier": 2
+      },
+      "right": {
+       "feature": "tiempo_50_seg",
+       "threshold": 63.2,
+       "left": {
+        "feature": "tiempo_50_seg",
+        "threshold": 62.55,
+        "left": {
+         "tier": 1
+        },
+        "right": {
+         "tier": 1
+        }
+       },
+       "right": {
+        "tier": 1
+       }
+      }
+     }
+    }
+   }
+  }
+ ]
+}

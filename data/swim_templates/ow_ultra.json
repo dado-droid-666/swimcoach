@@ -1,0 +1,114 @@
+{
+  "event_type": "ow_ultra",
+  "description": "Open Water 25km+ - multi-hour sessions, extreme endurance, mental prep",
+  "warmup_drills": [
+    "600 swim easy",
+    "300 sighting/navigation drill",
+    "200 kick",
+    "4x150 build with feeding"
+  ],
+  "cooldown": "500 very easy + 200 choice",
+  "main_sets": {
+    "base": [
+      {
+        "set_id": "ms1",
+        "description": "Ultra endurance",
+        "meters": 5000,
+        "reps": 1,
+        "distance": 5000,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 0,
+        "equipment": [],
+        "intensity_zone": "Z1",
+        "notes": "Very easy, 90+ min continuous, feed every 20min, mental focus"
+      },
+      {
+        "set_id": "ms2",
+        "description": "Back-to-back sessions",
+        "meters": 3000,
+        "reps": 1,
+        "distance": 3000,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 0,
+        "equipment": [],
+        "intensity_zone": "Z2",
+        "notes": "Second session same day (PM), practice recovery"
+      }
+    ],
+    "build": [
+      {
+        "set_id": "ms1",
+        "description": "Long race pace",
+        "meters": 8000,
+        "reps": 1,
+        "distance": 8000,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 0,
+        "equipment": [],
+        "intensity_zone": "Z2",
+        "notes": "Target race pace, full feeding/hydration protocol"
+      },
+      {
+        "set_id": "ms2",
+        "description": "Night swim practice",
+        "meters": 2000,
+        "reps": 1,
+        "distance": 2000,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 0,
+        "equipment": [],
+        "intensity_zone": "Z2",
+        "notes": "Practice night swimming if race includes dark hours"
+      }
+    ],
+    "peak": [
+      {
+        "set_id": "ms1",
+        "description": "Max simulation",
+        "meters": 10000,
+        "reps": 1,
+        "distance": 10000,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 0,
+        "equipment": [],
+        "intensity_zone": "Z2",
+        "notes": "Longest simulation, all race gear, mental strategies"
+      }
+    ],
+    "taper": [
+      {
+        "set_id": "ms1",
+        "description": "Taper volume",
+        "meters": 3000,
+        "reps": 1,
+        "distance": 3000,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 0,
+        "equipment": [],
+        "intensity_zone": "Z1",
+        "notes": "Easy, mental rehearsal, equipment check"
+      }
+    ],
+    "race": [
+      {
+        "set_id": "ms1",
+        "description": "Pre-race",
+        "meters": 800,
+        "reps": 4,
+        "distance": 200,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 60,
+        "equipment": [],
+        "intensity_zone": "Z1",
+        "notes": "Very easy, final prep, visualize success"
+      }
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+venv/
+.env
+!.env.example
+!.env.production.example
+
+# Database (local dev only; production uses Postgres)
+*.db
+*.sqlite
+*.sqlite3
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Temp
+*.log

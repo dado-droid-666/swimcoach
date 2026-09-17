@@ -1,0 +1,127 @@
+{
+  "event_type": "pool_distance",
+  "description": "400m+ events - aerobic efficiency, threshold, negative splits",
+  "warmup_drills": [
+    "500 swim easy",
+    "300 drill (sculling, catch-up)",
+    "200 kick",
+    "4x100 build"
+  ],
+  "cooldown": "400 very easy + 200 choice",
+  "main_sets": {
+    "base": [
+      {
+        "set_id": "ms1",
+        "description": "Long aerobic",
+        "meters": 2400,
+        "reps": 6,
+        "distance": 400,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 20,
+        "equipment": ["pull_buoy"],
+        "intensity_zone": "Z2",
+        "notes": "Negative split each 400"
+      },
+      {
+        "set_id": "ms2",
+        "description": "Threshold steps",
+        "meters": 1200,
+        "reps": 3,
+        "distance": 400,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 45,
+        "equipment": [],
+        "intensity_zone": "Z3",
+        "notes": "Each 400 faster than previous"
+      }
+    ],
+    "build": [
+      {
+        "set_id": "ms1",
+        "description": "Threshold intervals",
+        "meters": 2000,
+        "reps": 5,
+        "distance": 400,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 30,
+        "equipment": [],
+        "intensity_zone": "Z3",
+        "notes": "Hold CSS/threshold pace"
+      },
+      {
+        "set_id": "ms2",
+        "description": "Pace practice",
+        "meters": 800,
+        "reps": 2,
+        "distance": 400,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 60,
+        "equipment": [],
+        "intensity_zone": "Z4",
+        "notes": "Target race pace for 400/800/1500"
+      }
+    ],
+    "peak": [
+      {
+        "set_id": "ms1",
+        "description": "Race simulation",
+        "meters": 1500,
+        "reps": 1,
+        "distance": 1500,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 0,
+        "equipment": [],
+        "intensity_zone": "Z4",
+        "notes": "Full race distance at target pace"
+      },
+      {
+        "set_id": "ms2",
+        "description": "Broken race pace",
+        "meters": 1000,
+        "reps": 10,
+        "distance": 100,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 15,
+        "equipment": [],
+        "intensity_zone": "Z3",
+        "notes": "Race pace 100s with short rest"
+      }
+    ],
+    "taper": [
+      {
+        "set_id": "ms1",
+        "description": "Taper swim",
+        "meters": 800,
+        "reps": 4,
+        "distance": 200,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 60,
+        "equipment": [],
+        "intensity_zone": "Z2",
+        "notes": "Comfortable, last one at race pace"
+      }
+    ],
+    "race": [
+      {
+        "set_id": "ms1",
+        "description": "Pre-race",
+        "meters": 400,
+        "reps": 2,
+        "distance": 200,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 60,
+        "equipment": [],
+        "intensity_zone": "Z2",
+        "notes": "Easy, feel the water"
+      }
+    ]
+  }
+}

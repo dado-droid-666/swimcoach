@@ -1,0 +1,67 @@
+{
+  "focus": "power",
+  "phase": "Peak",
+  "equipment": ["bands"],
+  "exercises": [
+    {
+      "name": "Band Sprint Starts",
+      "muscle": "full body acceleration",
+      "sets": 4,
+      "reps": "10m",
+      "rpe": 9,
+      "tempo": "explosive",
+      "rest": 120,
+      "equipment": ["bands"],
+      "progression": "heavier_band → unresisted_sprints → hills",
+      "notes": "Band at waist, max intent first 10m"
+    },
+    {
+      "name": "Band Resisted Jump Squats",
+      "muscle": "lower body power",
+      "sets": 3,
+      "reps": "6-8",
+      "rpe": 8,
+      "tempo": "X010",
+      "rest": 90,
+      "equipment": ["bands"],
+      "progression": "heavier_band → box_jumps → depth_jumps",
+      "notes": "Band under feet, explode up"
+    },
+    {
+      "name": "Band Rotational Throws",
+      "muscle": "core rotation power",
+      "sets": 3,
+      "reps": "8/side",
+      "rpe": 8,
+      "tempo": "explosive",
+      "rest": 90,
+      "equipment": ["bands"],
+      "progression": "heavier_band → faster → single_arm",
+      "notes": "Rotate from hips, throw motion"
+    },
+    {
+      "name": "Band Plyo Push-ups",
+      "muscle": "upper body push power",
+      "sets": 3,
+      "reps": "5-8",
+      "rpe": 8,
+      "tempo": "X010",
+      "rest": 120,
+      "equipment": ["bands"],
+      "progression": "thicker_band → clap → depth_pushup",
+      "notes": "Band across back, explode up"
+    },
+    {
+      "name": "Band Single-Leg Hops",
+      "muscle": "unilateral leg power",
+      "sets": 3,
+      "reps": "6/leg",
+      "rpe": 8,
+      "tempo": "explosive",
+      "rest": 90,
+      "equipment": ["bands"],
+      "progression": "lighter_band → higher → continuous",
+      "notes": "Band at waist, hop forward"
+    }
+  ]
+}

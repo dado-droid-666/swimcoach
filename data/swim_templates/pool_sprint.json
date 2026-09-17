@@ -1,0 +1,128 @@
+{
+  "event_type": "pool_sprint",
+  "description": "50m/100m sprint events - speed, power, starts/turns",
+  "warmup_drills": [
+    "300 swim easy",
+    "200 drill (catch-up, fingertip drag)",
+    "100 kick",
+    "4x25 build to sprint",
+    "4x15m dive starts @ max"
+  ],
+  "cooldown": "200 very easy + 100 choice drill",
+  "main_sets": {
+    "base": [
+      {
+        "set_id": "ms1",
+        "description": "Aerobic base with speed work",
+        "meters": 1200,
+        "reps": 6,
+        "distance": 200,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 30,
+        "equipment": [],
+        "intensity_zone": "Z2",
+        "notes": "Even pace, focus on technique"
+      },
+      {
+        "set_id": "ms2",
+        "description": "Speed endurance",
+        "meters": 800,
+        "reps": 8,
+        "distance": 100,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 45,
+        "equipment": [],
+        "intensity_zone": "Z3",
+        "notes": "Descend 1-4, 5-8"
+      }
+    ],
+    "build": [
+      {
+        "set_id": "ms1",
+        "description": "Threshold + speed",
+        "meters": 1000,
+        "reps": 10,
+        "distance": 100,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 20,
+        "equipment": [],
+        "intensity_zone": "Z3",
+        "notes": "Hold threshold pace"
+      },
+      {
+        "set_id": "ms2",
+        "description": "Power 50s",
+        "meters": 400,
+        "reps": 8,
+        "distance": 50,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 60,
+        "equipment": ["fins"],
+        "intensity_zone": "Z4",
+        "notes": "Max effort, full recovery"
+      }
+    ],
+    "peak": [
+      {
+        "set_id": "ms1",
+        "description": "Race pace 100s",
+        "meters": 600,
+        "reps": 6,
+        "distance": 100,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 120,
+        "equipment": [],
+        "intensity_zone": "Z4",
+        "notes": "Target race pace, full recovery"
+      },
+      {
+        "set_id": "ms2",
+        "description": "Broken 50s",
+        "meters": 400,
+        "reps": 8,
+        "distance": 50,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 90,
+        "equipment": [],
+        "intensity_zone": "Z4",
+        "notes": "25 sprint + 25 easy, race simulation"
+      }
+    ],
+    "taper": [
+      {
+        "set_id": "ms1",
+        "description": "Sharpening sprints",
+        "meters": 300,
+        "reps": 6,
+        "distance": 50,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 90,
+        "equipment": [],
+        "intensity_zone": "Z3",
+        "notes": "Fast but controlled, focus on feel"
+      }
+    ],
+    "race": [
+      {
+        "set_id": "ms1",
+        "description": "Pre-race activation",
+        "meters": 200,
+        "reps": 4,
+        "distance": 50,
+        "stroke": "freestyle",
+        "target_pace_per_100": null,
+        "rest_seconds": 60,
+        "equipment": [],
+        "intensity_zone": "Z2",
+        "notes": "Easy activation, race pace last 2"
+      }
+    ]
+  }
+}

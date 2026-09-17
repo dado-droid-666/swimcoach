@@ -1,0 +1,79 @@
+{
+  "focus": "max_strength",
+  "phase": "Build",
+  "equipment": ["bands"],
+  "exercises": [
+    {
+      "name": "Band Resisted Push-ups",
+      "muscle": "chest/triceps/shoulders",
+      "sets": 4,
+      "reps": "6-8",
+      "rpe": 8,
+      "tempo": "3010",
+      "rest": 120,
+      "equipment": ["bands"],
+      "progression": "thicker_band → feet_elevated → plyo",
+      "notes": "Band across upper back, max tension at top"
+    },
+    {
+      "name": "Band Single-Arm Rows",
+      "muscle": "lats/rhomboids",
+      "sets": 4,
+      "reps": "6-8/side",
+      "rpe": 8,
+      "tempo": "3010",
+      "rest": 90,
+      "equipment": ["bands"],
+      "progression": "thicker_band → pause_top → slower_eccentric",
+      "notes": "Full stretch, squeeze at top"
+    },
+    {
+      "name": "Band Deadlifts (Heavy)",
+      "muscle": "posterior chain",
+      "sets": 4,
+      "reps": "6-8",
+      "rpe": 8,
+      "tempo": "3010",
+      "rest": 120,
+      "equipment": ["bands"],
+      "progression": "double_band → single_leg → deficit",
+      "notes": "Heavy band, hip hinge pattern"
+    },
+    {
+      "name": "Band Overhead Press",
+      "muscle": "shoulders/triceps",
+      "sets": 3,
+      "reps": "6-8",
+      "rpe": 8,
+      "tempo": "2010",
+      "rest": 90,
+      "equipment": ["bands"],
+      "progression": "thicker_band → single_arm → z_press",
+      "notes": "Band under feet, press overhead"
+    },
+    {
+      "name": "Band Bulgarian Split Squats",
+      "muscle": "quads/glutes unilateral",
+      "sets": 3,
+      "reps": "6-8/leg",
+      "rpe": 8,
+      "tempo": "3010",
+      "rest": 90,
+      "equipment": ["bands"],
+      "progression": "thicker_band → front_foot_elevated → pause",
+      "notes": "Band under front foot, over shoulders"
+    },
+    {
+      "name": "Band Core Anti-Extension (Dead Bug)",
+      "muscle": "core stability",
+      "sets": 3,
+      "reps": "8/side",
+      "rpe": 8,
+      "tempo": "3010",
+      "rest": 60,
+      "equipment": ["bands"],
+      "progression": "thicker_band → straight_leg → hollow_hold",
+      "notes": "Band anchored behind, resist extension"
+    }
+  ]
+}

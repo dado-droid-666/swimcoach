@@ -1,0 +1,79 @@
+{
+  "focus": "power",
+  "phase": "Peak",
+  "equipment": ["bodyweight", "bands"],
+  "exercises": [
+    {
+      "name": "Plyometric Push-ups",
+      "muscle": "chest/triceps/shoulders (explosive)",
+      "sets": 3,
+      "reps": "5-8",
+      "rpe": 8,
+      "tempo": "X010",
+      "rest": 120,
+      "equipment": ["bodyweight"],
+      "progression": "clap_pushup → depth_pushup → weighted",
+      "notes": "Explosive up, land soft"
+    },
+    {
+      "name": "Jump Squats",
+      "muscle": "quads/glutes (explosive)",
+      "sets": 3,
+      "reps": "8-10",
+      "rpe": 8,
+      "tempo": "X010",
+      "rest": 90,
+      "equipment": ["bodyweight"],
+      "progression": "box_jumps → depth_jumps → weighted",
+      "notes": "Max height, quiet landing"
+    },
+    {
+      "name": "Band Sprint Starts",
+      "muscle": "full body power/acceleration",
+      "sets": 4,
+      "reps": "10m",
+      "rpe": 9,
+      "tempo": "explosive",
+      "rest": 120,
+      "equipment": ["bands"],
+      "progression": "heavier_band → resisted_sprints → unresisted",
+      "notes": "Band at waist, max intent first 10m"
+    },
+    {
+      "name": "Medicine Ball Slams",
+      "muscle": "core/shoulders (explosive)",
+      "sets": 3,
+      "reps": "8-10",
+      "rpe": 8,
+      "tempo": "explosive",
+      "rest": 90,
+      "equipment": ["medicine_ball"],
+      "progression": "heavier_ball → rotational_slams → single_arm",
+      "notes": "Full body, slam hard"
+    },
+    {
+      "name": "Burpees",
+      "muscle": "full body conditioning",
+      "sets": 3,
+      "reps": "8-10",
+      "rpe": 8,
+      "tempo": "fast",
+      "rest": 90,
+      "equipment": ["bodyweight"],
+      "progression": "burpee_pullup → weighted_vest → box_jump_burpee",
+      "notes": "Chest to floor, jump high"
+    },
+    {
+      "name": "Band Rotational Throws",
+      "muscle": "core rotation/power",
+      "sets": 3,
+      "reps": "8/side",
+      "rpe": 8,
+      "tempo": "explosive",
+      "rest": 90,
+      "equipment": ["bands"],
+      "progression": "heavier_band → faster → single_arm",
+      "notes": "Rotate from hips, not arms"
+    }
+  ]
+}

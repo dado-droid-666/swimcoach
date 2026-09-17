@@ -1,0 +1,101 @@
+{
+  "focus": "mobility",
+  "phase": "Taper/Race",
+  "equipment": ["bodyweight"],
+  "exercises": [
+    {
+      "name": "Cat-Camel",
+      "muscle": "spine mobility",
+      "sets": 2,
+      "reps": "10-12",
+      "rpe": 3,
+      "tempo": "slow",
+      "rest": 30,
+      "equipment": ["bodyweight"],
+      "progression": "larger_range → hold_end_ranges",
+      "notes": "Move slowly, breathe into stretch"
+    },
+    {
+      "name": "Thoracic Rotations (Quadruped)",
+      "muscle": "thoracic spine rotation",
+      "sets": 2,
+      "reps": "8/side",
+      "rpe": 3,
+      "tempo": "slow",
+      "rest": 30,
+      "equipment": ["bodyweight"],
+      "progression": "open_book → thread_needle → weighted",
+      "notes": "Follow hand with eyes"
+    },
+    {
+      "name": "Hip Circles (Standing)",
+      "muscle": "hip mobility",
+      "sets": 2,
+      "reps": "10/direction/side",
+      "rpe": 3,
+      "tempo": "controlled",
+      "rest": 30,
+      "equipment": ["bodyweight"],
+      "progression": "larger_circles → figure_8 → banded",
+      "notes": "Keep pelvis stable"
+    },
+    {
+      "name": "Shoulder CARs (Controlled Articular Rotations)",
+      "muscle": "shoulder joint mobility",
+      "sets": 2,
+      "reps": "5/direction/side",
+      "rpe": 3,
+      "tempo": "very_slow",
+      "rest": 30,
+      "equipment": ["bodyweight"],
+      "progression": "larger_range → weighted → banded",
+      "notes": "Max pain-free circle"
+    },
+    {
+      "name": "Ankle Mobility (Knee to Wall)",
+      "muscle": "ankle dorsiflexion",
+      "sets": 2,
+      "reps": "10/side",
+      "rpe": 3,
+      "tempo": "slow",
+      "rest": 30,
+      "equipment": ["bodyweight"],
+      "progression": "further_from_wall → weighted_knee",
+      "notes": "Heel down, knee to wall"
+    },
+    {
+      "name": "Scapular Push-ups",
+      "muscle": "scapular control",
+      "sets": 2,
+      "reps": "10-12",
+      "rpe": 4,
+      "tempo": "2010",
+      "rest": 45,
+      "equipment": ["bodyweight"],
+      "progression": "protraction_retraction → one_arm → weighted",
+      "notes": "Arms straight, move only shoulder blades"
+    },
+    {
+      "name": "90/90 Hip Stretch",
+      "muscle": "hip internal/external rotation",
+      "sets": 2,
+      "duration": 45,
+      "rpe": 3,
+      "rest": 30,
+      "equipment": ["bodyweight"],
+      "progression": "longer_hold → forward_lean → dynamic",
+      "notes": "Both knees at 90, switch sides"
+    },
+    {
+      "name": "Doorway Pec Stretch",
+      "muscle": "chest/anterior shoulder",
+      "sets": 2,
+      "duration": 30,
+      "rpe": 3,
+      "rest": 30,
+      "equipment": ["bodyweight"],
+      "progression": "higher_arm → lean_forward → contract_relax",
+      "notes": "Gentle stretch, breathe"
+    }
+  ]
+}

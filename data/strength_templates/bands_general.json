@@ -1,0 +1,103 @@
+{
+  "focus": "general",
+  "phase": "Base",
+  "equipment": ["bands"],
+  "exercises": [
+    {
+      "name": "Band Pull-aparts",
+      "muscle": "rear delts/rhomboids",
+      "sets": 3,
+      "reps": "15-20",
+      "rpe": 6,
+      "tempo": "2010",
+      "rest": 45,
+      "equipment": ["bands"],
+      "progression": "thicker_band → pause_reps → slower_tempo",
+      "notes": "Shoulders down, squeeze blades"
+    },
+    {
+      "name": "Band Face Pulls",
+      "muscle": "rear delts/rotator cuff",
+      "sets": 3,
+      "reps": "12-15",
+      "rpe": 6,
+      "tempo": "2010",
+      "rest": 45,
+      "equipment": ["bands"],
+      "progression": "thicker_band → external_rotation → single_arm",
+      "notes": "High elbows, rotate out"
+    },
+    {
+      "name": "Band Rows",
+      "muscle": "lats/upper back",
+      "sets": 3,
+      "reps": "12-15",
+      "rpe": 6,
+      "tempo": "2010",
+      "rest": 60,
+      "equipment": ["bands"],
+      "progression": "thicker_band → single_arm → pause_reps",
+      "notes": "Squeeze shoulder blades"
+    },
+    {
+      "name": "Band Chest Press",
+      "muscle": "chest/triceps",
+      "sets": 3,
+      "reps": "12-15",
+      "rpe": 6,
+      "tempo": "2010",
+      "rest": 60,
+      "equipment": ["bands"],
+      "progression": "thicker_band → single_arm → feet_elevated",
+      "notes": "Band behind back, press forward"
+    },
+    {
+      "name": "Band Deadlifts",
+      "muscle": "hamstrings/glutes/back",
+      "sets": 3,
+      "reps": "12-15",
+      "rpe": 6,
+      "tempo": "2010",
+      "rest": 60,
+      "equipment": ["bands"],
+      "progression": "thicker_band → single_leg → pause_bottom",
+      "notes": "Hinge at hips, band under feet"
+    },
+    {
+      "name": "Band Squats",
+      "muscle": "quads/glutes",
+      "sets": 3,
+      "reps": "15-20",
+      "rpe": 6,
+      "tempo": "2010",
+      "rest": 60,
+      "equipment": ["bands"],
+      "progression": "thicker_band → pulse_reps → jump_squats",
+      "notes": "Band under feet, over shoulders"
+    },
+    {
+      "name": "Band Pallof Press",
+      "muscle": "core anti-rotation",
+      "sets": 3,
+      "reps": "10/side",
+      "rpe": 6,
+      "tempo": "2010",
+      "rest": 60,
+      "equipment": ["bands"],
+      "progression": "thicker_band → hold_longer → overhead",
+      "notes": "Resist rotation, brace core"
+    },
+    {
+      "name": "Band External Rotation",
+      "muscle": "rotator cuff",
+      "sets": 3,
+      "reps": "15-20",
+      "rpe": 5,
+      "tempo": "2010",
+      "rest": 45,
+      "equipment": ["bands"],
+      "progression": "thicker_band → slower_eccentric → 90_90",
+      "notes": "Elbow at side, rotate out"
+    }
+  ]
+}

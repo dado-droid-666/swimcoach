@@ -1,0 +1,200 @@
+import json
+import random
+from pathlib import Path
+from typing import List, Dict, Any, Optional
+from datetime import date
+
+from backend.services.macrocycle_calculator import get_phase_for_week, get_event_category
+from backend.schemas import CompetitionType, Level, PrimaryGoal
+
+
+def load_template(template_name: str) -> Dict[str, Any]:
+    """Load a swim template from JSON file."""
+    template_path = Path(__file__).parent.parent.parent / "data" / "swim_templates" / f"{template_name}.json"
+    if template_path.exists():
+        with open(template_path, "r") as f:
+            return json.load(f)
+    return {}
+
+
+def estimate_pace(level: Level, ftp_pace: Optional[int], zone: str) -> int:
+    """Estimate target pace per 100m for a given zone."""
+    if ftp_pace:
+        # Based on FTP/threshold pace
+        zone_offsets = {"Z1": 15, "Z2": 5, "Z3": -5, "Z4": -15}
+        return ftp_pace + zone_offsets.get(zone, 0)
+    
+    # Estimate by level
+    base_paces = {
+        Level.BEGINNER: {"Z1": 140, "Z2": 125, "Z3": 115, "Z4": 105},
+        Level.INTERMEDIATE: {"Z1": 120, "Z2": 105, "Z3": 95, "Z4": 85},
+        Level.ADVANCED: {"Z1": 100, "Z2": 90, "Z3": 80, "Z4": 72},
+    }
+    return base_paces.get(level, base_paces[Level.INTERMEDIATE]).get(zone, 105)
+
+
+def scale_set_meters(template_set: Dict, target_meters: int, template_total: int) -> Dict:
+    """Scale a template set to match target meters."""
+    if template_total == 0:
+        return template_set
+    
+    scale = target_meters / template_total
+    scaled = template_set.copy()
+    scaled["meters"] = round(template_set.get("meters", 0) * scale)
+    scaled["reps"] = max(1, round(template_set.get("reps", 1) * scale))
+    if "distance" in scaled:
+        scaled["distance"] = max(25, round(template_set["distance"] * scale))
+    return scaled
+
+
+def generate_swim_session(
+    session_date: date,
+    week_relative: int,
+    phase: Dict[str, Any],
+    daily_volume: int,
+    available_equipment: List[str],
+    preferred_strokes: List[str],
+    level: Level,
+    ftp_pace: Optional[int],
+    event_category: str,
+    session_duration_min: int,
+    session_number: int,
+    total_sessions_in_week: int
+) -> Dict[str, Any]:
+    """Generate a single swim session."""
+    
+    template = load_template(event_category)
+    if not template:
+        template = load_template("pool_mid")
+    
+    phase_name = phase["name"]
+    intensity_dist = phase["intensity_distribution"]
+    
+    # Split volume: warmup 20%, main 70%, cooldown 10%
+    warmup_meters = round(daily_volume * 0.2)
+    main_meters = round(daily_volume * 0.7)
+    cooldown_meters = daily_volume - warmup_meters - main_meters
+    
+    # Select main set template based on phase
+    main_sets = template.get("main_sets", {}).get(phase_name.lower(), template.get("main_sets", {}).get("base", []))
+    if not main_sets:
+        main_sets = template.get("main_sets", {}).get("base", [])
+    
+    # Calculate template total meters for scaling
+    template_main_total = sum(s.get("meters", 0) for s in main_sets)
+    
+    # Scale main sets
+    scaled_main = []
+    for i, ts in enumerate(main_sets):
+        scaled = scale_set_meters(ts, main_meters, template_main_total) if template_main_total > 0 else ts
+        # Override pace based on level/ftp
+        if "target_pace_per_100" not in scaled or scaled["target_pace_per_100"] is None:
+            zone = scaled.get("intensity_zone", "Z2")
+            scaled["target_pace_per_100"] = estimate_pace(level, ftp_pace, zone)
+        # Filter equipment
+        scaled["equipment"] = [e for e in scaled.get("equipment", []) if e in available_equipment]
+        scaled["set_id"] = f"ms{i+1}"
+        scaled_main.append(scaled)
+    
+    # Build warmup
+    warmup_drills = template.get("warmup_drills", ["400 swim", "200 drill", "200 kick"])
+    warmup_desc = " + ".join(warmup_drills[:3])
+    
+    # Build cooldown
+    cooldown_desc = template.get("cooldown", "200 easy + 200 choice")
+    
+    # Determine focus
+    focus_map = {
+        "Base": "Aerobic endurance",
+        "Build": "Threshold development",
+        "Peak": "Race pace specificity",
+        "Taper": "Sharpening",
+        "Race": "Competition"
+    }
+    
+    rpe_map = {"Base": 5, "Build": 6, "Peak": 7, "Taper": 4, "Race": 8}
+    
+    return {
+        "date": session_date.isoformat(),
+        "day_name": session_date.strftime("%A"),
+        "week_relative": week_relative,
+        "phase_name": phase_name,
+        "total_meters": daily_volume,
+        "estimated_duration_min": min(session_duration_min, max(45, daily_volume // 35)),
+        "focus": focus_map.get(phase_name, "General"),
+        "rpe_target": rpe_map.get(phase_name, 6),
+        "warmup": {
+            "meters": warmup_meters,
+            "description": warmup_desc,
+            "drills": warmup_drills[:3]
+        },
+        "main_set": scaled_main,
+        "cooldown": {
+            "meters": cooldown_meters,
+            "description": cooldown_desc
+        },
+        "generated_by": "macrocycle_v1",
+        "parameters_snapshot": {
+            "level": level.value,
+            "event_category": event_category,
+            "phase": phase_name,
+            "daily_volume": daily_volume
+        }
+    }
+
+
+def generate_weekly_swim_plan(
+    week_start: date,
+    week_relative: int,
+    macrocycle_phases: List[Dict],
+    profile: Dict[str, Any],
+    competition_type: CompetitionType,
+    pool_events: List[str],
+    ow_distance_km: Optional[float]
+) -> List[Dict[str, Any]]:
+    """Generate swim sessions for a week."""
+    
+    phase = get_phase_for_week(macrocycle_phases, week_relative)
+    phase_name = phase["name"]
+    
+    # Get available days (0=Sun..6=Sat)
+    available_days = profile.get("available_days", [1, 3, 5])
+    swim_days_per_week = min(profile.get("swim_days_per_week", 4), len(available_days))
+    
+    # Select swim days from available days
+    swim_days = available_days[:swim_days_per_week]
+    
+    # Calculate weekly volume
+    base_weekly_volume = profile.get("swim_days_per_week", 4) * profile.get("target_volume_per_session", 3000)
+    weekly_volume = round(base_weekly_volume * phase["swim_volume_mult"])
+    
+    # Daily volume distribution
+    daily_volume = round(weekly_volume / swim_days_per_week) if swim_days_per_week > 0 else 0
+    
+    # Event category
+    event_category = get_event_category(competition_type, pool_events, ow_distance_km)
+    
+    sessions = []
+    for i, day_offset in enumerate(swim_days):
+        session_date = week_start + timedelta(days=day_offset)
+        session = generate_swim_session(
+            session_date=session_date,
+            week_relative=week_relative,
+            phase=phase,
+            daily_volume=daily_volume,
+            available_equipment=profile.get("available_equipment", []),
+            preferred_strokes=profile.get("preferred_strokes", ["freestyle"]),
+            level=Level(profile.get("level", "intermediate")),
+            ftp_pace=profile.get("ftp_pace_per_100"),
+            event_category=event_category,
+            session_duration_min=profile.get("session_duration_min", 90),
+            session_number=i,
+            total_sessions_in_week=swim_days_per_week
+        )
+        sessions.append(session)
+    
+    return sessions
+
+
+# Need timedelta import
+from datetime import timedelta
