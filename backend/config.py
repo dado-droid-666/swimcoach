@@ -15,7 +15,7 @@ class Settings(BaseSettings):
 
     mp_access_token: str
     mp_public_key: str
-    mp_webhook_secret: str
+    mp_webhook_secret: str = ""
     mp_preapproval_plan_id: str = "pro_monthly"
 
     adsense_client_id: str = ""
