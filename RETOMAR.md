@@ -35,3 +35,19 @@
   2. Comparativa visual (conservar lógica SwimCoach, traer estilos).
   3. Plan de fusión por archivo y aplicar solo con visto bueno.
 - Para retomar, decir: "retomamos la fusión".
+
+## Deploy (18/09/2026, plan gratuito $0)
+- Repo: https://github.com/dado-droid-666/swimcoach (main)
+- Plataforma: Render Web Service plan Free (manual, NO Blueprint).
+- DB: Supabase `atypoclonwaxvukwvycy` (directa 5432). Tablas SwimCoach creadas:
+  users, athlete_profiles, competition_goals, macrocycle_plans,
+  training_sessions, strength_sessions, daily_feedback (+ alembic_version).
+  Conviven sin colisión con las de entrenamiento-app.
+- Alembic: migración inicial vacía (el esquema lo crea `init_db()` al arrancar).
+  Fix aplicado en `migrations/env.py` (escape `%` para passwords con `%3F`).
+- `requirements.txt`: + `psycopg2-binary==2.9.10` + `alembic==1.13.2`.
+- Pendiente usuario en Render: crear Web Service Free (Build:
+  `pip install -r backend/requirements.txt`, Start:
+  `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`), pegar env vars
+  (DATABASE_URL Supabase, SECRET_KEY, ENVIRONMENT=production, FRONTEND_URL,
+  MP x4, AdSense x3). Migración futura a DB paga = cambiar 1 variable.
