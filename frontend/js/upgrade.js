@@ -87,7 +87,7 @@ function renderUpgradeCards(app) {
                 
                 <div style="text-align: center; margin-bottom: 1.5rem;">
                     <h3 style="margin: 0 0 0.5rem;">Pro</h3>
-                    <div style="font-size: 3rem; font-weight: bold; color: var(--primary);">$4</div>
+                    <div style="font-size: 3rem; font-weight: bold; color: var(--primary);">$100 MXN</div>
                     <div style="color: var(--muted-color);">/month</div>
                 </div>
                 
@@ -103,7 +103,7 @@ function renderUpgradeCards(app) {
                     <li>Priority email support</li>
                 </ul>
                 
-                <button class="primary" style="width: 100%; margin-top: 1.5rem; padding: 1rem; font-size: 1.125rem;" onclick="startCheckout()">Upgrade to Pro - $4/month</button>
+                <button class="primary" style="width: 100%; margin-top: 1.5rem; padding: 1rem; font-size: 1.125rem;" onclick="startCheckout()">Upgrade to Pro - $100 MXN/month</button>
             </article>
         </div>
         
@@ -162,7 +162,7 @@ async function startCheckout() {
         window.location.href = data.init_point;
     } catch (error) {
         window.app.showError(error.message || 'Failed to start checkout');
-        if (btn) { btn.disabled = false; btn.textContent = 'Upgrade to Pro - $4/month'; }
+        if (btn) { btn.disabled = false; btn.textContent = 'Upgrade to Pro - $100 MXN/month'; }
     }
 }
 

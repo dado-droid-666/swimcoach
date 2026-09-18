@@ -1,0 +1,91 @@
+{
+  "focus": "general",
+  "phase": "Base",
+  "equipment": ["kettlebell"],
+  "exercises": [
+    {
+      "name": "Kettlebell Goblet Squat",
+      "muscle": "quads/glutes",
+      "sets": 3,
+      "reps": "10-12",
+      "rpe": 7,
+      "tempo": "2010",
+      "rest": 60,
+      "equipment": ["kettlebell"],
+      "progression": "heavier_bell → pause_bottom → slow_eccentric",
+      "notes": "Chest up, elbows inside knees"
+    },
+    {
+      "name": "Kettlebell Romanian Deadlift",
+      "muscle": "hamstrings/glutes/back",
+      "sets": 3,
+      "reps": "10-12",
+      "rpe": 7,
+      "tempo": "2010",
+      "rest": 60,
+      "equipment": ["kettlebell"],
+      "progression": "heavier_bell → single_leg → deficit",
+      "notes": "Hinge at hips, flat back"
+    },
+    {
+      "name": "Kettlebell Swing",
+      "muscle": "posterior chain/power",
+      "sets": 3,
+      "reps": "12-15",
+      "rpe": 7,
+      "tempo": "explosive",
+      "rest": 60,
+      "equipment": ["kettlebell"],
+      "progression": "heavier_bell → single_arm → longer_sets",
+      "notes": "Hike, snap hips, float the bell"
+    },
+    {
+      "name": "Kettlebell Single-Arm Row",
+      "muscle": "lats/upper back",
+      "sets": 3,
+      "reps": "8-10/side",
+      "rpe": 7,
+      "tempo": "2010",
+      "rest": 60,
+      "equipment": ["kettlebell"],
+      "progression": "heavier_bell → pause_top → renegade_row",
+      "notes": "Flat back, pull to hip"
+    },
+    {
+      "name": "Kettlebell Overhead Press",
+      "muscle": "shoulders/triceps",
+      "sets": 3,
+      "reps": "8-10/side",
+      "rpe": 7,
+      "tempo": "2010",
+      "rest": 60,
+      "equipment": ["kettlebell"],
+      "progression": "heavier_bell → bottoms_up → push_press",
+      "notes": "Ribs down, press the ceiling away"
+    },
+    {
+      "name": "Kettlebell Turkish Get-up",
+      "muscle": "full body/stability",
+      "sets": 2,
+      "reps": "3/side",
+      "rpe": 6,
+      "tempo": "slow",
+      "rest": 90,
+      "equipment": ["kettlebell"],
+      "progression": "heavier_bell → eyes_on_bell → no_hand",
+      "notes": "Slow stages, shoulder packed"
+    },
+    {
+      "name": "Kettlebell Halo",
+      "muscle": "shoulders/core",
+      "sets": 2,
+      "reps": "8/direction",
+      "rpe": 5,
+      "tempo": "slow",
+      "rest": 45,
+      "equipment": ["kettlebell"],
+      "progression": "heavier_bell → half_kneeling → slower",
+      "notes": "Tight abs, circle close to head"
+    }
+  ]
+}

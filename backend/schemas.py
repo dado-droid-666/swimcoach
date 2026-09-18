@@ -1,6 +1,6 @@
 from datetime import date, datetime
 from typing import Optional, List, Dict, Any
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 from enum import Enum
 
 
@@ -165,6 +165,8 @@ class CompetitionGoalResponse(CompetitionGoalBase):
 
 # Plan
 class SetSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True, extra="allow")
+
     set_id: str
     description: str
     meters: int

@@ -24,6 +24,18 @@ async function renderDashboard(app) {
     const tierA = window.getTierAssessment ? getTierAssessment() : null;
     const tierBadge = tierA ? `<span class="tipo-badge tipo-competencia" style="margin-left: 0.5rem;">Tier ${tierA.tier} · ${window.TIER_LABEL ? TIER_LABEL[tierA.tier] : ''}</span>` : '';
     const cssLine = tierA && tierA.cssPace ? `<div style="color: var(--primary); font-size: 0.875rem; margin-top: 0.25rem;">🎯 Target pace (CSS): ${Math.floor(tierA.cssPace / 60)}:${String(Math.round(tierA.cssPace % 60)).padStart(2, '0')} /100m</div>` : '';
+    // CSS retest prompt (sole benchmark, every 6 weeks)
+    let retestDays = null;
+    if (tierA && tierA.saved_at) {
+        retestDays = Math.floor((Date.now() - new Date(tierA.saved_at).getTime()) / 86400000);
+    }
+    const showRetest = !tierA || (retestDays != null && retestDays >= 42);
+    const retestCard = showRetest ? `
+        <article class="card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--primary);">
+            <strong>⏱️ ${tierA ? `CSS test is ${retestDays} days old — retest to keep zones honest` : 'No CSS test yet — calibrate your zones'}</strong>
+            <div style="color: var(--muted-color); font-size: 0.875rem; margin: 0.25rem 0 0.75rem;">Swim 400m + 200m all-out, update your test in onboarding step 1.</div>
+            <a href="#/onboarding?step=1" class="big-btn secondary" style="text-decoration: none; margin-top: 0;">${tierA ? 'Retest CSS' : 'Take the CSS test'}</a>
+        </article>` : '';
     
     // Calculate days until competition
     const compDate = new Date(app.state.competition.competition_date);
@@ -38,6 +50,7 @@ async function renderDashboard(app) {
                 <div class="countdown-num">${daysUntil}</div>
                 <div class="countdown-label">days until competition · ${weeksUntil} weeks</div>
             </div>
+            ${retestCard}
             
             <!-- Stats Grid -->
             <div class="grid" style="margin-bottom: 1.5rem;">

@@ -97,16 +97,17 @@
     "taper": [
       {
         "set_id": "ms1",
-        "description": "Race rehearsal",
-        "meters": 400,
-        "reps": 2,
-        "distance": 200,
-        "stroke": "freestyle",
-        "target_pace_per_100": null,
-        "rest_seconds": 180,
-        "equipment": [],
-        "intensity_zone": "Z4",
-        "notes": "Full race simulation, max 2"
+  "description": "Race rehearsal",
+      "meters": 400,
+      "reps": 2,
+      "distance": 200,
+      "stroke": "freestyle",
+      "target_pace_per_100": null,
+      "rest_seconds": 180,
+      "equipment": [],
+      "intensity_zone": "Z4",
+      "stroke_rate_optional": true,
+      "notes": "Full race simulation, max 2"
       }
     ],
     "race": [

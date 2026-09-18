@@ -43,8 +43,8 @@ def create_preapproval(user: User, plan_id: Optional[str] = None) -> Optional[Di
                     "frequency": 1,
                     "frequency_type": "months"
                 },
-                "transaction_amount": 4.0,  # $4/month
-                "currency_id": "USD"
+                "transaction_amount": 100.0,  # $100 MXN/month
+                "currency_id": "MXN"
             },
             "status": "pending"
         }

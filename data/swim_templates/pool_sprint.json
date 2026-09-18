@@ -69,16 +69,17 @@
     "peak": [
       {
         "set_id": "ms1",
-        "description": "Race pace 100s",
-        "meters": 600,
-        "reps": 6,
-        "distance": 100,
-        "stroke": "freestyle",
-        "target_pace_per_100": null,
-        "rest_seconds": 120,
-        "equipment": [],
-        "intensity_zone": "Z4",
-        "notes": "Target race pace, full recovery"
+ "description": "Race pace 100s",
+      "meters": 600,
+      "reps": 6,
+      "distance": 100,
+      "stroke": "freestyle",
+      "target_pace_per_100": null,
+      "rest_seconds": 120,
+      "equipment": [],
+      "intensity_zone": "Z4",
+      "stroke_rate_optional": true,
+      "notes": "Target race pace, full recovery"
       },
       {
         "set_id": "ms2",

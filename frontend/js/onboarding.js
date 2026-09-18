@@ -125,8 +125,8 @@ function profileStep(app) {
 }
 
 function equipmentStep(app) {
-    const swimEquip = ['pull_buoy', 'paddles', 'fins', 'snorkel', 'kickboard'];
-    const strengthEquip = ['bodyweight', 'bands'];
+    const swimEquip = ['pull_buoy', 'paddles', 'fins', 'snorkel', 'kickboard', 'metronome'];
+    const strengthEquip = ['bodyweight', 'bands', 'kettlebell', 'trx'];
     
     return `
         <fieldset style="margin-bottom: 1.5rem;">
@@ -146,8 +146,8 @@ function equipmentStep(app) {
             <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
                 ${strengthEquip.map(e => `
                     <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;">
-                        <input type="checkbox" name="strength_equip" value="${e}" checked onchange="toggleEquipment(this)" ${e === 'bodyweight' ? 'disabled' : ''}>
-                        ${e.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} ${e === 'bodyweight' ? '(required)' : ''}
+                        <input type="checkbox" name="strength_equip" value="${e}" checked onchange="toggleEquipment(this)">
+                        ${e.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} ${e === 'bodyweight' ? '(always included)' : ''}
                     </label>
                 `).join('')}
             </div>
@@ -410,7 +410,11 @@ function completeOnboarding() {
         session_duration_min: parseInt(saved.session_duration_min),
         ftp_pace_per_100: saved.ftp_pace_per_100 ? parseInt(saved.ftp_pace_per_100) : null,
         injury_notes: saved.injury_notes || '',
-        available_equipment: saved.swim_equip ? (Array.isArray(saved.swim_equip) ? saved.swim_equip : [saved.swim_equip]) : [],
+        available_equipment: Array.from(new Set([
+            ...((saved.swim_equip) ? (Array.isArray(saved.swim_equip) ? saved.swim_equip : [saved.swim_equip]) : []),
+            ...((saved.strength_equip) ? (Array.isArray(saved.strength_equip) ? saved.strength_equip : [saved.strength_equip]) : []),
+            'bodyweight', // always included
+        ])),
         preferred_strokes: saved.preferred_strokes ? (Array.isArray(saved.preferred_strokes) ? saved.preferred_strokes : [saved.preferred_strokes]) : ['freestyle'],
         primary_goal: saved.primary_goal || 'endurance',
         available_days: saved.available_days ? (Array.isArray(saved.available_days) ? saved.available_days.map(Number) : [Number(saved.available_days)]) : [1, 3, 5]

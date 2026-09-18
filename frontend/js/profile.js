@@ -96,10 +96,22 @@ async function renderProfile(app) {
                     <div class="grid" style="margin-bottom: 1rem;">
                         <label for="available_equipment">Swim Equipment</label>
                         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-                            ${['pull_buoy', 'paddles', 'fins', 'snorkel', 'kickboard'].map(e => `
+                            ${['pull_buoy', 'paddles', 'fins', 'snorkel', 'kickboard', 'metronome'].map(e => `
                                 <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;">
-                                    <input type="checkbox" name="available_equipment" value="${e}" ${(app.state.profile?.available_equipment || []).includes(e) ? 'checked' : ''} onchange="updateEquipment()">
+                                    <input type="checkbox" name="available_equipment" value="${e}" ${(app.state.profile?.available_equipment || []).includes(e) ? 'checked' : ''} onchange="updateEquipment(this)">
                                     ${e.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="grid" style="margin-bottom: 1rem;">
+                        <label for="available_equipment">Strength Equipment</label>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            ${['bodyweight', 'bands', 'kettlebell', 'trx'].map(e => `
+                                <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;">
+                                    <input type="checkbox" name="available_equipment" value="${e}" ${(app.state.profile?.available_equipment || []).includes(e) || e === 'bodyweight' ? 'checked' : ''} onchange="updateEquipment(this)">
+                                    ${e.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}${e === 'bodyweight' ? ' (always)' : ''}
                                 </label>
                             `).join('')}
                         </div>
@@ -146,7 +158,10 @@ async function saveProfile() {
         injury_notes: formData.get('injury_notes') || '',
         available_days: Array.from(form.querySelectorAll('input[name="available_days"]:checked')).map(cb => parseInt(cb.value)),
         preferred_strokes: Array.from(form.querySelectorAll('input[name="preferred_strokes"]:checked')).map(cb => cb.value),
-        available_equipment: Array.from(form.querySelectorAll('input[name="available_equipment"]:checked')).map(cb => cb.value)
+        available_equipment: Array.from(new Set(
+            Array.from(form.querySelectorAll('input[name="available_equipment"]:checked')).map(cb => cb.value)
+                .concat(['bodyweight'])
+        ))
     };
     
     try {

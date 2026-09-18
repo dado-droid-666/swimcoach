@@ -1,0 +1,91 @@
+{
+  "focus": "general",
+  "phase": "Base",
+  "equipment": ["trx"],
+  "exercises": [
+    {
+      "name": "TRX Row",
+      "muscle": "lats/upper back",
+      "sets": 3,
+      "reps": "10-12",
+      "rpe": 6,
+      "tempo": "2010",
+      "rest": 60,
+      "equipment": ["trx"],
+      "progression": "more_incline → single_arm → feet_elevated",
+      "notes": "Body straight, squeeze blades"
+    },
+    {
+      "name": "TRX Chest Press",
+      "muscle": "chest/triceps",
+      "sets": 3,
+      "reps": "10-12",
+      "rpe": 6,
+      "tempo": "2010",
+      "rest": 60,
+      "equipment": ["trx"],
+      "progression": "more_incline → single_arm → atomic_press",
+      "notes": "Plank body, press handles forward"
+    },
+    {
+      "name": "TRX Squat to Y-Fly",
+      "muscle": "legs/shoulders",
+      "sets": 3,
+      "reps": "10-12",
+      "rpe": 6,
+      "tempo": "2010",
+      "rest": 60,
+      "equipment": ["trx"],
+      "progression": "deeper_squat → single_leg → slower_tempo",
+      "notes": "Light strap assist, stand tall"
+    },
+    {
+      "name": "TRX Hamstring Curl",
+      "muscle": "hamstrings/glutes",
+      "sets": 3,
+      "reps": "10-12",
+      "rpe": 7,
+      "tempo": "2010",
+      "rest": 60,
+      "equipment": ["trx"],
+      "progression": "single_leg → hips_high → slower_eccentric",
+      "notes": "Hips up, curl heels to glutes"
+    },
+    {
+      "name": "TRX Pike",
+      "muscle": "core/hip flexors",
+      "sets": 3,
+      "reps": "8-10",
+      "rpe": 7,
+      "tempo": "2010",
+      "rest": 60,
+      "equipment": ["trx"],
+      "progression": "knees_tuck → full_pike → single_leg",
+      "notes": "Hips over shoulders, control down"
+    },
+    {
+      "name": "TRX Face Pull",
+      "muscle": "rear delts/rotator cuff",
+      "sets": 3,
+      "reps": "12-15",
+      "rpe": 6,
+      "tempo": "2010",
+      "rest": 45,
+      "equipment": ["trx"],
+      "progression": "more_incline → external_rotation → hold",
+      "notes": "High elbows, swimmer posture"
+    },
+    {
+      "name": "TRX Pallof Hold",
+      "muscle": "core anti-rotation",
+      "sets": 2,
+      "reps": "30s/side",
+      "rpe": 6,
+      "tempo": "hold",
+      "rest": 45,
+      "equipment": ["trx"],
+      "progression": "longer_hold → stagger_stance → press_out",
+      "notes": "Resist rotation, breathe steady"
+    }
+  ]
+}

@@ -6,6 +6,7 @@ from datetime import date
 
 from backend.services.macrocycle_calculator import get_phase_for_week, get_event_category
 from backend.schemas import CompetitionType, Level, PrimaryGoal
+from backend.services.css_zones import zone_for_pace, spm_for_zone
 
 
 def load_template(template_name: str) -> Dict[str, Any]:
@@ -31,6 +32,20 @@ def estimate_pace(level: Level, ftp_pace: Optional[int], zone: str) -> int:
         Level.ADVANCED: {"Z1": 100, "Z2": 90, "Z3": 80, "Z4": 72},
     }
     return base_paces.get(level, base_paces[Level.INTERMEDIATE]).get(zone, 105)
+
+
+def suggest_stroke_rate(level: Level, phase_name: str) -> int:
+    """Suggest stroke rate (strokes/min) for tempo-trainer sets."""
+    base = {
+        Level.BEGINNER: 58,
+        Level.INTERMEDIATE: 64,
+        Level.ADVANCED: 70,
+    }.get(level, 64)
+    if phase_name in ("Peak", "Race"):
+        base += 2
+    elif phase_name in ("Base", "Taper"):
+        base -= 2
+    return base
 
 
 def scale_set_meters(template_set: Dict, target_meters: int, template_total: int) -> Dict:
@@ -94,7 +109,25 @@ def generate_swim_session(
         # Filter equipment
         scaled["equipment"] = [e for e in scaled.get("equipment", []) if e in available_equipment]
         scaled["set_id"] = f"ms{i+1}"
+        # CSS zone + stroke-rate guidance (FTP pace ≈ CSS anchor)
+        css_anchor = ftp_pace or estimate_pace(level, None, "Z3")
+        scaled["css_zone"] = zone_for_pace(css_anchor, scaled.get("target_pace_per_100"))
+        scaled["target_spm"] = spm_for_zone(scaled["css_zone"])
         scaled_main.append(scaled)
+
+    # Metronome: unlock stroke-rate guidance on intense sets (template
+    # zone or CSS-derived zone) plus explicitly marked candidates
+    if "metronome" in (available_equipment or []):
+        for scaled in scaled_main:
+            zone = scaled.get("intensity_zone", "Z2")
+            if zone in ("Z4", "Z5") or scaled.get("css_zone") in ("Z4", "Z5") \
+                    or scaled.get("stroke_rate_optional"):
+                scaled["stroke_rate_spm"] = suggest_stroke_rate(level, phase_name)
+                scaled["notes"] = ((scaled.get("notes") or "") + " | Tempo trainer @ "
+                                   f"{scaled['stroke_rate_spm']} SPM").strip(" |")
+                if "metronome" not in scaled.get("equipment", []):
+                    scaled["equipment"] = list(scaled.get("equipment", [])) + ["metronome"]
+                break
     
     # Build warmup
     warmup_drills = template.get("warmup_drills", ["400 swim", "200 drill", "200 kick"])

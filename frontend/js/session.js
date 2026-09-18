@@ -158,6 +158,8 @@ function renderSwimTab(swim) {
                                 <div>Rest: ${set.rest_seconds}s</div>
                                 <div>Pace: ${set.target_pace_per_100 ? formatPace(set.target_pace_per_100) : '—'}</div>
                                 <div>Equip: ${set.equipment?.join(', ') || 'None'}</div>
+                                ${set.css_zone ? `<div><span class="tipo-badge tipo-alberca">${set.css_zone}</span></div>` : ''}
+                                ${set.stroke_rate_spm ? `<div>⏱️ Rate: <strong>${set.stroke_rate_spm} SPM</strong> (metronome)</div>` : (set.target_spm ? `<div>Tempo guide: ${set.target_spm} SPM</div>` : '')}
                             </div>
                             ${set.notes ? `<p style="margin: 0.5rem 0 0; font-size: 0.875rem; color: var(--muted-color);">${set.notes}</p>` : ''}
                         </article>
@@ -235,10 +237,10 @@ function buildPlayerBlocks(swim, strength) {
         if (swim.warmup) blocks.push({ kind: 'swim', tag: 'Warmup', title: `Warmup · ${swim.warmup.meters || 0}m`, desc: swim.warmup.description || 'Easy swimming', sub: (swim.warmup.drills || []).join(' · ') });
         (swim.main_set || []).forEach((s, i) => {
             blocks.push({
-                kind: 'swim', tag: `Main set ${i + 1}/${swim.main_set.length}`,
+                kind: 'swim', tag: `Main set ${i + 1}/${swim.main_set.length}${s.css_zone ? ` · ${s.css_zone}` : ''}`,
                 title: s.description || `Set ${i + 1}`,
                 desc: `${s.reps}×${s.distance}m ${s.stroke || ''}`.trim(),
-                sub: [`Rest ${s.rest_seconds || 0}s`, s.target_pace_per_100 ? `Pace ${formatPace(s.target_pace_per_100)}` : null, (s.equipment || []).length ? `Gear: ${s.equipment.join(', ')}` : null, s.notes || null].filter(Boolean).join(' · ')
+                sub: [`Rest ${s.rest_seconds || 0}s`, s.target_pace_per_100 ? `Pace ${formatPace(s.target_pace_per_100)}` : null, (s.equipment || []).length ? `Gear: ${s.equipment.join(', ')}` : null, s.stroke_rate_spm ? `⏱️ ${s.stroke_rate_spm} SPM` : (s.target_spm ? `${s.target_spm} SPM` : null), s.notes || null].filter(Boolean).join(' · ')
             });
         });
         if (swim.cooldown) blocks.push({ kind: 'swim', tag: 'Cooldown', title: `Cooldown · ${swim.cooldown.meters || 0}m`, desc: swim.cooldown.description || 'Very easy' });
@@ -404,25 +406,52 @@ function wirePlayer(swim, strength) {
     startBtn.addEventListener('click', async () => {
         startBtn.disabled = true;
         startBtn.textContent = 'Loading ML suggestion…';
-        const ml = await enrichStrengthWithMl(strength);
-        startBtn.disabled = false;
-        startBtn.textContent = '▶ Start guided session';
-        _player = { blocks: buildPlayerBlocks(swim, strength), idx: 0, mlLabel: ml.label };
-        if (!_player.blocks.length) { window.app.showError('No blocks in this session'); return; }
-        document.getElementById('tab-content').style.display = 'none';
-        startBtn.style.display = 'none';
-        document.getElementById('player-view').style.display = 'block';
-        renderPlayerBlock();
+        try {
+            const ml = await withTimeout(enrichStrengthWithMl(strength), 8000);
+            _player = { blocks: buildPlayerBlocks(swim, strength), idx: 0, mlLabel: ml.label };
+            if (!_player.blocks.length) { window.app.showError('No blocks in this session'); return; }
+            document.getElementById('tab-content').style.display = 'none';
+            startBtn.style.display = 'none';
+            document.getElementById('player-view').style.display = 'block';
+            renderPlayerBlock();
+        } catch (err) {
+            console.error('[player] start failed:', err);
+            window.app.showError('Could not start guided session. Showing details instead.');
+            exitPlayer();
+        } finally {
+            startBtn.disabled = false;
+            startBtn.textContent = '▶ Start guided session';
+        }
     });
     document.getElementById('btn-anterior').addEventListener('click', () => {
-        if (_player && _player.idx > 0) { _player.idx -= 1; renderPlayerBlock(); }
+        try {
+            if (_player && _player.idx > 0) { _player.idx -= 1; renderPlayerBlock(); }
+        } catch (err) {
+            console.error('[player] prev failed:', err);
+            window.app.showError('Could not go back a block.');
+        }
     });
     document.getElementById('btn-siguiente').addEventListener('click', () => {
-        if (!_player) return;
-        if (_player.idx < _player.blocks.length - 1) { _player.idx += 1; renderPlayerBlock(); }
-        else finishPlayer();
+        try {
+            if (!_player) return;
+            if (_player.idx < _player.blocks.length - 1) { _player.idx += 1; renderPlayerBlock(); }
+            else finishPlayer().catch(err => {
+                console.error('[player] finish failed:', err);
+                window.app.showError('Could not finish session.');
+            });
+        } catch (err) {
+            console.error('[player] next failed:', err);
+            window.app.showError('Could not advance. Try exiting and re-entering the player.');
+        }
     });
     document.getElementById('btn-exit-player').addEventListener('click', exitPlayer);
+}
+
+function withTimeout(promise, ms) {
+    return Promise.race([
+        promise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error('ML timeout')), ms)),
+    ]);
 }
 
 async function completeSession(type) {

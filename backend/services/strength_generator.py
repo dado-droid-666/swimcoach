@@ -39,19 +39,56 @@ def generate_strength_session(
     phase_name = phase["name"]
     template_name = get_strength_template_for_phase(phase_name)
     template = load_strength_template(template_name)
-    
+
     if not template:
         template = load_strength_template("bodyweight_general")
-    
+
+    # Owned-equipment general templates are mixed in so the user's gear
+    # (bands/kettlebell/trx) actually changes the session.
+    owned_templates = []
+    for eq, tpl in (("bands", "bands_general"), ("kettlebell", "kettlebell_general"), ("trx", "trx_general")):
+        if eq in (available_equipment or []):
+            extra = load_strength_template(tpl)
+            if extra.get("exercises"):
+                owned_templates.append(extra)
+
+    def _eligible(exercises):
+        out = []
+        for ex in exercises:
+            required_equip = ex.get("equipment", ["bodyweight"])
+            if all(eq in available_equipment or eq == "bodyweight" for eq in required_equip):
+                progression_week = max(0, week_relative + 24)  # Normalize to positive
+                out.append(apply_progression(ex, phase_name, progression_week))
+        return out
+
+    base_pool = _eligible(template.get("exercises", []))
+    source_pools = []
+    for extra in owned_templates:
+        pool = _eligible(extra.get("exercises", []))
+        if pool:
+            source_pools.append(pool)
+    source_pools.append(base_pool)
+
+    # Interleave round-robin across each source (owned gear templates +
+    # base) so every owned implement shows up instead of the first file
+    # filling the whole session. Dedup by (name, reps, sets).
     exercises = []
-    for ex in template.get("exercises", []):
-        # Check if equipment is available
-        required_equip = ex.get("equipment", ["bodyweight"])
-        if all(eq in available_equipment or eq == "bodyweight" for eq in required_equip):
-            # Apply progression based on week
-            progression_week = max(0, week_relative + 24)  # Normalize to positive
-            exercise = apply_progression(ex, phase_name, progression_week)
-            exercises.append(exercise)
+    seen = set()
+    idx = [0] * len(source_pools)
+    progress = True
+    while progress:
+        progress = False
+        for s, pool in enumerate(source_pools):
+            while idx[s] < len(pool):
+                nxt = pool[idx[s]]
+                idx[s] += 1
+                key = (nxt.get("name"), nxt.get("reps"), nxt.get("sets"))
+                if key in seen:
+                    continue
+                seen.add(key)
+                exercises.append(nxt)
+                progress = True
+                break
     
     # Limit exercises based on phase
     max_exercises = {
@@ -61,7 +98,13 @@ def generate_strength_session(
         "Taper": 3,
         "Race": 0
     }.get(phase_name, 6)
-    
+
+    # Weekly rotation (conjugate-lite): shift the start each week so the
+    # surviving cut varies across weeks instead of repeating one order.
+    if len(exercises) > 1:
+        rot = abs(week_relative) % len(exercises)
+        exercises = exercises[rot:] + exercises[:rot]
+
     exercises = exercises[:max_exercises]
     
     # Duration estimate
