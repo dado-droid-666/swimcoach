@@ -62,12 +62,28 @@ def generate_strength_session(
         return out
 
     base_pool = _eligible(template.get("exercises", []))
-    source_pools = []
+    gear_pools = {}
     for extra in owned_templates:
         pool = _eligible(extra.get("exercises", []))
         if pool:
-            source_pools.append(pool)
-    source_pools.append(base_pool)
+            gear_pools.setdefault(extra.get("equipment", ["bands"])[0] if isinstance(extra.get("equipment"), list) else "gear", pool)
+
+    # Split A/B/C rotation (from the hand-written example):
+    # A = pull + core (trx/bands lead), B = legs + hips (kettlebell lead),
+    # C = stamina mix (bodyweight lead). session_number rotates the split.
+    split = ["A", "B", "C"][session_number % 3]
+    split_lead = {"A": ("trx", "bands"), "B": ("kettlebell",), "C": ()}[split]
+    ordered = []
+    for eq in split_lead:
+        if eq in gear_pools:
+            ordered.append(gear_pools[eq])
+    for eq, pool in gear_pools.items():
+        if eq not in split_lead:
+            ordered.append(pool)
+    source_pools = ordered + [base_pool]
+    if split == "C":  # stamina: bodyweight leads
+        source_pools = [base_pool] + ordered
+    split_label = {"A": "Pull + Core", "B": "Legs + Hips", "C": "Stamina"}[split]
 
     # Interleave round-robin across each source (owned gear templates +
     # base) so every owned implement shows up instead of the first file
@@ -129,7 +145,7 @@ def generate_strength_session(
         "day_name": session_date.strftime("%A"),
         "week_relative": week_relative,
         "phase_name": phase_name,
-        "focus": focus_map.get(phase_name, "General"),
+        "focus": f"{focus_map.get(phase_name, 'General')} · Split {split} ({split_label})",
         "exercises": exercises,
         "estimated_duration_min": duration_map.get(phase_name, 30),
         "equipment_needed": list(set(eq for ex in exercises for eq in ex.get("equipment", ["bodyweight"]))),

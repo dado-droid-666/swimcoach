@@ -8,6 +8,9 @@ MyProCoach, SwimmingRegimen. Fases: las 5 inglesas (Base→Build→Peak→
 Taper→Race). Benchmark único: CSS (retest cada 6 semanas).
 
 ## Natación — zonas CSS ×5 (`backend/services/css_zones.py`)
+- Biblioteca de drills (`data/drill_library.json`): control de aire, patada,
+  técnica; rotación determinística por sesión (no azar), aptos por fase.
+- Warmup en 3 bloques visibles (breath + kick + technique) + serie + afloje.
 - Z1 Recovery (115-130% CSS, RPE 2-3, 50-55 SPM): warm-up, cool-down, técnica.
 - Z2 Endurance (105-115%, RPE 4-5, 55-60 SPM): base aeróbica.
 - Z3 Threshold (95-105%, RPE 6-7, 60-65 SPM): sets @CSS.

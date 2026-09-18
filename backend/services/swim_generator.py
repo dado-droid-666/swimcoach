@@ -18,6 +18,34 @@ def load_template(template_name: str) -> Dict[str, Any]:
     return {}
 
 
+def load_drills() -> Dict[str, List[Dict[str, Any]]]:
+    """Load the drill library (breath control, kick, technique)."""
+    drill_path = Path(__file__).parent.parent.parent / "data" / "drill_library.json"
+    if drill_path.exists():
+        with open(drill_path, "r") as f:
+            return json.load(f)
+    return {}
+
+
+def pick_drills(drills: Dict[str, List[Dict[str, Any]]], phase_name: str,
+               session_number: int) -> Dict[str, List[str]]:
+    """Deterministically pick one drill per block, rotating by session.
+
+    Returns {breath_control, kick, technique} drill names suitable for the
+    phase. Rotation (not random) keeps plans reproducible per session slot.
+    """
+    picked = {}
+    for i, block in enumerate(("breath_control", "kick", "technique")):
+        cands = [d for d in drills.get(block, [])
+                 if phase_name in d.get("phases", [])] or drills.get(block, [])
+        if not cands:
+            picked[block] = []
+            continue
+        rot = (session_number + i) % len(cands)
+        picked[block] = [cands[rot]["name"]]
+    return picked
+
+
 def estimate_pace(level: Level, ftp_pace: Optional[int], zone: str) -> int:
     """Estimate target pace per 100m for a given zone."""
     if ftp_pace:
@@ -129,8 +157,15 @@ def generate_swim_session(
                     scaled["equipment"] = list(scaled.get("equipment", [])) + ["metronome"]
                 break
     
-    # Build warmup
-    warmup_drills = template.get("warmup_drills", ["400 swim", "200 drill", "200 kick"])
+    # Build warmup from the drill library: breath control + kick +
+    # technique blocks (rotating by session slot), kept in template order
+    # so the session reads like hand-written blocks.
+    drill_blocks = pick_drills(load_drills(), phase_name, session_number)
+    warmup_drills = (drill_blocks.get("breath_control", [])
+                     + drill_blocks.get("kick", [])
+                     + drill_blocks.get("technique", []))
+    if not warmup_drills:
+        warmup_drills = template.get("warmup_drills", ["400 swim", "200 drill", "200 kick"])
     warmup_desc = " + ".join(warmup_drills[:3])
     
     # Build cooldown
@@ -166,6 +201,14 @@ def generate_swim_session(
             "meters": cooldown_meters,
             "description": cooldown_desc
         },
+        "blocks": [
+            {"title": "Warmup", "desc": warmup_desc},
+            {"title": "Breath control", "desc": ", ".join(drill_blocks.get("breath_control", [])) or "—"},
+            {"title": "Kick", "desc": ", ".join(drill_blocks.get("kick", [])) or "—"},
+            {"title": "Technique", "desc": ", ".join(drill_blocks.get("technique", [])) or "—"},
+            {"title": "Main set", "desc": f"{len(scaled_main)} sets"},
+            {"title": "Cooldown", "desc": cooldown_desc},
+        ],
         "generated_by": "macrocycle_v1",
         "parameters_snapshot": {
             "level": level.value,

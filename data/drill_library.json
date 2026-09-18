@@ -1,0 +1,20 @@
+{
+  "breath_control": [
+    {"name": "4x50 breathing 3/5/7", "desc": "Breathe every 3, then 5, then 7 strokes per 50", "phases": ["Base", "Build", "Peak", "Taper", "Race"]},
+    {"name": "Hypoxic 25s", "desc": "4x25 underwater kick with full recovery", "phases": ["Base", "Build", "Peak"]},
+    {"name": "3-3-3 breathing ladder", "desc": "3 strokes breathe right, 3 left, 3 bilateral x4", "phases": ["Base", "Build", "Taper"]}
+  ],
+  "kick": [
+    {"name": "6x50 mixed kick", "desc": "2 freestyle board, 2 backstroke, 2 easy underwater", "phases": ["Base", "Build", "Peak", "Taper", "Race"]},
+    {"name": "Vertical kick", "desc": "4x30s vertical kick, hands out last round", "phases": ["Base", "Build", "Peak"]},
+    {"name": "Kick descend", "desc": "4x50 kick, each faster, 20s rest", "phases": ["Build", "Peak"]}
+  ],
+  "technique": [
+    {"name": "Catch-up", "desc": "6x50 catch-up drill, long vessel", "phases": ["Base", "Build", "Taper", "Race"]},
+    {"name": "Fingertip drag", "desc": "6x50 high-elbow recovery", "phases": ["Base", "Build", "Taper"]},
+    {"name": "Single-arm", "desc": "6x50 (25 right / 25 left), other arm at side", "phases": ["Base", "Build"]},
+    {"name": "Fist swim", "desc": "4x50 closed fists, feel the forearm", "phases": ["Base", "Build", "Peak"]},
+    {"name": "6-1-6", "desc": "6 kicks side, 1 stroke, 6 kicks, 4x50", "phases": ["Base", "Taper", "Race"]},
+    {"name": "Scull front", "desc": "4x50 front scull, high elbows", "phases": ["Base", "Build", "Taper"]}
+  ]
+}
