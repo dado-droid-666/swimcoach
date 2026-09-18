@@ -119,8 +119,8 @@ async function renderDashboard(app) {
                 <div id="ad-banner" style="margin-top: 2rem; text-align: center; min-height: 90px;">
                     <ins class="adsbygoogle"
                          style="display:block"
-                         data-ad-client="ca-pub-XXXXXXXXXXXX"
-                         data-ad-slot="1234567890"
+                          data-ad-client="ca-pub-4540036176937342"
+                          data-ad-slot="7276396302"
                          data-ad-format="auto"
                          data-full-width-responsive="true"></ins>
                 </div>
