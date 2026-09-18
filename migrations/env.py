@@ -21,7 +21,8 @@ if config.config_file_name is not None:
 
 # Get settings and override sqlalchemy.url from environment
 settings = get_settings()
-config.set_main_option("sqlalchemy.url", settings.database_url)
+# Escape % for ConfigParser interpolation (passwords may contain %3F etc.)
+config.set_main_option("sqlalchemy.url", settings.database_url.replace("%", "%%"))
 
 # add your model's MetaData object here
 # for 'autogenerate' support
