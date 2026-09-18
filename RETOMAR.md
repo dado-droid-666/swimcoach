@@ -51,3 +51,9 @@
   `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`), pegar env vars
   (DATABASE_URL Supabase, SECRET_KEY, ENVIRONMENT=production, FRONTEND_URL,
   MP x4, AdSense x3). Migración futura a DB paga = cambiar 1 variable.
+- PRODUCCIÓN LIVE (18/09/2026): https://swimcoach-ss5j.onrender.com
+  (`/api/health` ok, `/` PWA dark 200, `/docs` 404 en prod como debe ser,
+  `/ml/*.json` servidos). Nota: actualizar FRONTEND_URL en Render a la URL
+  real si se puso otra.
+- Deploy fixes aplicados: PYTHON_VERSION=3.12.4 (Render default 3.14 rompía
+  pydantic-core), `mp_webhook_secret` con default "" (boot sin webhook).
