@@ -14,7 +14,7 @@ services:
       - key: PYTHONDONTWRITEBYTECODE
         value: "1"
       - key: FRONTEND_URL
-        fromEnvVar: FRONTEND_URL
+        sync: false
       - key: SECRET_KEY
         generateValue: true
       - key: DATABASE_URL
