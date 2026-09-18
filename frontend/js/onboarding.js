@@ -129,6 +129,7 @@ function equipmentStep(app) {
     const strengthEquip = ['bodyweight', 'bands', 'kettlebell', 'trx'];
     
     return `
+        <form id="equipment-form" onsubmit="return false;">
         <fieldset style="margin-bottom: 1.5rem;">
             <legend style="margin-bottom: 1rem;">Swim Equipment (available)</legend>
             <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
@@ -152,6 +153,7 @@ function equipmentStep(app) {
                 `).join('')}
             </div>
         </fieldset>
+        </form>
     `;
 }
 
@@ -310,22 +312,32 @@ function validateStep(step) {
 }
 
 function saveStepData(step) {
-    // Save to localStorage temporarily
-    const form = document.querySelector(`#step-content form, #step-content fieldset`);
-    if (!form) return;
-    
-    const data = new FormData(form);
+    // Save to localStorage temporarily.
+    // Collects named inputs directly (works with or without a <form>;
+    // FormData would throw on a bare <fieldset>, which froze step 2).
+    const root = document.getElementById('step-content');
+    if (!root) return;
+
     const saved = JSON.parse(localStorage.getItem('onboarding_data') || '{}');
-    
-    for (const [key, value] of data.entries()) {
-        if (saved[key]) {
+    const pushVal = (key, value) => {
+        if (!key || value == null || value === '') return;
+        if (saved[key] !== undefined) {
             if (!Array.isArray(saved[key])) saved[key] = [saved[key]];
-            saved[key].push(value);
+            // Avoid duplicates when going Back and Next again
+            if (!saved[key].includes(value)) saved[key].push(value);
         } else {
             saved[key] = value;
         }
-    }
-    
+    };
+
+    root.querySelectorAll('input[name], select[name], textarea[name]').forEach(el => {
+        if (el.type === 'checkbox' || el.type === 'radio') {
+            if (el.checked) pushVal(el.name, el.value);
+        } else {
+            pushVal(el.name, el.value);
+        }
+    });
+
     localStorage.setItem('onboarding_data', JSON.stringify(saved));
 }
 
@@ -346,6 +358,16 @@ function updateCssPreview() {
 
 function completeOnboarding() {
     const saved = JSON.parse(localStorage.getItem('onboarding_data') || '{}');
+    // First value wins (user may go Back/Next and re-save a step)
+    const first = (v, dflt) => {
+        if (v === undefined || v === null || v === '') return dflt;
+        return Array.isArray(v) ? (v.length ? v[0] : dflt) : v;
+    };
+    ['level', 'swim_days_per_week', 'target_volume_per_session', 'session_duration_min',
+     'ftp_pace_per_100', 'injury_notes', 'primary_goal', 'competition_date', 'competition_type',
+     'ow_distance_km', 'ow_conditions', 'strength_days_per_week',
+     'css_400_min', 'css_400_sec', 'css_200_min', 'css_200_sec', 'css_50_sec',
+     'ath_age', 'ath_weight', 'ath_height'].forEach(k => { saved[k] = first(saved[k]); });
 
     // Validate required profile fields (avoid 422 from backend)
     if (!saved.level || !saved.swim_days_per_week || !saved.target_volume_per_session || !saved.session_duration_min) {
