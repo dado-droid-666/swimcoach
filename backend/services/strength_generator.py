@@ -213,16 +213,25 @@ def generate_weekly_strength_plan(
     week_relative: int,
     macrocycle_phases: List[Dict],
     profile: Dict[str, Any],
-    swim_days: List[int]  # Days of week used for swim (0-6)
+    swim_days: List[int],  # Days of week used for swim (0-6)
+    requested_per_week: Optional[int] = None
 ) -> List[Dict[str, Any]]:
-    """Generate strength sessions for a week."""
-    
+    """Generate strength sessions for a week.
+
+    Effective days = min(user request, phase cap) so asking for fewer is
+    respected and 4 is possible in Base/Build (3 in Peak, 1 Taper, 0 Race).
+    Sessions spill onto swim days when needed (AM/PM split).
+    """
+
     from backend.services.macrocycle_calculator import get_phase_for_week
-    
+
     phase = get_phase_for_week(macrocycle_phases, week_relative)
     phase_name = phase["name"]
-    
-    strength_days_per_week = phase["strength_days"]
+
+    phase_cap = phase["strength_days"]
+    if requested_per_week is None:
+        requested_per_week = phase_cap
+    strength_days_per_week = max(0, min(requested_per_week, phase_cap))
     if strength_days_per_week == 0:
         return []
     

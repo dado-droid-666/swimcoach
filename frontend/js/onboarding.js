@@ -256,8 +256,8 @@ function competitionStep(app) {
             </div>
             
             <div class="grid" style="margin-bottom: 1rem;">
-                <label for="strength_days_per_week">Strength Sessions per Week</label>
-                <input type="number" id="strength_days_per_week" name="strength_days_per_week" min="1" max="3" value="2" required>
+                <label for="strength_days_per_week">Strength Sessions per Week (max 4, may share a day with swim)</label>
+                <input type="number" id="strength_days_per_week" name="strength_days_per_week" min="1" max="4" value="2" required>
             </div>
         </form>
     `;

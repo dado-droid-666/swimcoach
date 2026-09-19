@@ -179,7 +179,8 @@ def _generate_all_sessions(
                 "available_equipment": profile.available_equipment,
                 "level": profile.level
             },
-            swim_days=swim_days
+            swim_days=swim_days,
+            requested_per_week=goal.strength_days_per_week or 2
         )
         
         # Save strength sessions

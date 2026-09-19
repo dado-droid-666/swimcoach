@@ -35,7 +35,7 @@ PHASE_CONFIGS = [
         swim_focus="Aerobic capacity + Technique",
         strength_focus="General adaptation",
         swim_volume_mult=1.0,
-        strength_days_per_week=3,
+        strength_days_per_week=4,
         intensity_distribution={"Z1": 0.70, "Z2": 0.20, "Z3": 0.10, "Z4": 0.0}
     ),
     PhaseConfig(
@@ -45,7 +45,7 @@ PHASE_CONFIGS = [
         swim_focus="Threshold + Race pace",
         strength_focus="Max strength",
         swim_volume_mult=1.1,
-        strength_days_per_week=3,
+        strength_days_per_week=4,
         intensity_distribution={"Z1": 0.55, "Z2": 0.30, "Z3": 0.15, "Z4": 0.0}
     ),
     PhaseConfig(
@@ -55,7 +55,7 @@ PHASE_CONFIGS = [
         swim_focus="Race simulation + Sharpening",
         strength_focus="Power conversion",
         swim_volume_mult=1.0,
-        strength_days_per_week=2,
+        strength_days_per_week=3,
         intensity_distribution={"Z1": 0.50, "Z2": 0.25, "Z3": 0.20, "Z4": 0.05}
     ),
     PhaseConfig(
@@ -136,7 +136,7 @@ def calculate_macrocycle(
         "swim_focus": "Aerobic capacity + Technique",
         "strength_focus": "General adaptation",
         "swim_volume_mult": 1.0,
-        "strength_days": 3,
+        "strength_days": 4,
         "intensity_distribution": {"Z1": 0.70, "Z2": 0.20, "Z3": 0.10, "Z4": 0.0}
     })
     current_week = base_end + 1
@@ -150,7 +150,7 @@ def calculate_macrocycle(
         "swim_focus": "Threshold + Race pace",
         "strength_focus": "Max strength",
         "swim_volume_mult": 1.1,
-        "strength_days": 3,
+        "strength_days": 4,
         "intensity_distribution": {"Z1": 0.55, "Z2": 0.30, "Z3": 0.15, "Z4": 0.0}
     })
     current_week = build_end + 1
@@ -164,7 +164,7 @@ def calculate_macrocycle(
         "swim_focus": "Race simulation + Sharpening",
         "strength_focus": "Power conversion",
         "swim_volume_mult": 1.0,
-        "strength_days": 2,
+        "strength_days": 3,
         "intensity_distribution": {"Z1": 0.50, "Z2": 0.25, "Z3": 0.20, "Z4": 0.05}
     })
     current_week = peak_end + 1

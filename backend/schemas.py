@@ -122,7 +122,7 @@ class CompetitionGoalBase(BaseModel):
     ow_distance_km: Optional[float] = Field(default=None, ge=1.5, le=50)
     ow_conditions: Optional[OWConditions] = None
     target_times: Dict[str, int] = Field(default={})
-    strength_days_per_week: int = Field(ge=1, le=3, default=2)
+    strength_days_per_week: int = Field(ge=1, le=4, default=2)
 
     @field_validator("pool_events")
     @classmethod
@@ -150,7 +150,7 @@ class CompetitionGoalUpdate(BaseModel):
     ow_distance_km: Optional[float] = None
     ow_conditions: Optional[OWConditions] = None
     target_times: Optional[Dict[str, int]] = None
-    strength_days_per_week: Optional[int] = None
+    strength_days_per_week: Optional[int] = Field(default=None, ge=1, le=4)
 
 
 class CompetitionGoalResponse(CompetitionGoalBase):
