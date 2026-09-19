@@ -144,7 +144,7 @@ class StrengthSession(Base):
     week_relative = Column(Integer, nullable=False)
     phase_name = Column(String(20), nullable=False)
 
-    focus = Column(String(20), nullable=False)
+    focus = Column(String(50), nullable=False)
     exercises = Column(JSON, default=[])
     estimated_duration_min = Column(Integer, default=30)
     equipment_needed = Column(JSON, default=[])

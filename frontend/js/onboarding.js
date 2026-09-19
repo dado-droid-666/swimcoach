@@ -479,10 +479,17 @@ function completeOnboarding() {
         strength_days_per_week: parseInt(saved.strength_days_per_week || '2')
     };
     
-    // Submit to API
+    // Submit to API (competition: create, or update if it already exists
+    // from a previous partial attempt — retrying Generate must always work)
+    const saveCompetition = () => api.createCompetition(competitionData).catch(err => {
+        if (err && err.message && err.message.includes('already exists')) {
+            return api.updateCompetition(competitionData);
+        }
+        throw err;
+    });
     Promise.resolve()
         .then(() => api.updateProfile(profileData))
-        .then(() => api.createCompetition(competitionData))
+        .then(saveCompetition)
         .then(() => api.generateMacrocycle())
         .then(() => {
             localStorage.removeItem('onboarding_data');
