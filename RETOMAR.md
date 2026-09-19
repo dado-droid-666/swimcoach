@@ -1,59 +1,48 @@
-# SwimCoach — Retomar después (guardado 17/09/2026)
+# SwimCoach — Retomar después (guardado 19/09/2026 noche)
 
-## Dónde abrir
-- App local: `http://localhost:8000` (frontend + API mismo origen)
-- Docs API: `http://localhost:8000/docs`
-- Salud: `http://localhost:8000/api/health`
-- Arrancar: `cd "C:\Users\mocon\OneDrive\swimcoach"; .\venv\Scripts\python.exe -m uvicorn backend.main:app --reload --port 8000`
-- Detener: `Stop-Process -Name python`
+## Producción
+- LIVE: https://swimcoach-ss5j.onrender.com (plan Free + Supabase pooler 6543).
+  Nombre del sitio se queda así (decisión usuario).
+- Repo: https://github.com/dado-droid-666/swimcoach (main, todo pusheado).
+- Cuenta real del usuario existe; perfil reparado (swim 2→3).
 
-## Estado: críticos UI terminados y verificados
-1. Nuevos `frontend/js/login.js`, `register.js`, `utils.js`; `index.html` carga 12 módulos en orden.
-2. `api.js` → `getMacrocycle()` usa `/plan/macrocycle`.
-3. `sw.js` v1.0.1: sin `competition.js` fantasma, incluye login/register/settings/utils.
-4. `app.js`: router sin loops, redirect `?step=4`, AdSense con llaves corregidas.
-5. `onboarding.js`: steps numéricos + alias texto, fechas locales, validación anti-422.
-6. `session.js`: tabs null-safe, `completeSession()` llama a la API.
-7. `macrocycle.js`: `<h2>` cerrado, volumen con perfil real, `viewWeek()` → `#/session?date=`.
-8. `feedback.js`: paginación `window._fb`, Load More real, XSS-safe, exports globales.
-9. `profile.js`: sin ID duplicado, highlight en checkboxes, export por helper.
-10. `settings.js` / `upgrade.js`: export compartido, portal y cancel implementados.
-11. `backend/routes/plan.py`: eliminado duplicado `POST /api/plan/competition/generate` (vive en `competition.py`).
-12. Bonus: `APP SWIM/Maincode.py` `_main_` → `__main__`.
-- UI en inglés (decisión del usuario). Rediseño minimalista acuático: pendiente, fase 2.
+## Sesión 18-19/09 — todo lo hecho (commits viejos → nuevos)
+- Restyle dark oceánico + bottomnav + olas + player con timer/RPE modal.
+- Fase A ML cliente: tier_model/load_model/trees + JSONs, CSS test en
+  onboarding (tier APLICA level + escala volumen), badge + ritmo en dashboard,
+  factor ML suave en player.
+- AdSense real: `ca-pub-4540036176937342`, banner `7276396302`,
+  contenido `2885278049` (meta de verificación puesta).
+- Pro a **$100 MXN/mes** (backend MXN + upgrade.js). Free trial 1 mes intacto.
+- Equipo: metronome (sets ritmo + SPM), kettlebell_general + trx_general,
+  mezcla round-robin por implemento + rotación semanal, split A/B/C
+  (A=Pull+Core TRX, B=Legs+Hips KB, C=Stamina BW).
+- Metodología v2: `css_zones.py` Z1-Z5 + SPM + guardarraíles, retest CSS 6sem
+  en dashboard, `PROGRESSION.md`, `drill_library.json` + bloques en warmup.
+- Fuerza: tope 4 flexible (Base/Build 4, Peak 3, Taper 1, Race 0), respeta
+  pedido (`min`), solape AM/PM sin marca.
+- Bugs prod corregidos: pooler IPv4 (gratis no habla IPv6), bcrypt==4.0.1,
+  mp_webhook_secret default "", focus VARCHAR(50) (migración 7f3a2b1c9d4e),
+  profile antibrick (límites Update + 422 claro + rangos frontend),
+  fallback updateCompetition en 400, pills un tap (pillClick + :has),
+  saveStepData sin FormData + dedup back/next, endpoint macrocycle.
+- Modelo 1 reentrenado con datos reales: ancla PLOS 2025 (9369 marcas) +
+  priors youngSwimmers (121) + export anonimizado con consentimiento ES+EN
+  (`CONSENTIMIENTO.md`, `sql/004` pendiente de aplicar por el usuario).
+  JSON `rf_v1_2026-09-18` desplegado en SwimCoach y entrenamiento-app.
 
-## Verificación
-- `node --check`: 13 JS + SW OK.
-- `test_final_all.py`: 14 PASS. 2 "FAIL" esperados (portal 404 y cancel 400 en usuario no-Pro).
-- `TestClient GET /` → 200 HTML; `/api/health` ok; `/js/app.js`, `/manifest.json` 200.
+## Pendiente del usuario (con sus cuentas)
+1. Crear cuenta real + flujo completo en prod (perfil ya reparado).
+2. `npx supabase db push` (004 consentimiento) + `netlify deploy --prod`
+   en entrenamiento-app.
+3. Plan Pro $100 MXN manual + webhook en mercadopago.com.mx cuando venda
+   (hoy: checkout funciona, webhook vacío, plan auto).
+4. Revisar aprobación AdSense del sitio.
+5. Confirmar FRONTEND_URL = https://swimcoach-ss5j.onrender.com en Render.
 
-## Pendiente (tarde): fusión con la otra app
-- Usuario pasará archivos de app similar (aún no local).
-- Le gusta: el DISEÑO UI de la otra. Meta: FUSIONAR antes de usar.
-- Flujo acordado:
-  1. Recibir ruta/adjuntos + 2-3 pantallas favoritas.
-  2. Comparativa visual (conservar lógica SwimCoach, traer estilos).
-  3. Plan de fusión por archivo y aplicar solo con visto bueno.
-- Para retomar, decir: "retomamos la fusión".
-
-## Deploy (18/09/2026, plan gratuito $0)
-- Repo: https://github.com/dado-droid-666/swimcoach (main)
-- Plataforma: Render Web Service plan Free (manual, NO Blueprint).
-- DB: Supabase `atypoclonwaxvukwvycy` (directa 5432). Tablas SwimCoach creadas:
-  users, athlete_profiles, competition_goals, macrocycle_plans,
-  training_sessions, strength_sessions, daily_feedback (+ alembic_version).
-  Conviven sin colisión con las de entrenamiento-app.
-- Alembic: migración inicial vacía (el esquema lo crea `init_db()` al arrancar).
-  Fix aplicado en `migrations/env.py` (escape `%` para passwords con `%3F`).
-- `requirements.txt`: + `psycopg2-binary==2.9.10` + `alembic==1.13.2`.
-- Pendiente usuario en Render: crear Web Service Free (Build:
-  `pip install -r backend/requirements.txt`, Start:
-  `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`), pegar env vars
-  (DATABASE_URL Supabase, SECRET_KEY, ENVIRONMENT=production, FRONTEND_URL,
-  MP x4, AdSense x3). Migración futura a DB paga = cambiar 1 variable.
-- PRODUCCIÓN LIVE (18/09/2026): https://swimcoach-ss5j.onrender.com
-  (`/api/health` ok, `/` PWA dark 200, `/docs` 404 en prod como debe ser,
-  `/ml/*.json` servidos). Nota: actualizar FRONTEND_URL en Render a la URL
-  real si se puso otra.
-- Deploy fixes aplicados: PYTHON_VERSION=3.12.4 (Render default 3.14 rompía
-  pydantic-core), `mp_webhook_secret` con default "" (boot sin webhook).
+## Para retomar
+- Servidor local: `cd "C:\Users\mocon\OneDrive\swimcoach"; .\venv\Scripts\python.exe -m uvicorn backend.main:app --reload --port 8000`
+- Tests: `.\venv\Scripts\python.exe test_final_all.py` (14 PASS; 400/404 esperados)
+- Migraciones Supabase: `$env:DATABASE_URL="<pooler URI>"; python -m alembic upgrade head
+- Esquema decisiones: inglés, dark oceánico, acento aqua #3fd0e6, ML aplica
+  (tier→level, factor→reps), retest único CSS,KB/TRX plantilla general.
