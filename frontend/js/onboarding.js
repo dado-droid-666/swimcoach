@@ -308,6 +308,33 @@ function validateStep(step) {
             return false;
         }
     }
+    // Enforce numeric ranges (min/max), e.g. swim days 3-6: browsers
+    // don't block out-of-range typing, and bad values used to brick profiles
+    const numerics = form.querySelectorAll('input[type="number"][name]');
+    for (const field of numerics) {
+        if (field.value === '' || field.value == null) continue;
+        const v = parseFloat(field.value);
+        const lo = field.min !== '' ? parseFloat(field.min) : null;
+        const hi = field.max !== '' ? parseFloat(field.max) : null;
+        if ((lo != null && v < lo) || (hi != null && v > hi)) {
+            field.focus();
+            field.style.borderColor = 'var(--error-color)';
+            window.app.showError(
+                `${field.name.replaceAll('_', ' ')} must be between ${field.min || '…'} and ${field.max || '…'}.`);
+            return false;
+        }
+        field.style.borderColor = '';
+    }
+    // Coherence: swim days can't exceed selected training days
+    const swimDays = form.querySelector('[name="swim_days_per_week"]');
+    const dayBoxes = form.querySelectorAll('input[name="available_days"]:checked');
+    if (swimDays && dayBoxes && dayBoxes.length && parseInt(swimDays.value) > dayBoxes.length) {
+        swimDays.focus();
+        swimDays.style.borderColor = 'var(--error-color)';
+        window.app.showError(
+            `Swim days (${swimDays.value}) exceed your ${dayBoxes.length} selected training days.`);
+        return false;
+    }
     return true;
 }
 

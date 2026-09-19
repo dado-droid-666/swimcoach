@@ -40,10 +40,17 @@ class ApiClient {
                 throw new Error(data.detail || 'Pro feature - upgrade required');
             }
             
-            // Handle other errors
+            // Handle other errors (422 validation included)
             if (!response.ok) {
                 const data = await response.json().catch(() => ({}));
-                throw new Error(data.detail || `HTTP ${response.status}`);
+                let msg = data.detail || `HTTP ${response.status}`;
+                if (Array.isArray(msg)) {
+                    msg = msg.map(e => {
+                        const field = (e.loc || []).filter(x => x !== 'body').join('.');
+                        return field ? `${field}: ${e.msg}` : e.msg;
+                    }).join('; ');
+                }
+                throw new Error(msg);
             }
             
             // Parse JSON if present

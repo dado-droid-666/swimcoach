@@ -95,14 +95,14 @@ class AthleteProfileCreate(AthleteProfileBase):
 
 class AthleteProfileUpdate(AthleteProfileBase):
     level: Optional[Level] = None
-    swim_days_per_week: Optional[int] = None
-    target_volume_per_session: Optional[int] = None
+    swim_days_per_week: Optional[int] = Field(default=None, ge=3, le=6)
+    target_volume_per_session: Optional[int] = Field(default=None, ge=1500, le=8000)
     preferred_strokes: Optional[List[str]] = None
     available_equipment: Optional[List[str]] = None
     primary_goal: Optional[PrimaryGoal] = None
     available_days: Optional[List[int]] = None
-    session_duration_min: Optional[int] = None
-    ftp_pace_per_100: Optional[int] = None
+    session_duration_min: Optional[int] = Field(default=None, ge=45, le=150)
+    ftp_pace_per_100: Optional[int] = Field(default=None, ge=60, le=300)
     injury_notes: Optional[str] = None
 
 
