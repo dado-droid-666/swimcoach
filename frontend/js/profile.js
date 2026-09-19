@@ -73,7 +73,7 @@ async function renderProfile(app) {
                         <label for="available_days">Training Days</label>
                         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
                             ${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d, i) => `
-                                <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;">
+                                <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;" onclick="pillClick(event, this)">
                                     <input type="checkbox" name="available_days" value="${i === 6 ? 0 : i}" ${(app.state.profile?.available_days || [1,3,5]).includes(i === 6 ? 0 : i) ? 'checked' : ''} onchange="updateDays()">
                                     ${d}
                                 </label>
@@ -85,7 +85,7 @@ async function renderProfile(app) {
                         <label for="preferred_strokes">Preferred Strokes</label>
                         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
                             ${['freestyle', 'backstroke', 'breaststroke', 'butterfly', 'im'].map(s => `
-                                <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;">
+                                <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;" onclick="pillClick(event, this)">
                                     <input type="checkbox" name="preferred_strokes" value="${s}" ${(app.state.profile?.preferred_strokes || ['freestyle']).includes(s) ? 'checked' : ''} onchange="updateStrokes()">
                                     ${s.charAt(0).toUpperCase() + s.slice(1)}
                                 </label>
@@ -97,7 +97,7 @@ async function renderProfile(app) {
                         <label for="available_equipment">Swim Equipment</label>
                         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
                             ${['pull_buoy', 'paddles', 'fins', 'snorkel', 'kickboard', 'metronome'].map(e => `
-                                <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;">
+                                <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;" onclick="pillClick(event, this)">
                                     <input type="checkbox" name="available_equipment" value="${e}" ${(app.state.profile?.available_equipment || []).includes(e) ? 'checked' : ''} onchange="updateEquipment(this)">
                                     ${e.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
                                 </label>
@@ -109,7 +109,7 @@ async function renderProfile(app) {
                         <label for="available_equipment">Strength Equipment</label>
                         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
                             ${['bodyweight', 'bands', 'kettlebell', 'trx'].map(e => `
-                                <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;">
+                                <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;" onclick="pillClick(event, this)">
                                     <input type="checkbox" name="available_equipment" value="${e}" ${(app.state.profile?.available_equipment || []).includes(e) || e === 'bodyweight' ? 'checked' : ''} onchange="updateEquipment(this)">
                                     ${e.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}${e === 'bodyweight' ? ' (always)' : ''}
                                 </label>

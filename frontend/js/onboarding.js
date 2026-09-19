@@ -134,7 +134,7 @@ function equipmentStep(app) {
             <legend style="margin-bottom: 1rem;">Swim Equipment (available)</legend>
             <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
                 ${swimEquip.map(e => `
-                    <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;" onclick="pillClick(event, this)">
                         <input type="checkbox" name="swim_equip" value="${e}" onchange="toggleEquipment(this)">
                         ${e.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
                     </label>
@@ -146,7 +146,7 @@ function equipmentStep(app) {
             <legend style="margin-bottom: 1rem;">Strength Equipment (available)</legend>
             <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
                 ${strengthEquip.map(e => `
-                    <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;" onclick="pillClick(event, this)">
                         <input type="checkbox" name="strength_equip" value="${e}" checked onchange="toggleEquipment(this)">
                         ${e.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} ${e === 'bodyweight' ? '(always included)' : ''}
                     </label>
@@ -174,7 +174,7 @@ function goalsStep(app) {
                 <label for="preferred_strokes">Preferred Strokes</label>
                 <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
                     ${['freestyle', 'backstroke', 'breaststroke', 'butterfly', 'im'].map(s => `
-                        <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;" onclick="pillClick(event, this)">
                             <input type="checkbox" name="preferred_strokes" value="${s}" ${s === 'freestyle' ? 'checked' : ''} onchange="toggleStroke(this)">
                             ${s.charAt(0).toUpperCase() + s.slice(1)}
                         </label>
@@ -186,7 +186,7 @@ function goalsStep(app) {
                 <label for="available_days">Training Days (Mon=1...Sun=0)</label>
                 <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
                     ${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d, i) => `
-                        <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;" onclick="pillClick(event, this)">
                             <input type="checkbox" name="available_days" value="${i === 6 ? 0 : i}" ${[1,3,5].includes(i) ? 'checked' : ''} onchange="toggleDay(this)">
                             ${d}
                         </label>
@@ -224,7 +224,7 @@ function competitionStep(app) {
                 <legend style="margin-bottom: 1rem;">Pool Events</legend>
                 <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
                     ${['50_free', '100_free', '200_free', '400_free', '800_free', '1500_free', '50_back', '100_back', '200_back', '50_breast', '100_breast', '200_breast', '50_fly', '100_fly', '200_fly', '100_im', '200_im', '400_im'].map(e => `
-                        <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;" onclick="pillClick(event, this)">
                             <input type="checkbox" name="pool_events" value="${e}" onchange="toggleEvent(this)">
                             ${e.replace('_', ' ').toUpperCase()}
                         </label>

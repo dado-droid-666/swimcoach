@@ -645,6 +645,16 @@ th {
     background: var(--primary);
 }
 
+/* One-tap pill checkboxes: checked state visible even before/without JS paint */
+label:has(> input[type="checkbox"]:checked) {
+    border-color: var(--primary) !important;
+    background: var(--primary-background) !important;
+}
+label:has(> input[type="checkbox"]) {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
 /* Selection */
 ::selection {
     background: var(--primary-background);

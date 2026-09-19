@@ -93,3 +93,25 @@ function askEffort(title) {
 
 window.flashScreen = flashScreen;
 window.askEffort = askEffort;
+
+// One-tap pill checkboxes. The label handles the tap explicitly
+// (preventDefault + manual flip) so selection always happens on the
+// FIRST tap on desktop and touch — no double-tap quirk, no double-fire.
+function pillClick(e, label) {
+    if (e) e.preventDefault();
+    const box = label ? label.querySelector('input[type="checkbox"]') : null;
+    if (!box || box.disabled) return;
+    box.checked = !box.checked;
+    paintPill(box);
+    box.dispatchEvent(new Event('change', { bubbles: true }));
+}
+
+function paintPill(box) {
+    if (box && box.parentElement) {
+        box.parentElement.style.background = box.checked ? 'var(--primary-background)' : '';
+        box.parentElement.style.borderColor = box.checked ? 'var(--primary)' : '';
+    }
+}
+
+window.pillClick = pillClick;
+window.paintPill = paintPill;
