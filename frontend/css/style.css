@@ -674,9 +674,9 @@ label:has(> input[type="checkbox"]) {
 #navbar { background: #082238ee; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
 #navbar a { color: var(--muted-color); }
 
-/* Centered navbar: content capped like main, links centered */
+/* Centered navbar: content capped and centered, links keep right */
 #navbar .nav-inner {
-    max-width: 520px;
+    max-width: 860px;
     margin: 0 auto;
     padding: 0 1rem;
     display: flex;

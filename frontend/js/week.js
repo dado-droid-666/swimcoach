@@ -39,6 +39,22 @@ async function renderWeek(app, startParam) {
     (week.swim_sessions || []).forEach(s => { swimByDate[s.date] = s; });
     const strByDate = {};
     (week.strength_sessions || []).forEach(s => { strByDate[s.date] = s; });
+    const hasAny = Object.keys(swimByDate).length + Object.keys(strByDate).length > 0;
+
+    // If this week is empty but the user has a plan, offer a jump to the
+    // current training week instead of a silent wall of rest days.
+    let emptyNotice = '';
+    if (!hasAny) {
+        const jump = trainingWeekMonday();
+        if (jump && jump !== startISO) {
+            emptyNotice = `
+                <article class="card" style="margin-bottom: 1rem; border-left: 4px solid var(--warning-color);">
+                    <strong>No sessions this week.</strong>
+                    <div style="color: var(--muted-color); font-size: 0.875rem; margin: 0.25rem 0 0.75rem;">Your plan trains other weeks — jump straight there.</div>
+                    <button class="big-btn secondary" onclick="location.hash='#/week?start=${jump}'">Go to my training week →</button>
+                </article>`;
+        }
+    }
 
     const days = [];
     for (let i = 0; i < 7; i++) {
@@ -57,6 +73,10 @@ async function renderWeek(app, startParam) {
 
     const prevISO = toISODate(addDays(monday, -7));
     const nextISO = toISODate(addDays(monday, 7));
+    const isPro = window.app && window.app.state.tier === 'pro';
+    const regenLink = isPro
+        ? `<a href="#" id="regen-week" style="font-size: 13px;">↻ Regenerate</a>`
+        : `<a href="#" id="regen-week" style="font-size: 13px; opacity: 0.55;" title="Pro feature">🔒 Regenerate</a>`;
     const title = `${monday.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${addDays(monday, 6).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
 
     const dayType = (day) => {
@@ -68,13 +88,14 @@ async function renderWeek(app, startParam) {
 
     document.getElementById('app').innerHTML = `
         <div style="max-width: 520px; margin: 0 auto;">
-            <div class="topbar"><span class="brand">Your <b>week</b></span><span><a href="#/macrocycle" style="font-size: 13px;">Full plan →</a> · <a href="#" id="regen-week" style="font-size: 13px;">↻ Regenerate</a></span></div>
+            <div class="topbar"><span class="brand">Your <b>week</b></span><span><a href="#/macrocycle" style="font-size: 13px;">Full plan →</a> · ${regenLink}</span></div>
             <div class="semana-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
                 <button class="semana-nav-btn" onclick="location.hash='#/week?start=${prevISO}'">←</button>
                 <div style="text-align:center"><div id="semana-titulo" style="font-weight: 700;">${title}</div><div style="font-size: 11px; color: var(--muted-color);">Drag sessions between days (Pro) · tap to open</div></div>
                 <button class="semana-nav-btn" onclick="location.hash='#/week?start=${nextISO}'">→</button>
             </div>
             <div id="week-list">
+                ${emptyNotice}
                 ${days.map(day => `
                     <div class="card day-row ${dayType(day)}" data-date="${day.iso}"
                          ondragover="event.preventDefault()" ondrop="dropSession(event, '${day.iso}')"
@@ -172,6 +193,30 @@ window.dragSession = dragSession;
 window.dropSession = dropSession;
 window.pickSession = pickSession;
 window.weekDayTap = weekDayTap;
+
+// Monday of the user's current training week, derived from the
+// competition date + macrocycle length. Null when unknown.
+function trainingWeekMonday() {
+    try {
+        const app = window.app;
+        const comp = app && app.state.competition;
+        const macro = app && app.state.macrocycle;
+        if (!comp || !comp.competition_date || !macro || !macro.total_weeks) return null;
+        const race = new Date(parseInt(comp.competition_date.slice(0, 4)),
+            parseInt(comp.competition_date.slice(5, 7)) - 1,
+            parseInt(comp.competition_date.slice(8, 10)));
+        const start = new Date(race.getFullYear(), race.getMonth(), race.getDate());
+        start.setDate(start.getDate() - macro.total_weeks * 7);
+        const today = new Date();
+        const t = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const anchor = t < start ? start : (t > race ? race : t);
+        const mon = new Date(anchor.getFullYear(), anchor.getMonth(), anchor.getDate());
+        mon.setDate(mon.getDate() - ((mon.getDay() + 6) % 7));
+        return mon.toLocaleDateString('en-CA');
+    } catch {
+        return null;
+    }
+}
 
 window.renderWeek = renderWeek;
 window.mondayOf = mondayOf;
