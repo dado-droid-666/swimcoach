@@ -126,7 +126,7 @@ function viewWeek(week) {
     const monday = new Date(target);
     monday.setDate(target.getDate() - ((target.getDay() + 6) % 7));
     const iso = monday.toLocaleDateString('en-CA');
-    window.location.hash = `#/session?date=${iso}`;
+    window.location.hash = `#/week?start=${iso}`;
 }
 
 function phaseProgress(phase, app) {

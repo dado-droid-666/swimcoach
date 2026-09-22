@@ -1,15 +1,47 @@
 // Session View
+function parseISODate(iso) {
+    return new Date(parseInt(iso.slice(0, 4)), parseInt(iso.slice(5, 7)) - 1, parseInt(iso.slice(8, 10)));
+}
+
+function mondayISO(iso) {
+    const d = parseISODate(iso);
+    d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+    return window.localISO ? localISO(d) : d.toLocaleDateString('en-CA');
+}
+
+async function findNearestSessions(dateISO) {
+    // Scan ±14 days for the closest days with sessions (for rest-day card)
+    const prev = [];
+    const next = [];
+    const seen = new Set();
+    for (let off = 1; off <= 14; off++) {
+        for (const [arr, delta] of [[prev, -off], [next, off]]) {
+            const iso = window.shiftISO ? shiftISO(dateISO, delta) : dateISO;
+            const wk = mondayISO(iso);
+            if (seen.has(wk)) continue;
+            seen.add(wk);
+            try {
+                const plan = await api.getWeekPlan(wk);
+                const has = (plan.swim_sessions || []).concat(plan.strength_sessions || [])
+                    .some(s => s.date === iso);
+                if (has) arr.push(iso);
+            } catch { /* ignore offline weeks */ }
+        }
+        if (prev.length && next.length) break;
+    }
+    return { prev: prev[0] || null, next: next[0] || null };
+}
+
 async function renderSession(app, dateParam) {
-    const date = dateParam === 'today' ? new Date().toISOString().split('T')[0] : dateParam;
-    
+    const todayISO = window.localISO ? localISO(new Date()) : new Date().toLocaleDateString('en-CA');
+    const date = dateParam === 'today' ? todayISO : dateParam;
+
     let sessionData;
     try {
         if (dateParam === 'today') {
             sessionData = await api.getTodayPlan();
         } else {
-            const weekStart = new Date(date);
-            weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-            const weekPlan = await api.getWeekPlan(weekStart.toISOString().split('T')[0]);
+            const weekPlan = await api.getWeekPlan(mondayISO(date));
             sessionData = {
                 swim: weekPlan.swim_sessions.find(s => s.date === date) || null,
                 strength: weekPlan.strength_sessions.find(s => s.date === date) || null
@@ -20,19 +52,29 @@ async function renderSession(app, dateParam) {
         return;
     }
     
-    const sessionDate = new Date(date);
+    const sessionDate = parseISODate(date);
     const dayName = sessionDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-    
+
     const swim = sessionData.swim;
     const strength = sessionData.strength;
+    const prevISO = window.shiftISO ? shiftISO(date, -1) : date;
+    const nextISO = window.shiftISO ? shiftISO(date, 1) : date;
     
     const html = `
         <div class="session-view" style="max-width: 800px; margin: 0 auto;">
-            <header style="margin-bottom: 1.5rem;">
-                <a href="#/dashboard" class="secondary" style="text-decoration: none; font-size: 0.875rem;">← Back to Dashboard</a>
+            <header style="margin-bottom: 1rem;">
+                <div class="topbar"><a href="#/dashboard" class="secondary" style="text-decoration: none; font-size: 0.875rem;">← Dashboard</a><a href="#/week?start=${mondayISO(date)}" style="font-size: 0.875rem;">Week →</a></div>
                 <h1 style="margin: 0.5rem 0 0;">${dayName}</h1>
                 <p style="color: var(--muted-color); margin: 0;">${swim?.phase_name || strength?.phase_name || 'Training'} • Week ${swim?.week_relative || strength?.week_relative || '?'}</p>
             </header>
+
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem;">
+                <button class="secondary" style="flex: 1;" onclick="location.hash='#/session?date=${prevISO}'">← Prev day</button>
+                <button class="secondary" style="flex: 1;" onclick="location.hash='#/session/today'">Today</button>
+                <button class="secondary" style="flex: 1;" onclick="location.hash='#/session?date=${nextISO}'">Next day →</button>
+            </div>
+
+            <div id="rest-day-slot"></div>
             
             <div class="tabs" style="display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem;" role="tablist">
                 <button role="tab" class="tab-btn ${swim ? 'active' : ''}" data-tab="swim" ${!swim ? 'disabled' : ''} onclick="switchTab('swim')">
@@ -102,6 +144,39 @@ async function renderSession(app, dateParam) {
     }
 
     wirePlayer(swim, strength);
+
+    if (!swim && !strength) {
+        renderRestDay(date);
+    }
+}
+
+async function renderRestDay(dateISO) {
+    const slot = document.getElementById('rest-day-slot');
+    if (!slot) return;
+    slot.innerHTML = `
+        <article class="card" style="margin-bottom: 1.5rem; text-align: center; padding: 2rem;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">😴</div>
+            <h2 style="margin: 0 0 0.5rem;">Rest day</h2>
+            <p style="color: var(--muted-color); margin: 0 0 1rem;">Your plan schedules no training for this day. Recovery is part of the program.</p>
+            <div id="nearest-sessions" style="color: var(--muted-color); font-size: 0.875rem;">Looking for nearby sessions…</div>
+        </article>`;
+    try {
+        const { prev, next } = await findNearestSessions(dateISO);
+        const box = document.getElementById('nearest-sessions');
+        if (!box) return;
+        if (!prev && !next) {
+            box.textContent = 'No sessions found within ±14 days.';
+            return;
+        }
+        box.innerHTML = `
+            <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+                ${prev ? `<button class="secondary" onclick="location.hash='#/session?date=${prev}'">← ${prev}</button>` : ''}
+                ${next ? `<button class="secondary" onclick="location.hash='#/session?date=${next}'">${next} →</button>` : ''}
+            </div>`;
+    } catch {
+        const box = document.getElementById('nearest-sessions');
+        if (box) box.textContent = '';
+    }
 }
 
 function switchTab(tab) {
@@ -455,7 +530,7 @@ function withTimeout(promise, ms) {
 }
 
 async function completeSession(type) {
-    const date = new Date().toISOString().split('T')[0];
+    const date = window.localISO ? localISO(new Date()) : new Date().toLocaleDateString('en-CA');
     const data = {
         date,
         swim_completed: type === 'swim',
@@ -479,7 +554,8 @@ async function completeSession(type) {
 }
 
 function logFeedback(type) {
-    window.location.hash = `#/feedback?date=${new Date().toISOString().split('T')[0]}&type=${type}`;
+    const today = window.localISO ? localISO(new Date()) : new Date().toLocaleDateString('en-CA');
+    window.location.hash = `#/feedback?date=${today}&type=${type}`;
 }
 
 // Export

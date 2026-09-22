@@ -154,6 +154,7 @@ class App {
             '/onboarding': () => this.renderOnboarding(),
             '/dashboard': () => this.renderDashboard(),
             '/macrocycle': () => this.renderMacrocycle(),
+            '/week': (params) => this.renderWeek(params.get('start') || null),
             '/session': (params) => this.renderSession(params.get('date') || 'today'),
             '/feedback': () => this.renderFeedback(),
             '/profile': () => this.renderProfile(),
@@ -166,7 +167,7 @@ class App {
         for (const [routePath, handler] of Object.entries(routes)) {
             if (path.startsWith(routePath)) {
                 // Check auth for protected routes
-                const protectedRoutes = ['/dashboard', '/macrocycle', '/session', '/feedback', '/profile', '/upgrade', '/settings'];
+                const protectedRoutes = ['/dashboard', '/macrocycle', '/week', '/session', '/feedback', '/profile', '/upgrade', '/settings'];
                 const isProtected = protectedRoutes.some(r => path.startsWith(r));
                 
                 if (isProtected && !this.state.user) {
@@ -224,6 +225,7 @@ class App {
     renderOnboarding() { renderOnboarding(this); }
     renderDashboard() { renderDashboard(this); }
     renderMacrocycle() { renderMacrocycle(this); }
+    renderWeek(start) { renderWeek(this, start); }
     renderSession(date) { renderSession(this, date); }
     renderFeedback() { renderFeedback(this); }
     renderProfile() { renderProfile(this); }

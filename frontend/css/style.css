@@ -673,6 +673,26 @@ label:has(> input[type="checkbox"]) {
 #navbar, main, footer { position: relative; z-index: 1; }
 #navbar { background: #082238ee; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
 #navbar a { color: var(--muted-color); }
+
+/* Centered navbar: content capped like main, links centered */
+#navbar .nav-inner {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+#navbar ul {
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+@media (max-width: 640px) {
+    #navbar .nav-inner { justify-content: center; }
+    #navbar #nav-links { display: none !important; }
+}
 main { max-width: 520px; margin: 0 auto; width: 100%; }
 
 .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 18px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }

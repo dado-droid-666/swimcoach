@@ -150,6 +150,16 @@ class ApiClient {
         return this.request('/plan/today');
     }
 
+    async moveSession(type, id, date) {
+        return this.request(`/plan/session/move?session_type=${type}&session_id=${id}&date=${date}`, {
+            method: 'PUT'
+        });
+    }
+
+    async regenerateWeek(startDate) {
+        return this.request(`/plan/week/regenerate?start=${startDate}`, { method: 'POST' });
+    }
+
     // Feedback
     async submitFeedback(data) {
         return this.request('/feedback', {

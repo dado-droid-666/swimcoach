@@ -115,3 +115,19 @@ function paintPill(box) {
 
 window.pillClick = pillClick;
 window.paintPill = paintPill;
+
+// Local calendar date (YYYY-MM-DD) in the user's timezone.
+// Never use toISOString() for calendar dates: it shifts days in UTC- zones.
+function localISO(d) {
+    const x = d instanceof Date ? d : new Date(d);
+    return x.toLocaleDateString('en-CA');
+}
+
+function shiftISO(iso, days) {
+    const d = new Date(parseInt(iso.slice(0, 4)), parseInt(iso.slice(5, 7)) - 1, parseInt(iso.slice(8, 10)));
+    d.setDate(d.getDate() + days);
+    return localISO(d);
+}
+
+window.localISO = localISO;
+window.shiftISO = shiftISO;
