@@ -1,5 +1,10 @@
 // Week View: Mon-Sun strip with per-day swim/strength badges.
+// Date math delegates to utils.js (single source; local timezone, no UTC shift).
 function mondayOf(d) {
+    if (window.mondayISO && window.localISO) {
+        const iso = window.localISO(d);
+        return window.parseISODate(window.mondayISO(iso));
+    }
     const m = new Date(d.getFullYear(), d.getMonth(), d.getDate());
     m.setDate(m.getDate() - ((m.getDay() + 6) % 7));
     return m;
@@ -12,7 +17,13 @@ function addDays(d, n) {
 }
 
 function toISODate(d) {
+    if (window.localISO) return window.localISO(d);
     return d.toLocaleDateString('en-CA');
+}
+
+function dateKey(v) {
+    if (window.normDate) return window.normDate(v);
+    return String(v == null ? '' : v).slice(0, 10);
 }
 
 async function renderWeek(app, startParam) {
@@ -36,9 +47,9 @@ async function renderWeek(app, startParam) {
     }
 
     const swimByDate = {};
-    (week.swim_sessions || []).forEach(s => { swimByDate[s.date] = s; });
+    (week.swim_sessions || []).forEach(s => { swimByDate[dateKey(s.date)] = s; });
     const strByDate = {};
-    (week.strength_sessions || []).forEach(s => { strByDate[s.date] = s; });
+    (week.strength_sessions || []).forEach(s => { strByDate[dateKey(s.date)] = s; });
     const hasAny = Object.keys(swimByDate).length + Object.keys(strByDate).length > 0;
 
     // If this week is empty but the user has a plan, offer a jump to the
@@ -88,10 +99,10 @@ async function renderWeek(app, startParam) {
 
     document.getElementById('app').innerHTML = `
         <div style="max-width: 520px; margin: 0 auto;">
-            <div class="topbar"><span class="brand">Your <b>week</b></span><span><a href="#/macrocycle" style="font-size: 13px;">Full plan →</a> · ${regenLink}</span></div>
+            <div class="topbar" style="gap: 0.75rem; flex-wrap: wrap;"><span class="brand">Your <b>week</b></span><span style="display: flex; gap: 0.75rem; align-items: center;"><a href="#/macrocycle" style="font-size: 13px;">Full plan →</a><a href="#" id="move-mode-btn" style="font-size: 13px;${isPro ? '' : ' opacity: 0.55;'}" title="${isPro ? 'Move sessions between days' : 'Pro feature'}">${isPro ? '✥ Move' : '🔒 Move'}</a>${regenLink}</span></div>
             <div class="semana-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
                 <button class="semana-nav-btn" onclick="location.hash='#/week?start=${prevISO}'">←</button>
-                <div style="text-align:center"><div id="semana-titulo" style="font-weight: 700;">${title}</div><div style="font-size: 11px; color: var(--muted-color);">Drag sessions between days (Pro) · tap to open</div></div>
+                <div style="text-align:center"><div id="semana-titulo" style="font-weight: 700;">${title}</div><div style="font-size: 11px; color: var(--muted-color);">Tap a day to open · ✥ Move needs Pro</div></div>
                 <button class="semana-nav-btn" onclick="location.hash='#/week?start=${nextISO}'">→</button>
             </div>
             <div id="week-list">
@@ -105,8 +116,8 @@ async function renderWeek(app, startParam) {
                             <span class="day-date">${day.num}</span>
                         </div>
                         <div class="day-row-mid" style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
-                            ${day.swim ? `<span draggable="true" ondragstart="dragSession(event, 'swim', ${day.swim.id})" onclick="pickSession(event, 'swim', ${day.swim.id})" title="Drag or tap to move"><span class="tipo-badge tipo-alberca">Swim ✥</span> <span class="day-total">${day.swim.total_meters.toLocaleString()}m · ${day.swim.focus || ''}</span></span>` : ''}
-                            ${day.strength ? `<span draggable="true" ondragstart="dragSession(event, 'strength', ${day.strength.id})" onclick="pickSession(event, 'strength', ${day.strength.id})" title="Drag or tap to move"><span class="tipo-badge tipo-fuerza">Strength ✥</span> <span class="day-total">${day.strength.exercises?.length || 0} ex · ${day.strength.focus || ''}</span></span>` : ''}
+                            ${day.swim ? `<span draggable="true" ondragstart="dragSession(event, 'swim', ${day.swim.id})" onclick="badgeTap(event, 'swim', ${day.swim.id}, '${day.iso}')" title="Open session"><span class="tipo-badge tipo-alberca">Swim</span> <span class="day-total">${day.swim.total_meters.toLocaleString()}m · ${day.swim.focus || ''}</span></span>` : ''}
+                            ${day.strength ? `<span draggable="true" ondragstart="dragSession(event, 'strength', ${day.strength.id})" onclick="badgeTap(event, 'strength', ${day.strength.id}, '${day.iso}')" title="Open session"><span class="tipo-badge tipo-fuerza">Strength</span> <span class="day-total">${day.strength.exercises?.length || 0} ex · ${day.strength.focus || ''}</span></span>` : ''}
                             ${!day.swim && !day.strength ? `<span class="day-total">Rest day</span>` : ''}
                         </div>
                         <div class="day-row-right">→</div>
@@ -115,6 +126,7 @@ async function renderWeek(app, startParam) {
             </div>
         </div>
     `;
+    document.getElementById('move-mode-btn').addEventListener('click', toggleMoveMode);
     document.getElementById('regen-week').addEventListener('click', async (e) => {
         e.preventDefault();
         if (!requireProUI()) return;
@@ -149,16 +161,39 @@ async function dropSession(e, targetISO) {
     await moveSessionTo(targetISO, e.dataTransfer ? e.dataTransfer.getData('application/json') : null);
 }
 
-// Tap-to-move fallback for touch (drag rarely works on mobile):
-// tap a session to pick it up, tap another day to drop it.
+// Tap always opens the session. Moving happens only in explicit Move mode
+// (Pro): tap ✥ Move, tap a session, tap the destination day.
+let _moveMode = false;
 let _movePick = null;
 
-function pickSession(e, type, id) {
+function setMoveMode(on) {
+    _moveMode = on;
+    _movePick = null;
+    const btn = document.getElementById('move-mode-btn');
+    if (btn) btn.textContent = on ? '✖ Cancel move' : '✥ Move';
+}
+
+function toggleMoveMode(e) {
+    if (e) e.preventDefault();
+    if (!_moveMode && !requireProUI()) return;
+    setMoveMode(!_moveMode);
+    if (_moveMode) window.app.showSuccess('Move mode: tap a session, then tap a day.');
+}
+
+function badgeTap(e, type, id, iso) {
     e.stopPropagation();
-    if (!requireProUI()) return;
+    if (_moveMode) {
+        pickSession(e, type, id);
+    } else {
+        window.location.hash = `#/session?date=${iso}`;
+    }
+}
+
+function pickSession(e, type, id) {
+    if (e) e.stopPropagation();
     if (_movePick && _movePick.type === type && _movePick.id === id) {
         _movePick = null;
-        window.app.showSuccess('Move cancelled.');
+        window.app.showSuccess('Move cancelled — pick another session or exit move mode.');
         return;
     }
     _movePick = { type, id };
@@ -166,7 +201,7 @@ function pickSession(e, type, id) {
 }
 
 function weekDayTap(iso) {
-    if (_movePick) {
+    if (_moveMode && _movePick) {
         const pick = _movePick;
         _movePick = null;
         moveSessionTo(iso, JSON.stringify(pick));
@@ -183,6 +218,7 @@ async function moveSessionTo(targetISO, raw) {
     try {
         await api.moveSession(sel.type, sel.id, targetISO);
         window.app.showSuccess(`Moved to ${targetISO}`);
+        setMoveMode(false);
         renderWeek(window.app, targetISO);
     } catch (err) {
         window.app.showError(err.message || 'Move failed (day may be occupied)');
@@ -191,8 +227,8 @@ async function moveSessionTo(targetISO, raw) {
 
 window.dragSession = dragSession;
 window.dropSession = dropSession;
-window.pickSession = pickSession;
-window.weekDayTap = weekDayTap;
+window.badgeTap = badgeTap;
+window.toggleMoveMode = toggleMoveMode;
 
 // Monday of the user's current training week, derived from the
 // competition date + macrocycle length. Null when unknown.

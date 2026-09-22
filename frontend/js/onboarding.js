@@ -259,6 +259,18 @@ function competitionStep(app) {
                 <label for="strength_days_per_week">Strength Sessions per Week (max 4, may share a day with swim)</label>
                 <input type="number" id="strength_days_per_week" name="strength_days_per_week" min="1" max="4" value="2" required>
             </div>
+
+            <div class="grid" style="margin-bottom: 1rem;">
+                <label>Strength days (optional — leave empty for automatic, non-swim days first)</label>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    ${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d, i) => `
+                        <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;" onclick="pillClick(event, this)">
+                            <input type="checkbox" name="strength_days" value="${i}" onchange="toggleDay(this)">
+                            ${d}
+                        </label>
+                    `).join('')}
+                </div>
+            </div>
         </form>
     `;
 }
@@ -466,7 +478,8 @@ function completeOnboarding() {
         ])),
         preferred_strokes: saved.preferred_strokes ? (Array.isArray(saved.preferred_strokes) ? saved.preferred_strokes : [saved.preferred_strokes]) : ['freestyle'],
         primary_goal: saved.primary_goal || 'endurance',
-        available_days: saved.available_days ? (Array.isArray(saved.available_days) ? saved.available_days.map(Number) : [Number(saved.available_days)]) : [1, 3, 5]
+        available_days: saved.available_days ? (Array.isArray(saved.available_days) ? saved.available_days.map(Number) : [Number(saved.available_days)]) : [1, 3, 5],
+        strength_days: saved.strength_days ? (Array.isArray(saved.strength_days) ? saved.strength_days.map(Number).filter(d => d >= 0 && d <= 6) : [Number(saved.strength_days)].filter(d => d >= 0 && d <= 6)) : []
     };
     
     const competitionData = {

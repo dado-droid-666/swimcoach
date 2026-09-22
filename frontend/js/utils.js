@@ -131,3 +131,25 @@ function shiftISO(iso, days) {
 
 window.localISO = localISO;
 window.shiftISO = shiftISO;
+
+// Parse YYYY-MM-DD as a LOCAL date (never new Date(iso): UTC shift bug).
+function parseISODate(iso) {
+    return new Date(parseInt(iso.slice(0, 4)), parseInt(iso.slice(5, 7)) - 1, parseInt(iso.slice(8, 10)));
+}
+
+// Monday (local) of the week containing iso. Matches backend Monday weeks.
+function mondayISO(iso) {
+    const d = parseISODate(iso);
+    d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+    return localISO(d);
+}
+
+// Normalize any API date value to YYYY-MM-DD for key matching.
+function normDate(v) {
+    if (v == null) return '';
+    return String(v).slice(0, 10);
+}
+
+window.parseISODate = parseISODate;
+window.mondayISO = mondayISO;
+window.normDate = normDate;

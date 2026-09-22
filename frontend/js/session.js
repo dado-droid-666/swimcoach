@@ -1,13 +1,5 @@
-// Session View
-function parseISODate(iso) {
-    return new Date(parseInt(iso.slice(0, 4)), parseInt(iso.slice(5, 7)) - 1, parseInt(iso.slice(8, 10)));
-}
-
-function mondayISO(iso) {
-    const d = parseISODate(iso);
-    d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
-    return window.localISO ? localISO(d) : d.toLocaleDateString('en-CA');
-}
+// Session View (date helpers come from utils.js: parseISODate, mondayISO,
+// localISO, shiftISO, normDate — single source, local timezone, no UTC shift)
 
 async function findNearestSessions(dateISO) {
     // Scan ±14 days for the closest days with sessions (for rest-day card)
@@ -42,9 +34,10 @@ async function renderSession(app, dateParam) {
             sessionData = await api.getTodayPlan();
         } else {
             const weekPlan = await api.getWeekPlan(mondayISO(date));
+            const key = window.normDate ? normDate(date) : date;
             sessionData = {
-                swim: weekPlan.swim_sessions.find(s => s.date === date) || null,
-                strength: weekPlan.strength_sessions.find(s => s.date === date) || null
+                swim: weekPlan.swim_sessions.find(s => (window.normDate ? normDate(s.date) : s.date) === key) || null,
+                strength: weekPlan.strength_sessions.find(s => (window.normDate ? normDate(s.date) : s.date) === key) || null
             };
         }
     } catch (error) {

@@ -717,9 +717,9 @@ button.primary:hover, .primary:hover { background: #fff; border-color: #fff; }
 .secondary { background: transparent; color: var(--text-ocean); border-color: var(--border-color); }
 .secondary:hover { background: var(--bg-card2); }
 
-.bottomnav { position: fixed; left: 0; right: 0; bottom: 0; display: flex; background: #082238ee; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border-color); padding-bottom: env(safe-area-inset-bottom); z-index: 200; }
-.navbtn { flex: 1; background: none; border: none; color: var(--muted-color); padding: 10px 4px 8px; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; }
-.navbtn .ico { font-size: 20px; }
+.bottomnav { position: fixed; left: 0; right: 0; bottom: 0; display: flex; background: #082238ee; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border-color); padding-bottom: env(safe-area-inset-bottom); z-index: 200; gap: 0; }
+.navbtn { flex: 1 1 0; min-width: 0; background: none; border: none; color: var(--muted-color); padding: 8px 2px 6px; font-size: 10px; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.navbtn .ico { font-size: 18px; }
 .navbtn.active { color: var(--text-ocean); }
 
 .day-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; border-left: 4px solid transparent; padding: 14px 16px; }

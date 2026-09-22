@@ -84,6 +84,7 @@ class AthleteProfileBase(BaseModel):
     available_equipment: List[str] = Field(default=[])
     primary_goal: PrimaryGoal = PrimaryGoal.ENDURANCE
     available_days: List[int] = Field(default=[1, 3, 5])
+    strength_days: List[int] = Field(default=[])
     session_duration_min: int = Field(ge=45, le=150, default=90)
     ftp_pace_per_100: Optional[int] = Field(default=None, ge=60, le=300)
     injury_notes: str = ""
@@ -101,6 +102,7 @@ class AthleteProfileUpdate(AthleteProfileBase):
     available_equipment: Optional[List[str]] = None
     primary_goal: Optional[PrimaryGoal] = None
     available_days: Optional[List[int]] = None
+    strength_days: Optional[List[int]] = None
     session_duration_min: Optional[int] = Field(default=None, ge=45, le=150)
     ftp_pace_per_100: Optional[int] = Field(default=None, ge=60, le=300)
     injury_notes: Optional[str] = None
@@ -109,6 +111,7 @@ class AthleteProfileUpdate(AthleteProfileBase):
 class AthleteProfileResponse(AthleteProfileBase):
     id: int
     user_id: int
+    strength_days: Optional[List[int]] = None
 
     class Config:
         from_attributes = True

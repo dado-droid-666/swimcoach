@@ -177,7 +177,8 @@ def _generate_all_sessions(
             macrocycle_phases=macro.phases,
             profile={
                 "available_equipment": profile.available_equipment,
-                "level": profile.level
+                "level": profile.level,
+                "strength_days": getattr(profile, "strength_days", None) or []
             },
             swim_days=swim_days,
             requested_per_week=goal.strength_days_per_week or 2

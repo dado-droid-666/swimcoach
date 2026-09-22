@@ -76,17 +76,30 @@ def suggest_stroke_rate(level: Level, phase_name: str) -> int:
     return base
 
 
+def snap_25(meters: float) -> int:
+    """Snap meters to a 25m-pool multiple (min 25). Fixed 25m base."""
+    return max(25, int(round(meters / 25.0)) * 25)
+
+
 def scale_set_meters(template_set: Dict, target_meters: int, template_total: int) -> Dict:
-    """Scale a template set to match target meters."""
+    """Scale a template set to match target meters (25m multiples)."""
     if template_total == 0:
         return template_set
-    
+
     scale = target_meters / template_total
     scaled = template_set.copy()
-    scaled["meters"] = round(template_set.get("meters", 0) * scale)
+    scaled["meters"] = snap_25(template_set.get("meters", 0) * scale)
     scaled["reps"] = max(1, round(template_set.get("reps", 1) * scale))
     if "distance" in scaled:
-        scaled["distance"] = max(25, round(template_set["distance"] * scale))
+        # Snap rep distance first, then fit reps so reps x distance
+        # stays a 25m multiple near the scaled total.
+        rep_m = snap_25(template_set["distance"] * scale)
+        want_total = snap_25(template_set.get("meters", rep_m) * scale)
+        reps = max(1, round(template_set.get("reps", 1) * scale))
+        reps = max(1, int(round(want_total / rep_m))) if rep_m > 0 else reps
+        scaled["distance"] = rep_m
+        scaled["reps"] = reps
+        scaled["meters"] = reps * rep_m
     return scaled
 
 
@@ -113,10 +126,10 @@ def generate_swim_session(
     phase_name = phase["name"]
     intensity_dist = phase["intensity_distribution"]
     
-    # Split volume: warmup 20%, main 70%, cooldown 10%
-    warmup_meters = round(daily_volume * 0.2)
-    main_meters = round(daily_volume * 0.7)
-    cooldown_meters = daily_volume - warmup_meters - main_meters
+    # Split volume: warmup 20%, main 70%, cooldown 10% (25m multiples)
+    warmup_meters = snap_25(daily_volume * 0.2)
+    main_meters = snap_25(daily_volume * 0.7)
+    cooldown_meters = max(25, snap_25(daily_volume - warmup_meters - main_meters))
     
     # Select main set template based on phase
     main_sets = template.get("main_sets", {}).get(phase_name.lower(), template.get("main_sets", {}).get("base", []))
@@ -242,10 +255,10 @@ def generate_weekly_swim_plan(
     
     # Calculate weekly volume
     base_weekly_volume = profile.get("swim_days_per_week", 4) * profile.get("target_volume_per_session", 3000)
-    weekly_volume = round(base_weekly_volume * phase["swim_volume_mult"])
+    weekly_volume = snap_25(base_weekly_volume * phase["swim_volume_mult"])
     
     # Daily volume distribution
-    daily_volume = round(weekly_volume / swim_days_per_week) if swim_days_per_week > 0 else 0
+    daily_volume = snap_25(weekly_volume / swim_days_per_week) if swim_days_per_week > 0 else 0
     
     # Event category
     event_category = get_event_category(competition_type, pool_events, ow_distance_km)

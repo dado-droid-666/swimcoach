@@ -234,16 +234,18 @@ def generate_weekly_strength_plan(
     strength_days_per_week = max(0, min(requested_per_week, phase_cap))
     if strength_days_per_week == 0:
         return []
-    
-    # Available days for strength (non-swim days first)
+
+    # Day placement: explicit user picks first (Mon=0..Sun=6), then free
+    # non-swim days, then swim-day spill (AM/PM split).
+    preferred = [d for d in (profile.get("strength_days") or []) if 0 <= d <= 6]
     all_days = list(range(7))
-    available_for_strength = [d for d in all_days if d not in swim_days]
+    free_days = [d for d in all_days if d not in swim_days]
+    ordered = []
+    for d in preferred + free_days + swim_days:
+        if d not in ordered:
+            ordered.append(d)
     
-    # If not enough non-swim days, allow same-day (AM/PM split)
-    if len(available_for_strength) < strength_days_per_week:
-        available_for_strength.extend([d for d in swim_days if d not in available_for_strength])
-    
-    strength_days = available_for_strength[:strength_days_per_week]
+    strength_days = ordered[:strength_days_per_week]
     
     sessions = []
     for i, day_offset in enumerate(strength_days):

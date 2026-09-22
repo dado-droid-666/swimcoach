@@ -69,6 +69,7 @@ class AthleteProfile(Base):
     available_equipment = Column(JSON, default=[])
     primary_goal = Column(String(20), default="endurance")
     available_days = Column(JSON, default=[1, 3, 5])
+    strength_days = Column(JSON, default=[])  # preferred strength weekdays Mon=0..Sun=6; [] = auto
     session_duration_min = Column(Integer, default=90)
     ftp_pace_per_100 = Column(Integer, nullable=True)
     injury_notes = Column(Text, default="")
