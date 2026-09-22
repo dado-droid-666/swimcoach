@@ -152,6 +152,12 @@ async function renderFeedback(app) {
                 
                 <div id="history-list"></div>
             </section>
+
+            <!-- Per-exercise logs (ML data) -->
+            <section style="margin-top: 1.5rem;">
+                <h2 style="margin-bottom: 1rem;">Exercise logs</h2>
+                <div id="exlog-list"><p style="color: var(--muted-color); font-size: 0.875rem;">Loading…</p></div>
+            </section>
             
             ${app.state.tier === 'free' ? `
                 <div id="ad-banner" style="margin-top: 2rem; text-align: center; min-height: 90px;">
@@ -178,6 +184,36 @@ async function renderFeedback(app) {
     }
     
     loadHistory(true);
+
+    loadExerciseLogs();
+}
+
+async function loadExerciseLogs() {
+    const box = document.getElementById('exlog-list');
+    if (!box) return;
+    try {
+        const logs = await api.getExerciseLogs(100);
+        if (!logs.length) {
+            box.innerHTML = '<p style="color: var(--muted-color); font-size: 0.875rem;">No exercise logs yet — finish a guided session to record weight, reps and effort.</p>';
+            return;
+        }
+        const byDate = {};
+        logs.forEach(l => { (byDate[l.date] = byDate[l.date] || []).push(l); });
+        box.innerHTML = Object.keys(byDate).sort().reverse().slice(0, 7).map(d => `
+            <article class="card" style="margin-bottom: 0.75rem; padding: 1rem;">
+                <strong>${window.app.formatDate(d)}</strong>
+                <div style="font-size: 0.875rem; color: var(--muted-color); margin-top: 0.25rem;">
+                    ${byDate[d].map(l => `
+                        <div>${l.session_type === 'swim' ? '🏊' : '💪'} ${l.exercise_name}` +
+                        `${l.weight_kg != null ? ` · ${l.weight_kg}kg` : ''}` +
+                        `${l.reps ? ` · ${l.reps}` : ''}` +
+                        `${l.effort != null ? ` · ${'★'.repeat(l.effort)}${'☆'.repeat(5 - l.effort)}` : ''}</div>
+                    `).join('')}
+                </div>
+            </article>`).join('');
+    } catch {
+        box.innerHTML = '<p style="color: var(--muted-color); font-size: 0.875rem;">Could not load exercise logs.</p>';
+    }
 }
 
 function toggleSwimFields(checkbox) {

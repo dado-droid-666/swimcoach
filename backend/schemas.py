@@ -303,6 +303,35 @@ class FeedbackHistoryResponse(BaseModel):
     page_size: int
 
 
+# Per-exercise logs (ML training data: load + effort per exercise)
+class ExerciseLogCreate(BaseModel):
+    date: date
+    session_type: str = Field(pattern="^(swim|strength)$")
+    exercise_name: str = Field(min_length=1, max_length=120)
+    weight_kg: Optional[float] = Field(default=None, ge=0, le=500)
+    reps: Optional[str] = Field(default=None, max_length=40)
+    time_seg: Optional[int] = Field(default=None, ge=0, le=3600)
+    effort: Optional[int] = Field(default=None, ge=1, le=5)
+
+
+class ExerciseLogBatch(BaseModel):
+    logs: List[ExerciseLogCreate] = Field(min_length=1, max_length=100)
+
+
+class ExerciseLogResponse(BaseModel):
+    id: int
+    date: date
+    session_type: str
+    exercise_name: str
+    weight_kg: Optional[float] = None
+    reps: Optional[str] = None
+    time_seg: Optional[int] = None
+    effort: Optional[int] = None
+
+    class Config:
+        from_attributes = True
+
+
 # Stats
 class StatsSummaryResponse(BaseModel):
     weekly_volume: int

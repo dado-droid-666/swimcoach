@@ -65,6 +65,20 @@
         </div>
     </div>
 
+    <div id="exlog-overlay" class="registro-overlay" aria-hidden="true">
+        <div class="registro-modal">
+            <h3 id="exlog-title">Log your work</h3>
+            <p id="exlog-progress" style="color: var(--muted-color); font-size: 13px; margin: 0.25rem 0 1rem;"></p>
+            <div id="exlog-body"></div>
+            <p id="exlog-error" style="display: none; color: var(--error-color); font-size: 13px; text-align: center;">Effort 1-5 is required to finish.</p>
+            <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                <button class="big-btn secondary" id="exlog-back" style="flex: 0 0 90px;">←</button>
+                <button class="big-btn" id="exlog-next" style="flex: 1;">Next →</button>
+            </div>
+            <button class="big-btn secondary" id="exlog-skip" style="display: none;">Skip logging</button>
+        </div>
+    </div>
+
     <footer class="container" style="margin-top: 3rem; padding: 1rem; text-align: center; color: var(--muted-color); font-size: 0.875rem;">
         SwimCoach v1.0 | <a href="#/upgrade">Upgrade to Pro</a>
     </footer>
@@ -84,6 +98,7 @@
     <script src="/js/trees.js"></script>
     <script src="/js/tier_model.js"></script>
     <script src="/js/load_model.js"></script>
+    <script src="/js/tour.js"></script>
     <script src="/js/login.js"></script>
     <script src="/js/register.js"></script>
     <script src="/js/onboarding.js"></script>

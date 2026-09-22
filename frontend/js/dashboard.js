@@ -45,7 +45,7 @@ async function renderDashboard(app) {
     
     const html = `
         <div class="dashboard">
-            <div class="topbar"><span class="brand">Swim<strong>Coach</strong>${tierBadge}</span><span class="brand">${app.state.competition.competition_type === 'pool' ? 'Pool' : 'Open Water'} · ${app.state.competition.competition_date}</span></div>
+            <div class="topbar"><span class="brand">Swim<strong>Coach</strong>${tierBadge}</span><span><span class="brand">${app.state.competition.competition_type === 'pool' ? 'Pool' : 'Open Water'} · ${app.state.competition.competition_date}</span> <a href="#" onclick="event.preventDefault();window.showGuide('dashboard')" style="font-size: 13px;" title="Take the tour">? Guide</a></span></div>
             <div class="countdown">
                 <div class="countdown-num">${daysUntil}</div>
                 <div class="countdown-label">days until competition · ${weeksUntil} weeks</div>
@@ -142,6 +142,7 @@ async function renderDashboard(app) {
     `;
     
     document.getElementById('app').innerHTML = html;
+    if (window.maybeAutoTour) maybeAutoTour('dashboard');
     
     // Initialize AdSense if needed
     if (app.state.tier === 'free' && window.adsbygoogle) {

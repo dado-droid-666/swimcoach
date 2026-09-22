@@ -2,7 +2,7 @@ from datetime import datetime, date
 from enum import Enum as PyEnum
 from typing import Optional, List
 from sqlalchemy import (
-    Column, Integer, String, Text, DateTime, Date, Boolean,
+    Column, Integer, String, Text, DateTime, Date, Boolean, Float,
     ForeignKey, Enum, JSON, UniqueConstraint
 )
 from sqlalchemy.orm import relationship
@@ -54,6 +54,7 @@ class User(Base):
     swim_sessions = relationship("TrainingSession", back_populates="user")
     strength_sessions = relationship("StrengthSession", back_populates="user")
     feedback = relationship("DailyFeedback", back_populates="user")
+    exercise_logs = relationship("ExerciseLog", back_populates="user")
 
 
 class AthleteProfile(Base):
@@ -173,3 +174,22 @@ class DailyFeedback(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="feedback")
+
+
+class ExerciseLog(Base):
+    __tablename__ = "exercise_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    date = Column(Date, nullable=False, index=True)
+
+    session_type = Column(String(20), nullable=False)  # swim | strength
+    exercise_name = Column(String(120), nullable=False)
+    weight_kg = Column(Float, nullable=True)
+    reps = Column(String(40), nullable=True)
+    time_seg = Column(Integer, nullable=True)
+    effort = Column(Integer, nullable=True)  # 1-5 perceived effort
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User", back_populates="exercise_logs")

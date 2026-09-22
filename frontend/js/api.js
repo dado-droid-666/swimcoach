@@ -176,6 +176,17 @@ class ApiClient {
         return this.request(`/feedback/${date}`);
     }
 
+    async submitExerciseLogs(logs) {
+        return this.request('/feedback/logs', {
+            method: 'POST',
+            body: { logs }
+        });
+    }
+
+    async getExerciseLogs(limit = 200) {
+        return this.request(`/feedback/logs/history?limit=${limit}`);
+    }
+
     // Stats
     async getStatsSummary() {
         return this.request('/stats/summary');

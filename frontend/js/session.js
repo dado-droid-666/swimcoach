@@ -56,7 +56,7 @@ async function renderSession(app, dateParam) {
     const html = `
         <div class="session-view" style="max-width: 800px; margin: 0 auto;">
             <header style="margin-bottom: 1rem;">
-                <div class="topbar"><a href="#/dashboard" class="secondary" style="text-decoration: none; font-size: 0.875rem;">← Dashboard</a><a href="#/week?start=${mondayISO(date)}" style="font-size: 0.875rem;">Week →</a></div>
+                <div class="topbar"><a href="#/dashboard" class="secondary" style="text-decoration: none; font-size: 0.875rem;">← Dashboard</a><span><a href="#" onclick="event.preventDefault();window.showGuide('session')" style="font-size: 0.875rem;" title="Take the tour">? Guide</a> · <a href="#/week?start=${mondayISO(date)}" style="font-size: 0.875rem;">Week →</a></span></div>
                 <h1 style="margin: 0.5rem 0 0;">${dayName}</h1>
                 <p style="color: var(--muted-color); margin: 0;">${swim?.phase_name || strength?.phase_name || 'Training'} • Week ${swim?.week_relative || strength?.week_relative || '?'}</p>
             </header>
@@ -141,6 +141,8 @@ async function renderSession(app, dateParam) {
     if (!swim && !strength) {
         renderRestDay(date);
     }
+
+    if (window.maybeAutoTour) maybeAutoTour('session');
 }
 
 async function renderRestDay(dateISO) {
@@ -400,22 +402,134 @@ function beep() {
 async function finishPlayer() {
     const hasSwim = _player.blocks.some(b => b.kind === 'swim');
     const hasStrength = _player.blocks.some(b => b.kind === 'strength');
-    const effort = await askEffort('How did the session feel?');
-    if (!effort) return;
+    const isPro = window.app && window.app.state.tier === 'pro';
+    const items = await openExerciseLog(_player.swimRef, _player.strengthRef, isPro);
+    if (items === null && !isPro) return; // free must log effort
+    const today = window.localISO ? localISO(new Date()) : new Date().toLocaleDateString('en-CA');
     try {
+        if (items && items.length) {
+            await api.submitExerciseLogs(items.map(it => ({
+                date: today,
+                session_type: it.session_type,
+                exercise_name: it.name,
+                weight_kg: it.weight === '' || it.weight == null ? null : parseFloat(it.weight),
+                reps: it.reps || null,
+                time_seg: it.time_seg != null ? it.time_seg : null,
+                effort: it.effort || null,
+            })));
+        }
+        const avg = (arr) => arr.length ? Math.round(arr.reduce((a, b) => a + b, 0) / arr.length) : null;
+        const swimEff = items ? avg(items.filter(i => i.session_type === 'swim' && i.effort).map(i => i.effort)) : null;
+        const strEff = items ? avg(items.filter(i => i.session_type === 'strength' && i.effort).map(i => i.effort)) : null;
+        const meters = items ? items.filter(i => i.session_type === 'swim').reduce((a, i) => a + (parseInt(i.meters) || 0), 0) || null : null;
         await api.submitFeedback({
-            date: new Date().toLocaleDateString('en-CA'),
+            date: today,
             swim_completed: hasSwim,
             strength_completed: hasStrength,
-            swim_feeling: hasSwim ? effort : null,
-            strength_feeling: hasStrength ? effort : null,
+            swim_feeling: swimEff,
+            strength_feeling: strEff,
+            swim_completed_meters: meters,
             comments: ''
         });
-        window.app.showSuccess('Session complete! Feedback saved.');
+        window.app.showSuccess(items ? 'Session complete! Feedback saved.' : 'Session marked complete.');
         exitPlayer();
     } catch (err) {
         window.app.showError(err.message || 'Could not save feedback');
     }
+}
+
+// Per-exercise log modal (bottom-sheet). Free: effort 1-5 mandatory per
+// item to finish. Pro: Skip button visible, weight/reps always optional.
+// Resolves with items array, null on skip, or null on dismiss (free blocks).
+function openExerciseLog(swim, strength, isPro) {
+    return new Promise((resolve) => {
+        const overlay = document.getElementById('exlog-overlay');
+        if (!overlay) { resolve([]); return; }
+        const items = [];
+        if (strength && strength.exercises) {
+            strength.exercises.forEach(ex => items.push({
+                session_type: 'strength', name: ex.name,
+                weight: '', reps: ex.reps || '', time_seg: ex.duration || null, effort: 0,
+            }));
+        }
+        if (swim) {
+            items.push({
+                session_type: 'swim', name: `Swim — ${swim.focus || 'session'}`,
+                meters: swim.total_meters || null, effort: 0,
+            });
+        }
+        if (!items.length) { resolve([]); return; }
+        let idx = 0;
+        const title = document.getElementById('exlog-title');
+        const prog = document.getElementById('exlog-progress');
+        const body = document.getElementById('exlog-body');
+        const err = document.getElementById('exlog-error');
+        const nextBtn = document.getElementById('exlog-next');
+        const backBtn = document.getElementById('exlog-back');
+        const skipBtn = document.getElementById('exlog-skip');
+        const labels = ['Terrible', 'Poor', 'Okay', 'Good', 'Excellent'];
+        const emojis = ['😩', '😕', '😐', '🙂', '🤩'];
+        skipBtn.style.display = isPro ? 'block' : 'none';
+
+        const cleanup = (val) => {
+            overlay.classList.remove('open');
+            overlay.setAttribute('aria-hidden', 'true');
+            nextBtn.onclick = backBtn.onclick = skipBtn.onclick = null;
+            resolve(val);
+        };
+        const render = () => {
+            const it = items[idx];
+            err.style.display = 'none';
+            prog.textContent = `Exercise ${idx + 1} of ${items.length}${isPro ? ' (Pro: skippable)' : ''}`;
+            title.textContent = it.name;
+            const eBtns = labels.map((lb, i) => `
+                <button class="esfuerzo-btn ${it.effort === i + 1 ? 'selected' : ''}" data-v="${i + 1}">
+                    <span class="emoji">${emojis[i]}</span><span>${i + 1} · ${lb}</span>
+                </button>`).join('');
+            body.innerHTML = `
+                ${it.session_type === 'strength' ? `
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <label style="flex: 1; font-size: 12px; color: var(--muted-color);">Weight (kg, optional)<input id="exlog-weight" type="number" min="0" step="0.5" value="${it.weight}" style="width: 100%; margin-top: 4px;"></label>
+                        <label style="flex: 1; font-size: 12px; color: var(--muted-color);">Reps (optional)<input id="exlog-reps" type="text" value="${it.reps || ''}" style="width: 100%; margin-top: 4px;"></label>
+                    </div>` : `
+                    <div style="margin-bottom: 0.75rem;">
+                        <label style="font-size: 12px; color: var(--muted-color);">Meters completed<input id="exlog-meters" type="number" min="0" step="25" value="${it.meters || ''}" style="width: 100%; margin-top: 4px;"></label>
+                    </div>`}
+                <p style="font-size: 13px; color: var(--muted-color); margin: 0 0 8px;">How did it feel? (1-5, required${isPro ? ' unless skipped' : ''})</p>
+                <div class="esfuerzo-opciones">${eBtns}</div>`;
+            body.querySelectorAll('.esfuerzo-btn').forEach(b => b.addEventListener('click', () => {
+                it.effort = parseInt(b.dataset.v);
+                err.style.display = 'none';
+                body.querySelectorAll('.esfuerzo-btn').forEach(x => x.classList.toggle('selected', x === b));
+            }));
+            backBtn.disabled = idx === 0;
+            backBtn.style.opacity = idx === 0 ? 0.35 : 1;
+            nextBtn.textContent = idx === items.length - 1 ? 'Finish ✓' : 'Next →';
+        };
+        const stash = () => {
+            const it = items[idx];
+            if (it.session_type === 'strength') {
+                const w = document.getElementById('exlog-weight');
+                const r = document.getElementById('exlog-reps');
+                if (w) it.weight = w.value;
+                if (r) it.reps = r.value;
+            } else {
+                const m = document.getElementById('exlog-meters');
+                if (m) it.meters = m.value;
+            }
+        };
+        nextBtn.onclick = () => {
+            stash();
+            if (!items[idx].effort) { err.style.display = 'block'; return; }
+            if (idx < items.length - 1) { idx += 1; render(); }
+            else cleanup(items);
+        };
+        backBtn.onclick = () => { stash(); if (idx > 0) { idx -= 1; render(); } };
+        skipBtn.onclick = () => cleanup(null);
+        overlay.classList.add('open');
+        overlay.setAttribute('aria-hidden', 'false');
+        render();
+    });
 }
 
 function exitPlayer() {
@@ -476,7 +590,7 @@ function wirePlayer(swim, strength) {
         startBtn.textContent = 'Loading ML suggestion…';
         try {
             const ml = await withTimeout(enrichStrengthWithMl(strength), 8000);
-            _player = { blocks: buildPlayerBlocks(swim, strength), idx: 0, mlLabel: ml.label };
+            _player = { blocks: buildPlayerBlocks(swim, strength), idx: 0, mlLabel: ml.label, swimRef: swim, strengthRef: strength };
             if (!_player.blocks.length) { window.app.showError('No blocks in this session'); return; }
             document.getElementById('tab-content').style.display = 'none';
             startBtn.style.display = 'none';
