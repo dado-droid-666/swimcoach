@@ -759,3 +759,12 @@ input::placeholder, textarea::placeholder { color: var(--muted-color); }
 table th { color: var(--muted-color); }
 a { color: var(--primary); }
 footer { color: var(--muted-color); }
+
+/* Tour spotlight pulse */
+@keyframes tourPulse {
+    0%, 100% { box-shadow: 0 0 0 9999px rgba(4,14,26,.66), 0 0 0 0 rgba(63,208,230,.55); }
+    50% { box-shadow: 0 0 0 9999px rgba(4,14,26,.66), 0 0 0 10px rgba(63,208,230,0); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .tour-spot { animation: none !important; }
+}

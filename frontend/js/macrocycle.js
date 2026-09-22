@@ -93,13 +93,32 @@ async function renderMacrocycle(app) {
     document.getElementById('app').innerHTML = html;
 }
 
+// Exact plan anchor: backend weeks start at (race - total_weeks*7) and run
+// 7 days each, so week w starts at base + (w+total)*7. The view strip shows
+// the Monday of that block. Never estimate from "today".
+function planBase() {
+    const app = window.app;
+    if (!app || !app.state.competition || !app.state.competition.competition_date
+        || !app.state.macrocycle || !app.state.macrocycle.total_weeks) return null;
+    const c = app.state.competition.competition_date;
+    const base = new Date(parseInt(c.slice(0, 4)), parseInt(c.slice(5, 7)) - 1, parseInt(c.slice(8, 10)));
+    base.setDate(base.getDate() - app.state.macrocycle.total_weeks * 7);
+    return { base, total: app.state.macrocycle.total_weeks };
+}
+
+function mondayOfDate(d) {
+    const m = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    m.setDate(m.getDate() - ((m.getDay() + 6) % 7));
+    return m;
+}
+
 function getCurrentWeek(app) {
-    if (!app.state.macrocycle) return 0;
-    const today = new Date();
-    const start = new Date(app.state.macrocycle.phases[0].start_week < 0 ? 
-        new Date(new Date().setDate(new Date().getDate() + app.state.macrocycle.phases[0].start_week * 7)) : new Date());
-    const diff = Math.floor((new Date() - start) / (1000 * 60 * 60 * 24 * 7));
-    return -app.state.macrocycle.total_weeks + diff;
+    const a = planBase();
+    if (!a) return 0;
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const diffWeeks = Math.floor((today - a.base) / (7 * 86400000));
+    return diffWeeks - a.total;
 }
 
 function calculatePeakVolume(macro) {
@@ -118,14 +137,24 @@ function getTaperStart(macro) {
 
 function viewWeek(week) {
     // week is week_relative (negative = weeks out from race).
-    // Anchor on today + delta from current week, then take Monday.
-    const current = window.app ? getCurrentWeek(window.app) : 0;
-    const deltaWeeks = week - current;
-    const target = new Date();
-    target.setDate(target.getDate() + deltaWeeks * 7);
-    const monday = new Date(target);
-    monday.setDate(target.getDate() - ((target.getDay() + 6) % 7));
-    const iso = monday.toLocaleDateString('en-CA');
+    // Backend 7-day block for w starts at base+(w+total)*7; the view strip
+    // is the Mon-Sun week containing most of that block: the single Monday
+    // inside [block, block+6]. Exact, no estimates.
+    const a = planBase();
+    let iso;
+    if (a) {
+        const block = new Date(a.base.getFullYear(), a.base.getMonth(), a.base.getDate());
+        block.setDate(block.getDate() + (week + a.total) * 7);
+        const monday = new Date(block.getFullYear(), block.getMonth(), block.getDate());
+        monday.setDate(monday.getDate() + ((8 - monday.getDay()) % 7 + 7) % 7);
+        iso = monday.toLocaleDateString('en-CA');
+    } else {
+        // Fallback: relative to today (approximate)
+        const target = new Date();
+        target.setDate(target.getDate() + week * 7);
+        const monday = mondayOfDate(target);
+        iso = monday.toLocaleDateString('en-CA');
+    }
     window.location.hash = `#/week?start=${iso}`;
 }
 

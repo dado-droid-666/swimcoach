@@ -33,11 +33,33 @@
         active = null;
     }
 
+    // Steps may declare sel as a string or an array (fallback chain):
+    // the first VISIBLE match wins.
+    function findStepEl(step) {
+        const sels = Array.isArray(step.sel) ? step.sel : [step.sel];
+        for (const sel of sels) {
+            const found = elRect(sel);
+            if (found) return found;
+        }
+        return null;
+    }
+
     function renderStep() {
         const ov = document.getElementById('tour-overlay');
         if (!ov || !active) return;
         const step = active.steps[active.idx];
-        const found = elRect(step.sel);
+        // Scroll FIRST (instant, so coords below are final), then measure
+        // after layout settles. The old order (measure → smooth scroll)
+        // left the spotlight on stale coordinates.
+        const probe = findStepEl(step);
+        if (probe) probe.el.scrollIntoView({ block: 'center', behavior: 'instant' });
+        requestAnimationFrame(() => setTimeout(() => positionStep(step), 60));
+    }
+
+    function positionStep(step) {
+        const ov = document.getElementById('tour-overlay');
+        if (!ov || !active) return;
+        const found = findStepEl(step);
         const spot = ov.querySelector('.tour-spot');
         const bubble = ov.querySelector('.tour-bubble');
         const count = ov.querySelector('.tour-count');
@@ -54,14 +76,17 @@
         }
         spot.style.display = 'block';
         const pad = 8;
-        spot.style.cssText = `position:fixed;left:${found.r.left - pad + window.scrollX * 0}px;top:${found.r.top - pad}px;` +
+        spot.style.cssText = `position:fixed;left:${found.r.left - pad}px;top:${found.r.top - pad}px;` +
             `width:${found.r.width + pad * 2}px;height:${found.r.height + pad * 2}px;` +
-            'border:2px solid var(--primary);border-radius:14px;box-shadow:0 0 0 9999px rgba(4,14,26,.72);pointer-events:none;';
-        found.el.scrollIntoView({ block: 'center', behavior: 'smooth' });
-        // Bubble below the element, or above if no room
-        const below = found.r.bottom + 16 + 180 < window.innerHeight;
+            'border:3px solid var(--primary);border-radius:14px;box-shadow:0 0 0 9999px rgba(4,14,26,.66);pointer-events:none;' +
+            'animation:tourPulse 1.2s ease-in-out infinite;';
+        // Bubble below the element when it fits, else pinned to viewport
+        // bottom — never cut off.
+        const bubbleH = 220;
+        const below = found.r.bottom + 16 + bubbleH < window.innerHeight;
         bubble.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);max-width:min(420px,92vw);' +
-            (below ? `top:${found.r.bottom + 16}px;` : 'bottom:16px;');
+            'max-height:46vh;overflow-y:auto;' +
+            (below ? `top:${Math.min(found.r.bottom + 16, window.innerHeight - bubbleH - 16)}px;` : 'bottom:16px;');
     }
 
     function startTour(screen, steps) {
@@ -123,9 +148,9 @@
     }
 
     const SESSION_STEPS = [
-        { sel: '.tabs', title: 'Swim & strength tabs', text: 'Each day can have a swim session, a strength session, or both. Switch tabs to see each one.' },
-        { sel: '#start-player-btn', title: 'Guided player', text: 'Start guided session walks you block by block with a rest timer — ideal on deck.' },
-        { sel: '.tipo-badge', title: 'CSS zone badges', text: 'Badges like Z3 show the intensity zone derived from your Critical Swim Speed. SPM is your target stroke rate.' },
+        { sel: ['.tabs', '#rest-day-slot', '#tab-content'], title: 'Swim & strength tabs', text: 'Each day can have a swim session, a strength session, or both. Switch tabs to see each one.' },
+        { sel: ['#start-player-btn', '.player-nav', '#tab-content'], title: 'Guided player', text: 'Start guided session walks you block by block with a rest timer — ideal on deck.' },
+        { sel: ['#tab-content .card .tipo-badge', '#tab-content .tipo-badge', '.tipo-badge', '#tab-content'], title: 'CSS zone badges', text: 'Badges like Z3 show the intensity zone derived from your Critical Swim Speed. SPM is your target stroke rate.' },
         { sel: '#tab-content', title: 'Sets in detail', text: 'Every set shows reps × distance, rest, pace and gear. Metronome sets show the exact SPM to dial in.' },
         { sel: '.player-nav, #btn-siguiente', title: 'Player controls', text: 'In the player: previous/next block, rest timer presets, and a mandatory effort log (1-5) at the end.' },
         { sel: '#btn-exit-player, .bottomnav', title: 'Bottom navigation', text: 'Today, Week, Session, Log and Profile are always one tap away at the bottom.' },
@@ -133,7 +158,7 @@
 
     const DASHBOARD_STEPS = [
         { sel: '.countdown', title: 'Race countdown', text: 'Days left until your competition, computed from your macrocycle.' },
-        { sel: '.session-card', title: 'Tier & target pace', text: 'Your ML-calibrated tier and CSS target pace appear here when you take the swim test.' },
+        { sel: ['.session-card', '.countdown'], title: 'Tier & target pace', text: 'Your ML-calibrated tier and CSS target pace appear here when you take the swim test.' },
         { sel: '#start-player-btn, .big-btn', title: "Today's session", text: 'Jump straight into today\'s guided session or log feedback for completed work.' },
         { sel: '.card', title: 'Retest reminder', text: 'Every 6 weeks we ask for a fresh CSS test so zones and tiers stay honest.' },
     ];
