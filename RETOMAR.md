@@ -1,4 +1,4 @@
-# SwimCoach — Retomar después (guardado 19/09/2026 día)
+# SwimCoach — Retomar después (guardado 21/09/2026 noche)
 
 ## Producción
 - LIVE: https://swimcoach-ss5j.onrender.com (plan Free + Supabase pooler 6543).
@@ -41,6 +41,17 @@
   `POST /api/plan/week/regenerate`; UI drag & drop + tap-to-move + botón
   regenerar con confirm; free→upgrade. Verificado: 403/200/409/404/regen OK.
 - SW v1.0.5.
+
+## Sesión 21/09 — navegación, Pro mover, tour, logs, fixes finos (`a0c36f9`)
+- Semana Lun-Dom + prev/next día + fechas locales + rest-day con cercanas.
+- Navbar 860px; bottomnav compacto; topbar week con aire.
+- Pro: mover (drag + modo ✥ Move con tap) + regenerar semana; free→upgrade.
+- Tour guiado (spotlight scroll-then-measure + pulso + fallbacks) + ? Guide.
+- `exercise_logs` (migración b2c3d4e5f6a7 en Supabase): modal por ejercicio,
+  effort obligatorio free / skip Pro; historial en feedback.
+- Week-bars con ancla exacta (W-6→21sep, W-3→12oct verificado).
+- Cuenta usuario: daniel.alvarado4@gmail.com (id 2), plan 6 sem 21sep→30oct.
+- SW v1.0.6. Tests 14 PASS (400/404 esperados).
 
 ## Pendiente del usuario (con sus cuentas)
 1. Crear cuenta real + flujo completo en prod (perfil ya reparado).
