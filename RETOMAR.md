@@ -1,4 +1,4 @@
-# SwimCoach — Retomar después (guardado 19/09/2026 noche)
+# SwimCoach — Retomar después (guardado 19/09/2026 día)
 
 ## Producción
 - LIVE: https://swimcoach-ss5j.onrender.com (plan Free + Supabase pooler 6543).
@@ -30,6 +30,17 @@
   priors youngSwimmers (121) + export anonimizado con consentimiento ES+EN
   (`CONSENTIMIENTO.md`, `sql/004` pendiente de aplicar por el usuario).
   JSON `rf_v1_2026-09-18` desplegado en SwimCoach y entrenamiento-app.
+
+## Sesión 19/09 día — navegación + Pro mover/regenerar (`3808502`)
+- Vista semana Lun-Dom (`#/week`, `js/week.js`): badges por día, prev/next
+  semana, tap→sesión; bottomnav Plan→semana; macrocycle week-bars→semana.
+- Sesión: prev/hoy/next día, link a semana, tarjeta rest-day con cercanas
+  ±14d; fechas 100% locales `en-CA` (adiós desfase UTC).
+- Navbar centrado 520px; móvil sin links arriba (bottomnav manda).
+- Pro: `PUT /api/plan/session/move` (409 si choca, 404 si no existe) +
+  `POST /api/plan/week/regenerate`; UI drag & drop + tap-to-move + botón
+  regenerar con confirm; free→upgrade. Verificado: 403/200/409/404/regen OK.
+- SW v1.0.5.
 
 ## Pendiente del usuario (con sus cuentas)
 1. Crear cuenta real + flujo completo en prod (perfil ya reparado).
