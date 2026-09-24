@@ -24,6 +24,17 @@ async function renderSettings(app) {
             </section>
             
             <section class="card" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+                <h2 style="margin: 0 0 1rem;">Account</h2>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+                    <div>
+                        <strong>Log out</strong>
+                        <div style="font-size: 0.875rem; color: var(--muted-color);">Sign in with a different account</div>
+                    </div>
+                    <button class="secondary" onclick="logOut()">Log out</button>
+                </div>
+            </section>
+
+            <section class="card" style="margin-bottom: 1.5rem; padding: 1.5rem;">
                 <h2 style="margin: 0 0 1rem;">Data & Privacy</h2>
                 
                 <div style="display: flex; flex-direction: column; gap: 1rem;">

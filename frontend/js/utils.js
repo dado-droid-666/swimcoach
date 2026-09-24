@@ -116,6 +116,28 @@ function paintPill(box) {
 window.pillClick = pillClick;
 window.paintPill = paintPill;
 
+// Log out: server cookie + local session state, keep tour-seen flag,
+// then go to login so another user can sign in.
+async function logOut() {
+    try { await api.logout(); } catch { /* offline: clear local anyway */ }
+    let tourSeen = null;
+    try { tourSeen = localStorage.getItem('swimcoach_tour_seen_v1'); } catch { /* noop */ }
+    try { localStorage.clear(); } catch { /* noop */ }
+    try { if (tourSeen) localStorage.setItem('swimcoach_tour_seen_v1', tourSeen); } catch { /* noop */ }
+    if (window.app) {
+        window.app.state.user = null;
+        window.app.state.profile = null;
+        window.app.state.competition = null;
+        window.app.state.macrocycle = null;
+        window.app.state.todaySession = null;
+        window.app.state.tier = 'free';
+        window.app.updateNav();
+    }
+    window.location.hash = '#/login';
+}
+
+window.logOut = logOut;
+
 // Local calendar date (YYYY-MM-DD) in the user's timezone.
 // Never use toISOString() for calendar dates: it shifts days in UTC- zones.
 function localISO(d) {

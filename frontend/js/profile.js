@@ -7,7 +7,7 @@ async function renderProfile(app) {
     const html = `
         <div class="profile-view" style="max-width: 600px; margin: 0 auto;">
             <header style="margin-bottom: 1.5rem;">
-                <h1>Profile</h1>
+                <div class="topbar"><h1 style="margin: 0;">Profile</h1><button class="secondary" onclick="logOut()" style="padding: 0.5rem 1rem;">Log out</button></div>
                 <p style="color: var(--muted-color); margin: 0;">${user?.email} • ${tier === 'pro' ? '🌟 Pro' : 'Free'}</p>
             </header>
             
