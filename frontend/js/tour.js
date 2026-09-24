@@ -81,12 +81,17 @@
             'border:3px solid var(--primary);border-radius:14px;box-shadow:0 0 0 9999px rgba(4,14,26,.66);pointer-events:none;' +
             'animation:tourPulse 1.2s ease-in-out infinite;';
         // Bubble below the element when it fits, else pinned to viewport
-        // bottom — never cut off.
+        // bottom — never cut off. Small screens: full-width bottom sheet.
         const bubbleH = 220;
         const below = found.r.bottom + 16 + bubbleH < window.innerHeight;
-        bubble.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);max-width:min(420px,92vw);' +
-            'max-height:46vh;overflow-y:auto;' +
-            (below ? `top:${Math.min(found.r.bottom + 16, window.innerHeight - bubbleH - 16)}px;` : 'bottom:16px;');
+        if (window.innerWidth <= 640) {
+            bubble.style.cssText = 'position:fixed;left:0;right:0;bottom:0;transform:none;max-width:none;' +
+                'border-radius:22px 22px 0 0;max-height:60vh;overflow-y:auto;';
+        } else {
+            bubble.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);max-width:min(420px,92vw);' +
+                'max-height:46vh;overflow-y:auto;' +
+                (below ? `top:${Math.min(found.r.bottom + 16, window.innerHeight - bubbleH - 16)}px;` : 'bottom:16px;');
+        }
     }
 
     function startTour(screen, steps) {

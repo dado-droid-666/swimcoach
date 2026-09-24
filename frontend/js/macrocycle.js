@@ -18,7 +18,7 @@ async function renderMacrocycle(app) {
     const html = `
         <div class="macrocycle-view" style="max-width: 1000px; margin: 0 auto;">
             <header style="margin-bottom: 2rem;">
-                <h1>Macrocycle Plan</h1>
+                <div class="topbar"><h1 style="margin: 0;">Macrocycle Plan</h1><a href="#" id="new-plan-btn" style="font-size: 13px;" title="Start over keeping profile & history">↺ New plan</a></div>
                 <p style="color: var(--muted-color);">
                     ${competition.competition_type === 'pool' ? 'Pool' : 'Open Water'} • ${competition.competition_date} • ${macro.total_weeks} weeks
                 </p>
@@ -91,6 +91,24 @@ async function renderMacrocycle(app) {
     `;
     
     document.getElementById('app').innerHTML = html;
+    document.getElementById('new-plan-btn').addEventListener('click', startNewPlan);
+}
+
+async function startNewPlan(e) {
+    if (e) e.preventDefault();
+    const ok = confirm(
+        'Start a new plan?\n\nKEPT: profile (level, volume, equipment, days), CSS/tier, feedback history, exercise logs.\nDELETED: competition goal, macrocycle and sessions.\n\nContinue to competition setup?');
+    if (!ok) return;
+    try {
+        await api.resetTraining();
+        try { localStorage.removeItem('onboarding_data'); } catch { /* noop */ }
+        await window.app.loadCompetition();
+        await window.app.loadMacrocycle();
+        window.app.showSuccess('Plan cleared — set your new competition goal.');
+        setTimeout(() => { window.location.hash = '#/onboarding?step=4'; }, 600);
+    } catch (err) {
+        window.app.showError(err.message || 'Could not reset plan');
+    }
 }
 
 // Exact plan anchor: backend weeks start at (race - total_weeks*7) and run
@@ -177,3 +195,4 @@ window.viewWeek = viewWeek;
 
 // Export
 window.renderMacrocycle = renderMacrocycle;
+window.startNewPlan = startNewPlan;

@@ -66,3 +66,28 @@ def logout(response: Response):
 @router.get("/me", response_model=UserResponse)
 def me(user: User = Depends(get_current_user)):
     return UserResponse.model_validate(user)
+
+
+@router.delete("/account")
+def delete_account(
+    response: Response,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Permanently delete the account and ALL its data (irreversible)."""
+    from ..models import (
+        AthleteProfile, CompetitionGoal, MacrocyclePlan,
+        TrainingSession, StrengthSession, DailyFeedback, ExerciseLog,
+    )
+    uid = user.id
+    db.query(ExerciseLog).filter(ExerciseLog.user_id == uid).delete(synchronize_session=False)
+    db.query(DailyFeedback).filter(DailyFeedback.user_id == uid).delete(synchronize_session=False)
+    db.query(TrainingSession).filter(TrainingSession.user_id == uid).delete(synchronize_session=False)
+    db.query(StrengthSession).filter(StrengthSession.user_id == uid).delete(synchronize_session=False)
+    db.query(MacrocyclePlan).filter(MacrocyclePlan.user_id == uid).delete(synchronize_session=False)
+    db.query(CompetitionGoal).filter(CompetitionGoal.user_id == uid).delete(synchronize_session=False)
+    db.query(AthleteProfile).filter(AthleteProfile.user_id == uid).delete(synchronize_session=False)
+    db.query(User).filter(User.id == uid).delete(synchronize_session=False)
+    db.commit()
+    clear_auth_cookie(response)
+    return {"message": "Account deleted"}

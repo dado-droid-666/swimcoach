@@ -101,12 +101,25 @@ function confirmDeleteAll() {
     }
 }
 
-function confirmDeleteAccount() {
-    if (confirm('This will PERMANENTLY delete your account and ALL data from the server. This cannot be undone!')) {
-        if (prompt('Type "DELETE MY ACCOUNT" to confirm:') === 'DELETE MY ACCOUNT') {
-            // TODO: Implement delete account API call
-            alert('Delete account API not yet implemented');
-        }
+async function confirmDeleteAccount() {
+    if (!confirm('This will PERMANENTLY delete your account and ALL data from the server. This cannot be undone!')) return;
+    const typed = prompt('Type DELETE to confirm account deletion:');
+    if (typed !== 'DELETE') {
+        window.app.showError('Deletion cancelled.');
+        return;
+    }
+    try {
+        await api.deleteAccount();
+        await api.logout().catch(() => {});
+        window.app.state.user = null;
+        window.app.state.profile = null;
+        window.app.state.competition = null;
+        window.app.state.macrocycle = null;
+        try { localStorage.clear(); } catch { /* noop */ }
+        window.app.showSuccess('Account deleted.');
+        setTimeout(() => { window.location.hash = '#/login'; }, 800);
+    } catch (error) {
+        window.app.showError(error.message || 'Delete failed');
     }
 }
 

@@ -66,6 +66,21 @@ def delete_competition(user: User = Depends(get_current_user), db: Session = Dep
     return None
 
 
+@router.post("/reset")
+def reset_training(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """Start over: delete competition goal + macrocycle + sessions.
+
+    Keeps the profile (level, volume, equipment, days), tier/CSS stored
+    client-side, feedback history and exercise logs.
+    """
+    db.query(TrainingSession).filter(TrainingSession.user_id == user.id).delete(synchronize_session=False)
+    db.query(StrengthSession).filter(StrengthSession.user_id == user.id).delete(synchronize_session=False)
+    db.query(MacrocyclePlan).filter(MacrocyclePlan.user_id == user.id).delete(synchronize_session=False)
+    db.query(CompetitionGoal).filter(CompetitionGoal.user_id == user.id).delete(synchronize_session=False)
+    db.commit()
+    return {"message": "Training plan cleared. Profile, feedback and logs kept."}
+
+
 @router.post("/generate", status_code=status.HTTP_201_CREATED)
 def generate_macrocycle(
     user: User = Depends(get_current_user),

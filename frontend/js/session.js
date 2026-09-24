@@ -106,6 +106,7 @@ async function renderSession(app, dateParam) {
             
             ${app.state.tier === 'free' ? `
                 <div id="ad-banner" style="margin-top: 2rem; text-align: center; min-height: 90px;">
+                    <div style="font-size: 10px; color: var(--muted-color); text-transform: uppercase; letter-spacing: .08em;">Advertisement</div>
                     <ins class="adsbygoogle"
                          style="display:block"
                           data-ad-client="ca-pub-4540036176937342"

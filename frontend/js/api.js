@@ -87,6 +87,10 @@ class ApiClient {
         return this.request('/auth/logout', { method: 'POST' });
     }
 
+    async deleteAccount() {
+        return this.request('/auth/account', { method: 'DELETE' });
+    }
+
     async getMe() {
         return this.request('/auth/me');
     }
@@ -135,6 +139,10 @@ class ApiClient {
 
     async generateMacrocycle() {
         return this.request('/competition/generate', { method: 'POST' });
+    }
+
+    async resetTraining() {
+        return this.request('/competition/reset', { method: 'POST' });
     }
 
     // Plan

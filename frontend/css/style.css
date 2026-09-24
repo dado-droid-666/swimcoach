@@ -768,3 +768,20 @@ footer { color: var(--muted-color); }
 @media (prefers-reduced-motion: reduce) {
     .tour-spot { animation: none !important; }
 }
+
+/* Tour on small screens: bottom-sheet bubble, roomy text */
+#tour-overlay .tour-bubble h3 { font-size: 1.05rem; }
+#tour-overlay .tour-bubble p { font-size: 0.95rem; }
+@media (max-width: 640px) {
+    #tour-overlay .tour-bubble {
+        left: 0 !important;
+        right: 0 !important;
+        transform: none !important;
+        max-width: none !important;
+        border-radius: 22px 22px 0 0 !important;
+        padding: 1.5rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom)) !important;
+    }
+    #tour-overlay .tour-bubble h3 { font-size: 1.15rem; }
+    #tour-overlay .tour-bubble p { font-size: 1rem; line-height: 1.6; }
+    #tour-overlay .tour-bubble .big-btn { padding: 14px; font-size: 1rem; }
+}

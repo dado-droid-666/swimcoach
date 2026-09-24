@@ -204,9 +204,24 @@ async function exportData() {
     if (window.exportSwimData && window.app) return window.exportSwimData(window.app);
 }
 
-function confirmDelete() {
-    if (prompt('This will permanently delete your account and all data. Type "DELETE MY ACCOUNT" to confirm:') === 'DELETE MY ACCOUNT') {
-        window.app.showError('Delete account API not yet implemented');
+async function confirmDelete() {
+    if (!confirm('This will permanently delete your account and all data. Are you sure?')) return;
+    if (prompt('Type DELETE to confirm:') !== 'DELETE') {
+        window.app.showError('Deletion cancelled.');
+        return;
+    }
+    try {
+        await api.deleteAccount();
+        await api.logout().catch(() => {});
+        window.app.state.user = null;
+        window.app.state.profile = null;
+        window.app.state.competition = null;
+        window.app.state.macrocycle = null;
+        try { localStorage.clear(); } catch { /* noop */ }
+        window.app.showSuccess('Account deleted.');
+        setTimeout(() => { window.location.hash = '#/login'; }, 800);
+    } catch (error) {
+        window.app.showError(error.message || 'Delete failed');
     }
 }
 
