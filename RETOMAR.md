@@ -1,4 +1,4 @@
-# SwimCoach — Retomar después (guardado 21/09/2026 noche)
+# SwimCoach — Retomar después (guardado 23/09/2026 noche)
 
 ## Producción
 - LIVE: https://swimcoach-ss5j.onrender.com (plan Free + Supabase pooler 6543).
@@ -52,6 +52,22 @@
 - Week-bars con ancla exacta (W-6→21sep, W-3→12oct verificado).
 - Cuenta usuario: daniel.alvarado4@gmail.com (id 2), plan 6 sem 21sep→30oct.
 - SW v1.0.6. Tests 14 PASS (400/404 esperados).
+
+## Sesión 23/09 — idempotencia, días, CSS persistente, volumen (`e2618cb`)
+- Generate idempotente (borra plan previo) + botón con lock + 163
+  duplicados limpiados en Supabase (users 3 y 4).
+- Días Lun=0…Dom=6 en onboarding + profile (domingo ya no colisiona).
+- `swim_tests` (migración c3d4e5f6a7b8 en Supabase): guarda test al
+  completar, precarga en paso 1, dashboard lee servidor. Ojo gotcha Python:
+  `date: Optional[date]` se auto-sombrea → campo `test_date`.
+- Volumen: estimado en vivo en paso 1 + aviso sobre tope (12k/16k/25k);
+  todo múltiplo de 25 verificado (reps×dist, sets, totales).
+- Conteos exactos: días entreno == días nado; fuerza vacío/auto o exacto.
+- Logout visible (profile + settings) + fix rebote post-Generate (recarga
+  estado antes del dashboard).
+- Cuentas prod: moconette (id 3,temporal Temporal-1234 puesta y verificada),
+  daniel (id 4, OW 28feb2027). Debug users borrados.
+- Tests 14 PASS (400/404 esperados). SW v1.0.6.
 
 ## Pendiente del usuario (con sus cuentas)
 1. Crear cuenta real + flujo completo en prod (perfil ya reparado).
