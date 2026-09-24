@@ -20,8 +20,15 @@ async function renderDashboard(app) {
     
     app.state.todaySession = todayPlan;
 
-    // ML tier assessment (client-side, optional)
-    const tierA = window.getTierAssessment ? getTierAssessment() : null;
+    // ML tier assessment: server first (persisted), local fallback
+    let tierA = null;
+    try {
+        const latest = await api.getLatestTest().catch(() => null);
+        if (latest && latest.css_pace_100_seg != null) {
+            tierA = { tier: latest.tier, cssPace: latest.css_pace_100_seg };
+        }
+    } catch { /* offline: use local */ }
+    if (!tierA && window.getTierAssessment) tierA = getTierAssessment();
     const tierBadge = tierA ? `<span class="tipo-badge tipo-competencia" style="margin-left: 0.5rem;">Tier ${tierA.tier} · ${window.TIER_LABEL ? TIER_LABEL[tierA.tier] : ''}</span>` : '';
     const cssLine = tierA && tierA.cssPace ? `<div style="color: var(--primary); font-size: 0.875rem; margin-top: 0.25rem;">🎯 Target pace (CSS): ${Math.floor(tierA.cssPace / 60)}:${String(Math.round(tierA.cssPace % 60)).padStart(2, '0')} /100m</div>` : '';
     // CSS retest prompt (sole benchmark, every 6 weeks)

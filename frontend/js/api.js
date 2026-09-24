@@ -195,6 +195,17 @@ class ApiClient {
         return this.request(`/feedback/logs/history?limit=${limit}`);
     }
 
+    async saveSwimTest(data) {
+        return this.request('/tests', {
+            method: 'POST',
+            body: data
+        });
+    }
+
+    async getLatestTest() {
+        return this.request('/tests/latest');
+    }
+
     // Stats
     async getStatsSummary() {
         return this.request('/stats/summary');

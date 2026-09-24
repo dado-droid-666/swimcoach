@@ -55,6 +55,7 @@ class User(Base):
     strength_sessions = relationship("StrengthSession", back_populates="user")
     feedback = relationship("DailyFeedback", back_populates="user")
     exercise_logs = relationship("ExerciseLog", back_populates="user")
+    swim_tests = relationship("SwimTest", back_populates="user")
 
 
 class AthleteProfile(Base):
@@ -193,3 +194,25 @@ class ExerciseLog(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="exercise_logs")
+
+
+class SwimTest(Base):
+    __tablename__ = "swim_tests"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    date = Column(Date, nullable=False, index=True)
+
+    tiempo_400_seg = Column(Float, nullable=True)
+    tiempo_200_seg = Column(Float, nullable=True)
+    tiempo_50_seg = Column(Float, nullable=True)
+    css_pace_100_seg = Column(Float, nullable=True)
+    edad = Column(Integer, nullable=True)
+    peso_kg = Column(Float, nullable=True)
+    altura_cm = Column(Float, nullable=True)
+    tier = Column(Integer, nullable=True)
+    modelo_version = Column(String(60), nullable=True)
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User", back_populates="swim_tests")

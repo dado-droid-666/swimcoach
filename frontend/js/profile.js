@@ -74,7 +74,7 @@ async function renderProfile(app) {
                         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
                             ${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d, i) => `
                                 <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;" onclick="pillClick(event, this)">
-                                    <input type="checkbox" name="available_days" value="${i === 6 ? 0 : i}" ${(app.state.profile?.available_days || [1,3,5]).includes(i === 6 ? 0 : i) ? 'checked' : ''} onchange="updateDays()">
+                                    <input type="checkbox" name="available_days" value="${i}" ${(app.state.profile?.available_days || [1,3,5]).includes(i) ? 'checked' : ''} onchange="updateDays()">
                                     ${d}
                                 </label>
                             `).join('')}
@@ -168,7 +168,7 @@ async function saveProfile() {
         primary_goal: formData.get('primary_goal'),
         ftp_pace_per_100: formData.get('ftp_pace_per_100') ? parseInt(formData.get('ftp_pace_per_100')) : null,
         injury_notes: formData.get('injury_notes') || '',
-        available_days: Array.from(form.querySelectorAll('input[name="available_days"]:checked')).map(cb => parseInt(cb.value)),
+        available_days: Array.from(form.querySelectorAll('input[name="available_days"]:checked')).map(cb => parseInt(cb.value)).filter(d => d >= 0 && d <= 6),
         strength_days: Array.from(form.querySelectorAll('input[name="strength_days"]:checked')).map(cb => parseInt(cb.value)).filter(d => d >= 0 && d <= 6),
         preferred_strokes: Array.from(form.querySelectorAll('input[name="preferred_strokes"]:checked')).map(cb => cb.value),
         available_equipment: Array.from(new Set(

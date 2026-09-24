@@ -45,6 +45,41 @@ function renderOnboarding(app) {
     `;
     
     document.getElementById('app').innerHTML = html;
+    if (step === 1) prefillSavedTest();
+}
+
+function minSecInputs(prefix, totalSec, minId, secId) {
+    if (totalSec == null) return;
+    const m = Math.floor(totalSec / 60);
+    const s = Math.round(totalSec % 60);
+    const mi = document.getElementById(minId);
+    const si = document.getElementById(secId);
+    if (mi && !mi.value) mi.value = m;
+    if (si && !si.value) si.value = s;
+}
+
+// Prefill CSS test + athlete data from the server (never retype it)
+async function prefillSavedTest() {
+    try {
+        const t = await api.getLatestTest();
+        minSecInputs(0, t.tiempo_400_seg, 'css_400_min', 'css_400_sec');
+        minSecInputs(0, t.tiempo_200_seg, 'css_200_min', 'css_200_sec');
+        if (t.tiempo_50_seg != null) {
+            const el = document.getElementById('css_50_sec');
+            if (el && !el.value) el.value = t.tiempo_50_seg;
+        }
+        const map = { ath_age: t.edad, ath_weight: t.peso_kg, ath_height: t.altura_cm };
+        for (const [id, v] of Object.entries(map)) {
+            const el = document.getElementById(id);
+            if (el && !el.value && v != null) el.value = v;
+        }
+        if (window.updateCssPreview) updateCssPreview();
+        if (t.css_pace_100_seg != null && window.saveTierAssessment) {
+            saveTierAssessment({ tier: t.tier, cssPace: t.css_pace_100_seg, modelVersion: t.modelo_version });
+        }
+        const pv = document.getElementById('css-preview');
+        if (pv && t.date) pv.textContent += ` (saved test from ${t.date} — edit to retake)`;
+    } catch { /* no saved test yet: manual entry */ }
 }
 
 function getStepComponent(step, app) {
@@ -63,7 +98,7 @@ function profileStep(app) {
         <form id="profile-form">
             <div class="grid" style="margin-bottom: 1rem;">
                 <label for="level">Level</label>
-                <select id="level" name="level" required>
+                <select id="level" name="level" required onchange="updateVolumePreview()">
                     <option value="beginner">Beginner (0-1 year)</option>
                     <option value="intermediate" selected>Intermediate (1-3 years)</option>
                     <option value="advanced">Advanced (3+ years)</option>
@@ -72,12 +107,13 @@ function profileStep(app) {
             
             <div class="grid" style="margin-bottom: 1rem;">
                 <label for="swim_days_per_week">Swim Days per Week</label>
-                <input type="number" id="swim_days_per_week" name="swim_days_per_week" min="3" max="6" value="4" required>
+                <input type="number" id="swim_days_per_week" name="swim_days_per_week" min="3" max="6" value="4" required oninput="updateVolumePreview()">
             </div>
             
             <div class="grid" style="margin-bottom: 1rem;">
                 <label for="target_volume_per_session">Target Volume per Session (meters)</label>
-                <input type="number" id="target_volume_per_session" name="target_volume_per_session" min="1500" max="8000" value="3000" step="100" required>
+                <input type="number" id="target_volume_per_session" name="target_volume_per_session" min="1500" max="8000" value="3000" step="100" required oninput="updateVolumePreview()">
+                <p id="volume-preview" style="font-size: 0.875rem; color: var(--muted-color); margin: 0.25rem 0 0;"></p>
             </div>
             
             <div class="grid" style="margin-bottom: 1rem;">
@@ -183,11 +219,11 @@ function goalsStep(app) {
             </div>
             
             <div class="grid" style="margin-bottom: 1rem;">
-                <label for="available_days">Training Days (Mon=1...Sun=0)</label>
+                <label for="available_days">Training Days (Mon=0 … Sun=6)</label>
                 <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
                     ${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d, i) => `
                         <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; cursor: pointer;" onclick="pillClick(event, this)">
-                            <input type="checkbox" name="available_days" value="${i === 6 ? 0 : i}" ${[1,3,5].includes(i) ? 'checked' : ''} onchange="toggleDay(this)">
+                            <input type="checkbox" name="available_days" value="${i}" ${[1,3,5].includes(i) ? 'checked' : ''} onchange="toggleDay(this)">
                             ${d}
                         </label>
                     `).join('')}
@@ -286,7 +322,7 @@ function confirmStep(app) {
             <p style="color: var(--muted-color); margin-bottom: 2rem;">
                 Your profile is ready. We'll generate your personalized macrocycle based on your competition goal.
             </p>
-            <button class="primary" onclick="completeOnboarding()">Generate My Plan</button>
+            <button class="primary" id="generate-btn" onclick="completeOnboarding()">Generate My Plan</button>
         </div>
     `;
 }
@@ -337,16 +373,28 @@ function validateStep(step) {
         }
         field.style.borderColor = '';
     }
-    // Coherence: swim days can't exceed selected training days
-    const swimDays = form.querySelector('[name="swim_days_per_week"]');
-    const dayBoxes = form.querySelectorAll('input[name="available_days"]:checked');
-    if (swimDays && dayBoxes && dayBoxes.length && parseInt(swimDays.value) > dayBoxes.length) {
-        swimDays.focus();
-        swimDays.style.borderColor = 'var(--error-color)';
-        window.app.showError(
-            `Swim days (${swimDays.value}) exceed your ${dayBoxes.length} selected training days.`);
-        return false;
-    }
+    // Cross-step counts: training days must equal swim days from step 1;
+    // picked strength days must be empty (auto) or equal strength count.
+    try {
+        const savedPrev = JSON.parse(localStorage.getItem('onboarding_data') || '{}');
+        const pickedDays = form.querySelectorAll('input[name="available_days"]:checked').length;
+        if (step === 3 && pickedDays) {
+            const want = parseInt(Array.isArray(savedPrev.swim_days_per_week)
+                ? savedPrev.swim_days_per_week[0] : savedPrev.swim_days_per_week);
+            if (want && pickedDays !== want) {
+                window.app.showError(`Select exactly ${want} training days (you asked for ${want} swim days).`);
+                return false;
+            }
+        }
+        const pickedStr = form.querySelectorAll('input[name="strength_days"]:checked').length;
+        if (step === 4 && pickedStr) {
+            const wantS = parseInt(form.querySelector('[name="strength_days_per_week"]')?.value);
+            if (wantS && pickedStr !== wantS) {
+                window.app.showError(`Pick exactly ${wantS} strength days (or none for automatic).`);
+                return false;
+            }
+        }
+    } catch { /* never block on storage errors */ }
     return true;
 }
 
@@ -395,7 +443,27 @@ function updateCssPreview() {
     el.textContent = css ? `Your CSS: ${Math.floor(css / 60)}:${String(Math.round(css % 60)).padStart(2, '0')} /100m` : '';
 }
 
+function updateVolumePreview() {
+    const el = document.getElementById('volume-preview');
+    if (!el) return;
+    const days = parseInt(document.getElementById('swim_days_per_week')?.value) || 0;
+    const vol = parseInt(document.getElementById('target_volume_per_session')?.value) || 0;
+    const level = document.getElementById('level')?.value || 'intermediate';
+    if (!days || !vol) { el.textContent = ''; return; }
+    const weekly = days * vol;
+    const caps = { beginner: 12000, intermediate: 16000, advanced: 25000 };
+    const cap = caps[level] || 16000;
+    el.textContent = `≈ ${weekly.toLocaleString()}m/week in Base` +
+        (weekly > cap ? ` — above the ${cap.toLocaleString()}m guideline for ${level}, consider lowering volume or days.` : ' — within guideline.');
+    el.style.color = weekly > cap ? 'var(--warning-color)' : 'var(--muted-color)';
+}
+
 function completeOnboarding() {
+    // Anti-double-click: generation takes ~30s and used to duplicate plans
+    if (window._generating) return;
+    window._generating = true;
+    const genBtn = document.getElementById('generate-btn');
+    if (genBtn) { genBtn.disabled = true; genBtn.textContent = 'Generating… (~30s, do not click again)'; }
     const saved = JSON.parse(localStorage.getItem('onboarding_data') || '{}');
     // First value wins (user may go Back/Next and re-save a step)
     const first = (v, dflt) => {
@@ -435,6 +503,7 @@ function completeOnboarding() {
     // Tier APPLIES to level (user decision) and scales base volume.
     let tierInfo = null;
     let tierNotice = null;
+    let swimTestPayload = null;
     try {
         const t400 = secs(saved.css_400_min, saved.css_400_sec);
         const t200 = secs(saved.css_200_min, saved.css_200_sec);
@@ -459,6 +528,16 @@ function completeOnboarding() {
             if (window.saveTierAssessment) {
                 saveTierAssessment({ tier: tierInfo.tier, cssPace, modelVersion: tierInfo.modelVersion });
             }
+            // Persist the test server-side so it's never retyped
+            swimTestPayload = {
+                tiempo_400_seg: t400, tiempo_200_seg: t200,
+                tiempo_50_seg: saved.css_50_sec ? parseFloat(saved.css_50_sec) : null,
+                css_pace_100_seg: cssPace,
+                edad: saved.ath_age ? parseInt(saved.ath_age) : null,
+                peso_kg: saved.ath_weight ? parseFloat(saved.ath_weight) : null,
+                altura_cm: saved.ath_height ? parseFloat(saved.ath_height) : null,
+                tier: tierInfo.tier, modelo_version: tierInfo.modelVersion,
+            };
         }
     } catch (e) { /* ML never blocks onboarding */ }
 
@@ -478,7 +557,7 @@ function completeOnboarding() {
         ])),
         preferred_strokes: saved.preferred_strokes ? (Array.isArray(saved.preferred_strokes) ? saved.preferred_strokes : [saved.preferred_strokes]) : ['freestyle'],
         primary_goal: saved.primary_goal || 'endurance',
-        available_days: saved.available_days ? (Array.isArray(saved.available_days) ? saved.available_days.map(Number) : [Number(saved.available_days)]) : [1, 3, 5],
+        available_days: saved.available_days ? (Array.isArray(saved.available_days) ? saved.available_days.map(Number).filter(d => d >= 0 && d <= 6) : [Number(saved.available_days)].filter(d => d >= 0 && d <= 6)) : [1, 3, 5],
         strength_days: saved.strength_days ? (Array.isArray(saved.strength_days) ? saved.strength_days.map(Number).filter(d => d >= 0 && d <= 6) : [Number(saved.strength_days)].filter(d => d >= 0 && d <= 6)) : []
     };
     
@@ -501,6 +580,7 @@ function completeOnboarding() {
         throw err;
     });
     Promise.resolve()
+        .then(() => swimTestPayload ? api.saveSwimTest(swimTestPayload).catch(() => null) : null)
         .then(() => api.updateProfile(profileData))
         .then(saveCompetition)
         .then(() => api.generateMacrocycle())
@@ -517,7 +597,12 @@ function completeOnboarding() {
                     setTimeout(() => { window.location.hash = '#/dashboard'; }, 900);
                 });
         })
-        .catch(err => window.app.showError(err.message));
+        .catch(err => window.app.showError(err.message))
+        .finally(() => {
+            window._generating = false;
+            const b = document.getElementById('generate-btn');
+            if (b) { b.disabled = false; b.textContent = 'Generate My Plan'; }
+        });
 }
 
 function toggleEquipment(checkbox) {
@@ -552,6 +637,8 @@ function toggleEvent(checkbox) {
 
 // Export
 window.renderOnboarding = renderOnboarding;
+window.updateVolumePreview = updateVolumePreview;
+window.prefillSavedTest = prefillSavedTest;
 window.secs = secs;
 window.updateCssPreview = updateCssPreview;
 window.goToStep = goToStep;

@@ -246,7 +246,7 @@ def generate_weekly_swim_plan(
     phase = get_phase_for_week(macrocycle_phases, week_relative)
     phase_name = phase["name"]
     
-    # Get available days (0=Sun..6=Sat)
+    # Get available days (Mon=0..Sun=6, same as UI checkboxes)
     available_days = profile.get("available_days", [1, 3, 5])
     swim_days_per_week = min(profile.get("swim_days_per_week", 4), len(available_days))
     

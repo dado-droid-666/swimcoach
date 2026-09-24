@@ -332,6 +332,31 @@ class ExerciseLogResponse(BaseModel):
         from_attributes = True
 
 
+# Swim CSS test + athlete data (persisted so users never retype it).
+# NOTE: field is test_date (not date): `date: Optional[date]` self-shadows
+# the datetime type in class scope and collapses to NoneType.
+class SwimTestCreate(BaseModel):
+    test_date: Optional[date] = None
+    tiempo_400_seg: Optional[float] = Field(default=None, ge=60, le=3600)
+    tiempo_200_seg: Optional[float] = Field(default=None, ge=20, le=1800)
+    tiempo_50_seg: Optional[float] = Field(default=None, ge=15, le=600)
+    css_pace_100_seg: Optional[float] = Field(default=None, ge=30, le=400)
+    edad: Optional[int] = Field(default=None, ge=10, le=100)
+    peso_kg: Optional[float] = Field(default=None, ge=30, le=250)
+    altura_cm: Optional[float] = Field(default=None, ge=120, le=230)
+    tier: Optional[int] = Field(default=None, ge=1, le=3)
+    modelo_version: Optional[str] = Field(default=None, max_length=60)
+
+
+class SwimTestResponse(SwimTestCreate):
+    id: int
+    user_id: int
+    date: date
+
+    class Config:
+        from_attributes = True
+
+
 # Stats
 class StatsSummaryResponse(BaseModel):
     weekly_volume: int

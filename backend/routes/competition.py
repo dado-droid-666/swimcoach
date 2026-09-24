@@ -106,7 +106,10 @@ def generate_macrocycle(
         ow_distance_km=goal.ow_distance_km
     )
     
-    # Save macrocycle
+    # Save macrocycle (idempotent: wipe previous plan + sessions first so
+    # retries/double-clicks never duplicate sessions)
+    db.query(TrainingSession).filter(TrainingSession.user_id == user.id).delete(synchronize_session=False)
+    db.query(StrengthSession).filter(StrengthSession.user_id == user.id).delete(synchronize_session=False)
     existing = db.query(MacrocyclePlan).filter(MacrocyclePlan.user_id == user.id).first()
     if existing:
         db.delete(existing)
