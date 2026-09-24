@@ -506,8 +506,16 @@ function completeOnboarding() {
         .then(() => api.generateMacrocycle())
         .then(() => {
             localStorage.removeItem('onboarding_data');
-            window.app.showSuccess(tierNotice || 'Setup complete! Generating your macrocycle...');
-            setTimeout(() => window.location.hash = '#/dashboard', 1500);
+            // Refresh app state (profile/competition/macrocycle were created
+            // AFTER login) or the dashboard router bounces back to onboarding.
+            return Promise.resolve()
+                .then(() => window.app.loadProfile().catch(() => {}))
+                .then(() => window.app.loadCompetition().catch(() => {}))
+                .then(() => {
+                    window.app.updateNav();
+                    window.app.showSuccess(tierNotice || 'Setup complete! Generating your macrocycle...');
+                    setTimeout(() => { window.location.hash = '#/dashboard'; }, 900);
+                });
         })
         .catch(err => window.app.showError(err.message));
 }
