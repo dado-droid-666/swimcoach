@@ -56,7 +56,7 @@ async function renderSession(app, dateParam) {
     const html = `
         <div class="session-view" style="max-width: 800px; margin: 0 auto;">
             <header style="margin-bottom: 1rem;">
-                <div class="topbar"><a href="#/dashboard" class="secondary" style="text-decoration: none; font-size: 0.875rem;">← Dashboard</a><span><a href="#" onclick="event.preventDefault();window.showGuide('session')" style="font-size: 0.875rem;" title="Take the tour">? Guide</a> · <a href="#/week?start=${mondayISO(date)}" style="font-size: 0.875rem;">Week →</a></span></div>
+                <div class="topbar"><a href="#/dashboard" class="secondary" style="text-decoration: none; font-size: 0.875rem;">← Dashboard</a><a href="#/week?start=${mondayISO(date)}" style="font-size: 0.875rem;">Week →</a></div>
                 <h1 style="margin: 0.5rem 0 0;">${dayName}</h1>
                 <p style="color: var(--muted-color); margin: 0;">${swim?.phase_name || strength?.phase_name || 'Training'} • Week ${swim?.week_relative || strength?.week_relative || '?'}</p>
             </header>
