@@ -18,10 +18,11 @@ async function renderMacrocycle(app) {
     const html = `
         <div class="macrocycle-view" style="max-width: 1000px; margin: 0 auto;">
             <header style="margin-bottom: 2rem;">
-                <div class="topbar"><h1 style="margin: 0;">Macrocycle Plan</h1><a href="#" id="new-plan-btn" style="font-size: 13px;" title="Start over keeping profile & history">↺ New plan</a></div>
-                <p style="color: var(--muted-color);">
+                <h1 style="margin: 0 0 0.25rem; font-size: clamp(1.4rem, 6vw, 2rem);">Macrocycle Plan</h1>
+                <p style="color: var(--muted-color); margin: 0 0 1rem;">
                     ${competition.competition_type === 'pool' ? 'Pool' : 'Open Water'} • ${competition.competition_date} • ${macro.total_weeks} weeks
                 </p>
+                <button class="big-btn secondary" id="new-plan-btn" title="Start over keeping profile & history">↺ Start new plan</button>
             </header>
             
             <!-- Phase Timeline -->
