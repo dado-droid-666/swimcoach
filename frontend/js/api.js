@@ -168,6 +168,10 @@ class ApiClient {
         return this.request(`/plan/week/regenerate?start=${startDate}`, { method: 'POST' });
     }
 
+    async getPlanOverview() {
+        return this.request('/plan/overview');
+    }
+
     // Feedback
     async submitFeedback(data) {
         return this.request('/feedback', {

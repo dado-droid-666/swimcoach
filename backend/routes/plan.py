@@ -6,7 +6,8 @@ from backend.database import get_db
 from backend.models import User, MacrocyclePlan, TrainingSession, StrengthSession
 from backend.schemas import (
     WeekPlanResponse, TodayPlanResponse, MacrocycleResponse,
-    MacrocyclePhaseSchema, TrainingSessionResponse, StrengthSessionResponse
+    MacrocyclePhaseSchema, TrainingSessionResponse, StrengthSessionResponse,
+    OverviewWeek, PlanOverviewResponse,
 )
 from backend.auth import get_current_user, require_pro
 
@@ -239,3 +240,48 @@ def regenerate_week(
     db.commit()
     return {"message": "Week regenerated", "week_start": start.isoformat(),
             "swim_sessions": len(swim_sessions), "strength_sessions": len(strength_sessions)}
+
+
+@router.get("/overview", response_model=PlanOverviewResponse)
+def get_plan_overview(
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Whole-plan overview: per-week swim meters + strength load (planned).
+
+    One call for up to 30 weeks, grouped by Monday.
+    """
+    swims = db.query(TrainingSession).filter(
+        TrainingSession.user_id == user.id).order_by(TrainingSession.date).all()
+    strengths = db.query(StrengthSession).filter(
+        StrengthSession.user_id == user.id).order_by(StrengthSession.date).all()
+
+    weeks = {}
+    for s in swims:
+        monday = s.date - timedelta(days=s.date.weekday())
+        w = weeks.setdefault(monday, {
+            "week_start": monday, "week_relative": s.week_relative,
+            "phase_name": s.phase_name, "swim_meters": 0, "swim_sessions": 0,
+            "strength_sessions": 0, "strength_exercises": 0, "strength_minutes": 0,
+        })
+        w["swim_meters"] += s.total_meters or 0
+        w["swim_sessions"] += 1
+    for s in strengths:
+        monday = s.date - timedelta(days=s.date.weekday())
+        w = weeks.setdefault(monday, {
+            "week_start": monday, "week_relative": s.week_relative,
+            "phase_name": s.phase_name, "swim_meters": 0, "swim_sessions": 0,
+            "strength_sessions": 0, "strength_exercises": 0, "strength_minutes": 0,
+        })
+        w["strength_sessions"] += 1
+        w["strength_exercises"] += len(s.exercises or [])
+        w["strength_minutes"] += s.estimated_duration_min or 0
+
+    ordered = [weeks[k] for k in sorted(weeks)]
+    return PlanOverviewResponse(
+        weeks=[OverviewWeek(**w) for w in ordered],
+        total_swim_meters=sum(w["swim_meters"] for w in ordered),
+        total_swim_sessions=sum(w["swim_sessions"] for w in ordered),
+        total_strength_sessions=sum(w["strength_sessions"] for w in ordered),
+        total_strength_minutes=sum(w["strength_minutes"] for w in ordered),
+    )

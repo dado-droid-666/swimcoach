@@ -244,6 +244,25 @@ class WeekPlanResponse(BaseModel):
     strength_sessions: List[StrengthSessionResponse]
 
 
+class OverviewWeek(BaseModel):
+    week_start: date
+    week_relative: Optional[int] = None
+    phase_name: Optional[str] = None
+    swim_meters: int = 0
+    swim_sessions: int = 0
+    strength_sessions: int = 0
+    strength_exercises: int = 0
+    strength_minutes: int = 0
+
+
+class PlanOverviewResponse(BaseModel):
+    weeks: List[OverviewWeek]
+    total_swim_meters: int = 0
+    total_swim_sessions: int = 0
+    total_strength_sessions: int = 0
+    total_strength_minutes: int = 0
+
+
 class TodayPlanResponse(BaseModel):
     date: date
     swim: Optional[TrainingSessionResponse] = None
