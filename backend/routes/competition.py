@@ -149,9 +149,12 @@ def _generate_all_sessions(
         week_relative = week_offset - macro.total_weeks
         phase = get_phase_for_week(macro.phases, week_relative)
 
-        # Adaptativo: metodologia Salo siempre; feeling/adherencia/ML solo
-        # en semana actual/futuras (las pasadas quedan planificadas).
-        adaptive = build_week_adaptive(db, user.id, profile, goal, week_start, today)
+        # Los generadores normalizan al lunes dentro de cada bloque de 7
+        # dias (los dias del atleta son weekdays y la vista es Lun-Dom).
+        # El estado adaptativo usa el mismo lunes para decidir si la semana
+        # es actual/futura (aplica) o pasada (planificada).
+        week_monday = week_start + timedelta(days=(7 - week_start.weekday()) % 7)
+        adaptive = build_week_adaptive(db, user.id, profile, goal, week_monday, today)
 
         # Generate swim sessions
         swim_sessions = generate_weekly_swim_plan(

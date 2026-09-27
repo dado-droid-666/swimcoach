@@ -3,6 +3,9 @@ prehab y mezcla TRX/KB + libro. Puros unitarios, sin DB ni servidor.
 Uso: python -m pytest test_salo_mix.py -v
 """
 from datetime import date, timedelta
+import json
+import re
+from pathlib import Path
 
 from backend.services.macrocycle_calculator import get_event_category
 from backend.services.salo_mix import (
@@ -121,25 +124,6 @@ def test_fuerza_mix_trx_kb_y_salo():
     assert any(n in ("Prone Bridge", "Back Bridge", "Side Bridge") for n in names)  # core Salo
 
 
-def test_focus_cabe_en_varchar_postgres():
-    """Guardia durable: focus <=100 (Postgres valida, SQLite no)."""
-    adapt = {"salo": True, "recovery": False, "volume_factor": 1.0,
-             "feeling": 4, "edad": 30, "injury_notes": "", "reason": "t"}
-    adapt_r = {"salo": True, "recovery": True, "volume_factor": 0.7,
-               "feeling": 2, "edad": 30, "injury_notes": "hombro", "reason": "t"}
-    for wk, ph in [(-4, "Base"), (-3, "Build"), (-2, "Peak"), (-1, "Taper")]:
-        for a in (adapt, adapt_r):
-            for s in generate_weekly_strength_plan(
-                    monday(), wk, PHASES, BASE_PROFILE, [0, 1],
-                    requested_per_week=2, adaptive=a):
-                assert len(s["focus"]) <= 100, s["focus"]
-            for s in generate_weekly_swim_plan(
-                    monday(), wk, PHASES, BASE_PROFILE, CompetitionType.POOL,
-                    ["100_free"], None, a):
-                assert len(s["focus"] or "") <= 100, s["focus"]
-                assert len(s["generated_by"]) <= 20, s["generated_by"]
-
-
 def test_fuerza_youth_y_prehab():
     peak_phases = [dict(p, start_week=0, end_week=0) if p["name"] == "Peak" else p for p in PHASES]
     adapt_y = {"salo": True, "recovery": False, "volume_factor": 1.0,
@@ -155,3 +139,62 @@ def test_fuerza_youth_y_prehab():
         monday(), -3, PHASES, BASE_PROFILE, [0], requested_per_week=1, adaptive=adapt_p)
     names_p = [e["name"] for s in sessions_p for e in s["exercises"]]
     assert any("Retraction" in n or "Catch Position" in n for n in names_p)
+
+
+def test_focus_cabe_en_varchar_postgres():
+    """Guardia durable: focus <=100 (Postgres valida, SQLite no)."""
+    adapt = {"salo": True, "recovery": False, "volume_factor": 1.0,
+             "feeling": 4, "edad": 30, "injury_notes": "", "reason": "t"}
+    adapt_r = {"salo": True, "recovery": True, "volume_factor": 0.7,
+               "feeling": 2, "edad": 30, "injury_notes": "hombro", "reason": "t"}
+    for wk in (-4, -3, -2, -1):
+        for a in (adapt, adapt_r):
+            for s in generate_weekly_strength_plan(
+                    monday(), wk, PHASES, BASE_PROFILE, [0, 1],
+                    requested_per_week=2, adaptive=a):
+                assert len(s["focus"]) <= 100, s["focus"]
+            for s in generate_weekly_swim_plan(
+                    monday(), wk, PHASES, BASE_PROFILE, CompetitionType.POOL,
+                    ["100_free"], None, a):
+                assert len(s["focus"] or "") <= 100, s["focus"]
+                assert len(s["generated_by"]) <= 20, s["generated_by"]
+
+
+def test_dias_respetan_weekdays_cualquier_inicio():
+    """Los offsets de dias son weekdays (Lun=0..Dom=6): con [1,5,6] el nado
+    siempre cae Mar/Sab/Dom, sin importar el dia en que empiece el bloque."""
+    phases = [dict(p, start_week=-99, end_week=99) if p["name"] == "Base" else p for p in PHASES]
+    profile = dict(BASE_PROFILE, available_days=[1, 5, 6], swim_days_per_week=3)
+    adapt = {"salo": True, "recovery": False, "volume_factor": 1.0, "reason": "t"}
+    base = date(2026, 9, 27)  # domingo
+    for shift in range(7):
+        ws = base + timedelta(days=shift)
+        sessions = generate_weekly_swim_plan(
+            ws, -99, phases, profile, CompetitionType.POOL, ["100_free"], None, adapt)
+        assert sessions, shift
+        for s in sessions:
+            wd = date.fromisoformat(s["date"]).weekday()
+            assert wd in (1, 5, 6), f"inicio {ws} -> weekday {wd}"
+
+
+def test_monday_of_block():
+    """La normalizacion usada en generate: lunes dentro del bloque."""
+    for shift in range(7):
+        block = date(2026, 9, 27) + timedelta(days=shift)  # dom..sab
+        m = block + timedelta(days=(7 - block.weekday()) % 7)
+        assert m.weekday() == 0
+        assert 0 <= (m - block).days <= 6
+
+
+def test_notes_sin_codigos():
+    """La app muestra description+notes: cero jerga EN/SP/Ch visible."""
+    swim = json.loads((Path("data") / "salo_swim.json").read_text(encoding="utf-8"))
+    texts = ([x["description"] + " " + x["notes"]
+              for cat in swim["main_sets"].values() for ph in cat.values() for x in ph]
+             + [x["description"] + " " + x["notes"] for x in swim["recovery"] + swim["tecnica_ch1"]])
+    for t in texts:
+        assert not re.search(r"EN1|EN2|\bSP\b|Ch\d|Salo", t), t
+    dry = json.loads((Path("data") / "salo_dryland.json").read_text(encoding="utf-8"))
+    for g in dry["grupos"].values():
+        for e in g:
+            assert not re.search(r"Salo|Ch\d|DVD", e["notes"]), e["notes"]

@@ -1,155 +1,870 @@
 {
   "fuente": "Salo & Riewald, Complete Conditioning for Swimming — Ch3/Ch4/Ch10/Ch11 + DVD (solo estructura de sets, sin texto del libro)",
   "mix": {
-    "pool_sprint": {"EN1": 0.3, "EN2": 0.2, "SP": 0.5},
-    "pool_mid": {"EN1": 0.4, "EN2": 0.35, "SP": 0.25},
-    "pool_im": {"EN1": 0.4, "EN2": 0.35, "SP": 0.25},
-    "pool_distance": {"EN1": 0.55, "EN2": 0.3, "SP": 0.15},
-    "ow_short": {"EN1": 0.4, "EN2": 0.35, "SP": 0.25},
-    "ow_long": {"EN1": 0.55, "EN2": 0.3, "SP": 0.15},
-    "ow_ultra": {"EN1": 0.6, "EN2": 0.3, "SP": 0.1}
+    "pool_sprint": {
+      "EN1": 0.3,
+      "EN2": 0.2,
+      "SP": 0.5
+    },
+    "pool_mid": {
+      "EN1": 0.4,
+      "EN2": 0.35,
+      "SP": 0.25
+    },
+    "pool_im": {
+      "EN1": 0.4,
+      "EN2": 0.35,
+      "SP": 0.25
+    },
+    "pool_distance": {
+      "EN1": 0.55,
+      "EN2": 0.3,
+      "SP": 0.15
+    },
+    "ow_short": {
+      "EN1": 0.4,
+      "EN2": 0.35,
+      "SP": 0.25
+    },
+    "ow_long": {
+      "EN1": 0.55,
+      "EN2": 0.3,
+      "SP": 0.15
+    },
+    "ow_ultra": {
+      "EN1": 0.6,
+      "EN2": 0.3,
+      "SP": 0.1
+    }
   },
-  "zona_a_intensidad": {"EN1": "Z2", "EN2": "Z3", "SP": "Z4"},
+  "zona_a_intensidad": {
+    "EN1": "Z2",
+    "EN2": "Z3",
+    "SP": "Z4"
+  },
   "main_sets": {
     "pool_sprint": {
       "base": [
-        {"set_id": "salo-en1", "description": "6x100 @75% tecnica + DPS (desc 20s)", "meters": 600, "reps": 6, "distance": 100, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 20, "equipment": [], "intensity_zone": "Z2", "notes": "EN1 Salo Ch4: menos brazadas a mismo pace = mas eficiencia", "fuente_pag": "Ch4"},
-        {"set_id": "salo-sp-base", "description": "6x50 @90% velocidad base (desc 60s)", "meters": 300, "reps": 6, "distance": 50, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 60, "equipment": [], "intensity_zone": "Z4", "notes": "SP Salo Ch3: velocidad con recuperacion completa", "fuente_pag": "Ch3"}
+        {
+          "set_id": "salo-en1",
+          "description": "6x100 @75% tecnica + DPS (desc 20s)",
+          "meters": 600,
+          "reps": 6,
+          "distance": 100,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 20,
+          "equipment": [],
+          "intensity_zone": "Z2",
+          "notes": "Technique focus — fewer strokes at the same pace means more efficiency",
+          "fuente_pag": "Ch4"
+        },
+        {
+          "set_id": "salo-sp-base",
+          "description": "6x50 @90% velocidad base (desc 60s)",
+          "meters": 300,
+          "reps": 6,
+          "distance": 50,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 60,
+          "equipment": [],
+          "intensity_zone": "Z4",
+          "notes": "Speed — short and fast, full recovery",
+          "fuente_pag": "Ch3"
+        }
       ],
       "build": [
-        {"set_id": "salo-en2", "description": "8x100 @85% umbral sprint (desc 20s)", "meters": 800, "reps": 8, "distance": 100, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 20, "equipment": [], "intensity_zone": "Z3", "notes": "EN2 Salo Ch4: umbral", "fuente_pag": "Ch4"},
-        {"set_id": "salo-sp", "description": "8x50 @95% + salidas (desc 60s)", "meters": 400, "reps": 8, "distance": 50, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 60, "equipment": [], "intensity_zone": "Z4", "notes": "SP Salo Ch3/Ch6: velocidad + salidas", "fuente_pag": "Ch3/Ch6"}
+        {
+          "set_id": "salo-en2",
+          "description": "8x100 @85% umbral sprint (desc 20s)",
+          "meters": 800,
+          "reps": 8,
+          "distance": 100,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 20,
+          "equipment": [],
+          "intensity_zone": "Z3",
+          "notes": "Threshold — the fastest pace you can hold with control",
+          "fuente_pag": "Ch4"
+        },
+        {
+          "set_id": "salo-sp",
+          "description": "8x50 @95% + salidas (desc 60s)",
+          "meters": 400,
+          "reps": 8,
+          "distance": 50,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 60,
+          "equipment": [],
+          "intensity_zone": "Z4",
+          "notes": "Starts and turns — explode, then settle into pace",
+          "fuente_pag": "Ch3/Ch6"
+        }
       ],
       "peak": [
-        {"set_id": "salo-sp", "description": "8x50 @95% + 4x25 salidas (desc 60s)", "meters": 500, "reps": 8, "distance": 50, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 60, "equipment": [], "intensity_zone": "Z4", "stroke_rate_optional": true, "notes": "SP Salo Ch3: race pace 50/100", "fuente_pag": "Ch3"},
-        {"set_id": "salo-en1", "description": "8x50 tecnica DPS (desc 30s)", "meters": 400, "reps": 8, "distance": 50, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 30, "equipment": [], "intensity_zone": "Z2", "notes": "EN1 Salo Ch4: tecnica a ritmo", "fuente_pag": "Ch4"}
+        {
+          "set_id": "salo-sp",
+          "description": "8x50 @95% + 4x25 salidas (desc 60s)",
+          "meters": 500,
+          "reps": 8,
+          "distance": 50,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 60,
+          "equipment": [],
+          "intensity_zone": "Z4",
+          "stroke_rate_optional": true,
+          "notes": "Starts and turns — explode, then settle into pace",
+          "fuente_pag": "Ch3"
+        },
+        {
+          "set_id": "salo-en1",
+          "description": "8x50 tecnica DPS (desc 30s)",
+          "meters": 400,
+          "reps": 8,
+          "distance": 50,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 30,
+          "equipment": [],
+          "intensity_zone": "Z2",
+          "notes": "Technique focus — fewer strokes at the same pace means more efficiency",
+          "fuente_pag": "Ch4"
+        }
       ],
       "taper": [
-        {"set_id": "salo-sharp", "description": "6x50 rapido pero controlado (desc 90s)", "meters": 300, "reps": 6, "distance": 50, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 90, "equipment": [], "intensity_zone": "Z3", "notes": "Salo: afinar sin fatiga", "fuente_pag": "Ch3"}
+        {
+          "set_id": "salo-sharp",
+          "description": "6x50 rapido pero controlado (desc 90s)",
+          "meters": 300,
+          "reps": 6,
+          "distance": 50,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 90,
+          "equipment": [],
+          "intensity_zone": "Z3",
+          "notes": "Sharpening — fast but controlled, stay fresh",
+          "fuente_pag": "Ch3"
+        }
       ],
       "race": [
-        {"set_id": "salo-activ", "description": "4x50 activacion, ultimos 2 a ritmo (desc 60s)", "meters": 200, "reps": 4, "distance": 50, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 60, "equipment": [], "intensity_zone": "Z2", "notes": "Salo: activacion pre-competencia", "fuente_pag": "Ch3"}
+        {
+          "set_id": "salo-activ",
+          "description": "4x50 activacion, ultimos 2 a ritmo (desc 60s)",
+          "meters": 200,
+          "reps": 4,
+          "distance": 50,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 60,
+          "equipment": [],
+          "intensity_zone": "Z2",
+          "notes": "Event pace — swim it like race day",
+          "fuente_pag": "Ch3"
+        }
       ]
     },
     "pool_mid": {
       "base": [
-        {"set_id": "salo-en1", "description": "6x200 @75% + 4x50 DPS (desc 20s)", "meters": 1400, "reps": 6, "distance": 200, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 20, "equipment": [], "intensity_zone": "Z2", "notes": "EN1 Salo Ch4: base 200/400", "fuente_pag": "Ch4"},
-        {"set_id": "salo-en2-base", "description": "8x100 @85% suave (desc 20s)", "meters": 800, "reps": 8, "distance": 100, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 20, "equipment": [], "intensity_zone": "Z3", "notes": "EN2 Salo Ch4: introduccion umbral", "fuente_pag": "Ch4"}
+        {
+          "set_id": "salo-en1",
+          "description": "6x200 @75% + 4x50 DPS (desc 20s)",
+          "meters": 1400,
+          "reps": 6,
+          "distance": 200,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 20,
+          "equipment": [],
+          "intensity_zone": "Z2",
+          "notes": "Technique focus — fewer strokes at the same pace means more efficiency",
+          "fuente_pag": "Ch4"
+        },
+        {
+          "set_id": "salo-en2-base",
+          "description": "8x100 @85% suave (desc 20s)",
+          "meters": 800,
+          "reps": 8,
+          "distance": 100,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 20,
+          "equipment": [],
+          "intensity_zone": "Z3",
+          "notes": "Threshold — the fastest pace you can hold with control",
+          "fuente_pag": "Ch4"
+        }
       ],
       "build": [
-        {"set_id": "salo-en2", "description": "10x100 @85% umbral (desc 15s)", "meters": 1000, "reps": 10, "distance": 100, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 15, "equipment": [], "intensity_zone": "Z3", "notes": "EN2 Salo Ch4: umbral 200/400", "fuente_pag": "Ch4"},
-        {"set_id": "salo-sp", "description": "6x100 @90% ritmo 200/400 (desc 60s)", "meters": 600, "reps": 6, "distance": 100, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 60, "equipment": [], "intensity_zone": "Z4", "notes": "SP Salo Ch3: ritmo de prueba", "fuente_pag": "Ch3"}
+        {
+          "set_id": "salo-en2",
+          "description": "10x100 @85% umbral (desc 15s)",
+          "meters": 1000,
+          "reps": 10,
+          "distance": 100,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 15,
+          "equipment": [],
+          "intensity_zone": "Z3",
+          "notes": "Threshold — the fastest pace you can hold with control",
+          "fuente_pag": "Ch4"
+        },
+        {
+          "set_id": "salo-sp",
+          "description": "6x100 @90% ritmo 200/400 (desc 60s)",
+          "meters": 600,
+          "reps": 6,
+          "distance": 100,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 60,
+          "equipment": [],
+          "intensity_zone": "Z4",
+          "notes": "Event pace — swim it like race day",
+          "fuente_pag": "Ch3"
+        }
       ],
       "peak": [
-        {"set_id": "salo-sp", "description": "4x200 @90% ritmo 400 (desc 90s)", "meters": 800, "reps": 4, "distance": 200, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 90, "equipment": [], "intensity_zone": "Z4", "stroke_rate_optional": true, "notes": "SP Salo Ch3: simulacion de prueba", "fuente_pag": "Ch3"},
-        {"set_id": "salo-en1", "description": "4x100 @75% tecnica (desc 20s)", "meters": 400, "reps": 4, "distance": 100, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 20, "equipment": [], "intensity_zone": "Z2", "notes": "EN1 Salo Ch4: soltar", "fuente_pag": "Ch4"}
+        {
+          "set_id": "salo-sp",
+          "description": "4x200 @90% ritmo 400 (desc 90s)",
+          "meters": 800,
+          "reps": 4,
+          "distance": 200,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 90,
+          "equipment": [],
+          "intensity_zone": "Z4",
+          "stroke_rate_optional": true,
+          "notes": "Race simulation — practice your event pace and strategy",
+          "fuente_pag": "Ch3"
+        },
+        {
+          "set_id": "salo-en1",
+          "description": "4x100 @75% tecnica (desc 20s)",
+          "meters": 400,
+          "reps": 4,
+          "distance": 100,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 20,
+          "equipment": [],
+          "intensity_zone": "Z2",
+          "notes": "Technique focus — fewer strokes at the same pace means more efficiency",
+          "fuente_pag": "Ch4"
+        }
       ],
       "taper": [
-        {"set_id": "salo-sharp", "description": "6x100 @85% controlado (desc 60s)", "meters": 600, "reps": 6, "distance": 100, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 60, "equipment": [], "intensity_zone": "Z3", "notes": "Salo: afinar ritmo 200/400", "fuente_pag": "Ch3"}
+        {
+          "set_id": "salo-sharp",
+          "description": "6x100 @85% controlado (desc 60s)",
+          "meters": 600,
+          "reps": 6,
+          "distance": 100,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 60,
+          "equipment": [],
+          "intensity_zone": "Z3",
+          "notes": "Event pace — swim it like race day",
+          "fuente_pag": "Ch3"
+        }
       ],
       "race": [
-        {"set_id": "salo-activ", "description": "4x100 activacion, ultimo a ritmo (desc 60s)", "meters": 400, "reps": 4, "distance": 100, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 60, "equipment": [], "intensity_zone": "Z2", "notes": "Salo: activacion pre-competencia", "fuente_pag": "Ch3"}
+        {
+          "set_id": "salo-activ",
+          "description": "4x100 activacion, ultimo a ritmo (desc 60s)",
+          "meters": 400,
+          "reps": 4,
+          "distance": 100,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 60,
+          "equipment": [],
+          "intensity_zone": "Z2",
+          "notes": "Event pace — swim it like race day",
+          "fuente_pag": "Ch3"
+        }
       ]
     },
     "pool_im": {
       "base": [
-        {"set_id": "salo-en1", "description": "6x200 @75% estilos rotando (desc 25s)", "meters": 1200, "reps": 6, "distance": 200, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 25, "equipment": [], "intensity_zone": "Z2", "notes": "EN1 Salo Ch3/Ch4: base por estilos", "fuente_pag": "Ch3/Ch4"},
-        {"set_id": "salo-en2-base", "description": "8x100 @85% c/estilo (desc 20s)", "meters": 800, "reps": 8, "distance": 100, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 20, "equipment": [], "intensity_zone": "Z3", "notes": "EN2 Salo Ch4: umbral por estilos", "fuente_pag": "Ch4"}
+        {
+          "set_id": "salo-en1",
+          "description": "6x200 @75% estilos rotando (desc 25s)",
+          "meters": 1200,
+          "reps": 6,
+          "distance": 200,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 25,
+          "equipment": [],
+          "intensity_zone": "Z2",
+          "notes": "Stroke variety — rotate strokes, keep technique clean",
+          "fuente_pag": "Ch3/Ch4"
+        },
+        {
+          "set_id": "salo-en2-base",
+          "description": "8x100 @85% c/estilo (desc 20s)",
+          "meters": 800,
+          "reps": 8,
+          "distance": 100,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 20,
+          "equipment": [],
+          "intensity_zone": "Z3",
+          "notes": "Stroke variety — rotate strokes, keep technique clean",
+          "fuente_pag": "Ch4"
+        }
       ],
       "build": [
-        {"set_id": "salo-en2", "description": "8x100 @85% IM orden (desc 20s)", "meters": 800, "reps": 8, "distance": 100, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 20, "equipment": [], "intensity_zone": "Z3", "notes": "EN2 Salo Ch4: umbral IM", "fuente_pag": "Ch4"},
-        {"set_id": "salo-sp", "description": "6x50 @90% ritmo por estilo (desc 60s)", "meters": 300, "reps": 6, "distance": 50, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 60, "equipment": [], "intensity_zone": "Z4", "notes": "SP Salo Ch3: ritmo IM", "fuente_pag": "Ch3"}
+        {
+          "set_id": "salo-en2",
+          "description": "8x100 @85% IM orden (desc 20s)",
+          "meters": 800,
+          "reps": 8,
+          "distance": 100,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 20,
+          "equipment": [],
+          "intensity_zone": "Z3",
+          "notes": "Stroke variety — rotate strokes, keep technique clean",
+          "fuente_pag": "Ch4"
+        },
+        {
+          "set_id": "salo-sp",
+          "description": "6x50 @90% ritmo por estilo (desc 60s)",
+          "meters": 300,
+          "reps": 6,
+          "distance": 50,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 60,
+          "equipment": [],
+          "intensity_zone": "Z4",
+          "notes": "Event pace — swim it like race day",
+          "fuente_pag": "Ch3"
+        }
       ],
       "peak": [
-        {"set_id": "salo-sp", "description": "4x100 @90% ritmo IM (desc 90s)", "meters": 400, "reps": 4, "distance": 100, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 90, "equipment": [], "intensity_zone": "Z4", "stroke_rate_optional": true, "notes": "SP Salo Ch3: simulacion IM", "fuente_pag": "Ch3"}
+        {
+          "set_id": "salo-sp",
+          "description": "4x100 @90% ritmo IM (desc 90s)",
+          "meters": 400,
+          "reps": 4,
+          "distance": 100,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 90,
+          "equipment": [],
+          "intensity_zone": "Z4",
+          "stroke_rate_optional": true,
+          "notes": "Race simulation — practice your event pace and strategy",
+          "fuente_pag": "Ch3"
+        }
       ],
       "taper": [
-        {"set_id": "salo-sharp", "description": "8x50 @85% estilos, controlado (desc 45s)", "meters": 400, "reps": 8, "distance": 50, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 45, "equipment": [], "intensity_zone": "Z3", "notes": "Salo: afinar cambios de estilo", "fuente_pag": "Ch3"}
+        {
+          "set_id": "salo-sharp",
+          "description": "8x50 @85% estilos, controlado (desc 45s)",
+          "meters": 400,
+          "reps": 8,
+          "distance": 50,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 45,
+          "equipment": [],
+          "intensity_zone": "Z3",
+          "notes": "Pace changes — surge and settle, like open water packs",
+          "fuente_pag": "Ch3"
+        }
       ],
       "race": [
-        {"set_id": "salo-activ", "description": "4x50 activacion por estilo (desc 45s)", "meters": 200, "reps": 4, "distance": 50, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 45, "equipment": [], "intensity_zone": "Z2", "notes": "Salo: activacion pre-competencia", "fuente_pag": "Ch3"}
+        {
+          "set_id": "salo-activ",
+          "description": "4x50 activacion por estilo (desc 45s)",
+          "meters": 200,
+          "reps": 4,
+          "distance": 50,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 45,
+          "equipment": [],
+          "intensity_zone": "Z2",
+          "notes": "Pre-race activation — wake up the body, stay relaxed",
+          "fuente_pag": "Ch3"
+        }
       ]
     },
     "pool_distance": {
       "base": [
-        {"set_id": "salo-en1", "description": "3x800 @75% (desc 60s) + 200 suave", "meters": 2600, "reps": 3, "distance": 800, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 60, "equipment": [], "intensity_zone": "Z2", "notes": "EN1 Salo Ch4: fondo 800/1500", "fuente_pag": "Ch4"},
-        {"set_id": "salo-en1b", "description": "30min continuo @75% + 8x50 tecnica", "meters": 2000, "reps": 8, "distance": 50, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 20, "equipment": [], "intensity_zone": "Z2", "notes": "EN1 Salo Ch4: continuo + tecnica", "fuente_pag": "Ch4"}
+        {
+          "set_id": "salo-en1",
+          "description": "3x800 @75% (desc 60s) + 200 suave",
+          "meters": 2600,
+          "reps": 3,
+          "distance": 800,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 60,
+          "equipment": [],
+          "intensity_zone": "Z2",
+          "notes": "Aerobic base — build the engine at controlled effort",
+          "fuente_pag": "Ch4"
+        },
+        {
+          "set_id": "salo-en1b",
+          "description": "30min continuo @75% + 8x50 tecnica",
+          "meters": 2000,
+          "reps": 8,
+          "distance": 50,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 20,
+          "equipment": [],
+          "intensity_zone": "Z2",
+          "notes": "Technique focus — fewer strokes at the same pace means more efficiency",
+          "fuente_pag": "Ch4"
+        }
       ],
       "build": [
-        {"set_id": "salo-en2", "description": "5x400 @85% umbral fondo (desc 45s)", "meters": 2000, "reps": 5, "distance": 400, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 45, "equipment": [], "intensity_zone": "Z3", "notes": "EN2 Salo Ch4: umbral fondo", "fuente_pag": "Ch4"},
-        {"set_id": "salo-sp", "description": "10x100 @90% cierre fondo (desc 30s)", "meters": 1000, "reps": 10, "distance": 100, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 30, "equipment": [], "intensity_zone": "Z4", "notes": "SP Salo Ch3: cierre de prueba", "fuente_pag": "Ch3"}
+        {
+          "set_id": "salo-en2",
+          "description": "5x400 @85% umbral fondo (desc 45s)",
+          "meters": 2000,
+          "reps": 5,
+          "distance": 400,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 45,
+          "equipment": [],
+          "intensity_zone": "Z3",
+          "notes": "Threshold — the fastest pace you can hold with control",
+          "fuente_pag": "Ch4"
+        },
+        {
+          "set_id": "salo-sp",
+          "description": "10x100 @90% cierre fondo (desc 30s)",
+          "meters": 1000,
+          "reps": 10,
+          "distance": 100,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 30,
+          "equipment": [],
+          "intensity_zone": "Z4",
+          "notes": "Fast finish — lift the pace at the end like in a race",
+          "fuente_pag": "Ch3"
+        }
       ],
       "peak": [
-        {"set_id": "salo-en2", "description": "3x1000 @85% ritmo OW/fondo (desc 90s)", "meters": 3000, "reps": 3, "distance": 1000, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 90, "equipment": [], "intensity_zone": "Z3", "stroke_rate_optional": true, "notes": "EN2 Salo Ch4: ritmo de prueba", "fuente_pag": "Ch4"}
+        {
+          "set_id": "salo-en2",
+          "description": "3x1000 @85% ritmo OW/fondo (desc 90s)",
+          "meters": 3000,
+          "reps": 3,
+          "distance": 1000,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 90,
+          "equipment": [],
+          "intensity_zone": "Z3",
+          "stroke_rate_optional": true,
+          "notes": "Event pace — swim it like race day",
+          "fuente_pag": "Ch4"
+        }
       ],
       "taper": [
-        {"set_id": "salo-sharp", "description": "5x200 @85% controlado (desc 45s)", "meters": 1000, "reps": 5, "distance": 200, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 45, "equipment": [], "intensity_zone": "Z3", "notes": "Salo: afinar fondo", "fuente_pag": "Ch4"}
+        {
+          "set_id": "salo-sharp",
+          "description": "5x200 @85% controlado (desc 45s)",
+          "meters": 1000,
+          "reps": 5,
+          "distance": 200,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 45,
+          "equipment": [],
+          "intensity_zone": "Z3",
+          "notes": "Sharpening — fast but controlled, stay fresh",
+          "fuente_pag": "Ch4"
+        }
       ],
       "race": [
-        {"set_id": "salo-activ", "description": "1000 suave + 4x100 ritmo (desc 45s)", "meters": 1400, "reps": 4, "distance": 100, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 45, "equipment": [], "intensity_zone": "Z2", "notes": "Salo: activacion pre-competencia", "fuente_pag": "Ch4"}
+        {
+          "set_id": "salo-activ",
+          "description": "1000 suave + 4x100 ritmo (desc 45s)",
+          "meters": 1400,
+          "reps": 4,
+          "distance": 100,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 45,
+          "equipment": [],
+          "intensity_zone": "Z2",
+          "notes": "Event pace — swim it like race day",
+          "fuente_pag": "Ch4"
+        }
       ]
     },
     "ow_short": {
       "base": [
-        {"set_id": "salo-en1", "description": "6x200 @75% + 4x50 DPS (desc 20s)", "meters": 1400, "reps": 6, "distance": 200, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 20, "equipment": [], "intensity_zone": "Z2", "notes": "EN1 Salo Ch4: base OW corto", "fuente_pag": "Ch4"},
-        {"set_id": "salo-en2-base", "description": "8x100 @85% (desc 20s)", "meters": 800, "reps": 8, "distance": 100, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 20, "equipment": [], "intensity_zone": "Z3", "notes": "EN2 Salo Ch4: umbral", "fuente_pag": "Ch4"}
+        {
+          "set_id": "salo-en1",
+          "description": "6x200 @75% + 4x50 DPS (desc 20s)",
+          "meters": 1400,
+          "reps": 6,
+          "distance": 200,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 20,
+          "equipment": [],
+          "intensity_zone": "Z2",
+          "notes": "Technique focus — fewer strokes at the same pace means more efficiency",
+          "fuente_pag": "Ch4"
+        },
+        {
+          "set_id": "salo-en2-base",
+          "description": "8x100 @85% (desc 20s)",
+          "meters": 800,
+          "reps": 8,
+          "distance": 100,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 20,
+          "equipment": [],
+          "intensity_zone": "Z3",
+          "notes": "Threshold — the fastest pace you can hold with control",
+          "fuente_pag": "Ch4"
+        }
       ],
       "build": [
-        {"set_id": "salo-en2", "description": "5x400 @85% ritmo OW (desc 45s)", "meters": 2000, "reps": 5, "distance": 400, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 45, "equipment": [], "intensity_zone": "Z3", "notes": "EN2 Salo Ch4: ritmo aguas abiertas", "fuente_pag": "Ch4"},
-        {"set_id": "salo-sp", "description": "6x100 @90% cierre (desc 45s)", "meters": 600, "reps": 6, "distance": 100, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 45, "equipment": [], "intensity_zone": "Z4", "notes": "SP Salo Ch3: cambios de ritmo OW", "fuente_pag": "Ch3"}
+        {
+          "set_id": "salo-en2",
+          "description": "5x400 @85% ritmo OW (desc 45s)",
+          "meters": 2000,
+          "reps": 5,
+          "distance": 400,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 45,
+          "equipment": [],
+          "intensity_zone": "Z3",
+          "notes": "Event pace — swim it like race day",
+          "fuente_pag": "Ch4"
+        },
+        {
+          "set_id": "salo-sp",
+          "description": "6x100 @90% cierre (desc 45s)",
+          "meters": 600,
+          "reps": 6,
+          "distance": 100,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 45,
+          "equipment": [],
+          "intensity_zone": "Z4",
+          "notes": "Event pace — swim it like race day",
+          "fuente_pag": "Ch3"
+        }
       ],
       "peak": [
-        {"set_id": "salo-sp", "description": "3x1000 @85% + 6x100 @90% (desc 60s)", "meters": 3600, "reps": 3, "distance": 1000, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 60, "equipment": [], "intensity_zone": "Z4", "stroke_rate_optional": true, "notes": "Salo: simulacion OW con cierre", "fuente_pag": "Ch3/Ch4"}
+        {
+          "set_id": "salo-sp",
+          "description": "3x1000 @85% + 6x100 @90% (desc 60s)",
+          "meters": 3600,
+          "reps": 3,
+          "distance": 1000,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 60,
+          "equipment": [],
+          "intensity_zone": "Z4",
+          "stroke_rate_optional": true,
+          "notes": "Race simulation — practice your event pace and strategy",
+          "fuente_pag": "Ch3/Ch4"
+        }
       ],
       "taper": [
-        {"set_id": "salo-sharp", "description": "1500 continuo @80% + 4x100 @85%", "meters": 1900, "reps": 4, "distance": 100, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 45, "equipment": [], "intensity_zone": "Z3", "notes": "Salo: afinar OW", "fuente_pag": "Ch4"}
+        {
+          "set_id": "salo-sharp",
+          "description": "1500 continuo @80% + 4x100 @85%",
+          "meters": 1900,
+          "reps": 4,
+          "distance": 100,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 45,
+          "equipment": [],
+          "intensity_zone": "Z3",
+          "notes": "Open-water endurance — steady, sighting relaxed",
+          "fuente_pag": "Ch4"
+        }
       ],
       "race": [
-        {"set_id": "salo-activ", "description": "800 suave + 4x50 a ritmo (desc 45s)", "meters": 1000, "reps": 4, "distance": 50, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 45, "equipment": [], "intensity_zone": "Z2", "notes": "Salo: activacion pre-competencia", "fuente_pag": "Ch4"}
+        {
+          "set_id": "salo-activ",
+          "description": "800 suave + 4x50 a ritmo (desc 45s)",
+          "meters": 1000,
+          "reps": 4,
+          "distance": 50,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 45,
+          "equipment": [],
+          "intensity_zone": "Z2",
+          "notes": "Event pace — swim it like race day",
+          "fuente_pag": "Ch4"
+        }
       ]
     },
     "ow_long": {
       "base": [
-        {"set_id": "salo-en1", "description": "3x800 @75% (desc 60s) + 200 suave", "meters": 2600, "reps": 3, "distance": 800, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 60, "equipment": [], "intensity_zone": "Z2", "notes": "EN1 Salo Ch4: fondo OW", "fuente_pag": "Ch4"},
-        {"set_id": "salo-en1b", "description": "30min continuo @75% + 8x50 tecnica", "meters": 2000, "reps": 8, "distance": 50, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 20, "equipment": [], "intensity_zone": "Z2", "notes": "EN1 Salo Ch4: continuo OW", "fuente_pag": "Ch4"}
+        {
+          "set_id": "salo-en1",
+          "description": "3x800 @75% (desc 60s) + 200 suave",
+          "meters": 2600,
+          "reps": 3,
+          "distance": 800,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 60,
+          "equipment": [],
+          "intensity_zone": "Z2",
+          "notes": "Open-water endurance — steady, sighting relaxed",
+          "fuente_pag": "Ch4"
+        },
+        {
+          "set_id": "salo-en1b",
+          "description": "30min continuo @75% + 8x50 tecnica",
+          "meters": 2000,
+          "reps": 8,
+          "distance": 50,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 20,
+          "equipment": [],
+          "intensity_zone": "Z2",
+          "notes": "Technique focus — fewer strokes at the same pace means more efficiency",
+          "fuente_pag": "Ch4"
+        }
       ],
       "build": [
-        {"set_id": "salo-en2", "description": "5x400 @85% umbral OW (desc 45s)", "meters": 2000, "reps": 5, "distance": 400, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 45, "equipment": [], "intensity_zone": "Z3", "notes": "EN2 Salo Ch4: umbral OW", "fuente_pag": "Ch4"},
-        {"set_id": "salo-sp", "description": "10x100 @90% (desc 30s)", "meters": 1000, "reps": 10, "distance": 100, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 30, "equipment": [], "intensity_zone": "Z4", "notes": "SP Salo Ch3: ritmo OW", "fuente_pag": "Ch3"}
+        {
+          "set_id": "salo-en2",
+          "description": "5x400 @85% umbral OW (desc 45s)",
+          "meters": 2000,
+          "reps": 5,
+          "distance": 400,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 45,
+          "equipment": [],
+          "intensity_zone": "Z3",
+          "notes": "Open-water endurance — steady, sighting relaxed",
+          "fuente_pag": "Ch4"
+        },
+        {
+          "set_id": "salo-sp",
+          "description": "10x100 @90% (desc 30s)",
+          "meters": 1000,
+          "reps": 10,
+          "distance": 100,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 30,
+          "equipment": [],
+          "intensity_zone": "Z4",
+          "notes": "Event pace — swim it like race day",
+          "fuente_pag": "Ch3"
+        }
       ],
       "peak": [
-        {"set_id": "salo-en2", "description": "3x1500 @85% ritmo OW (desc 120s)", "meters": 4500, "reps": 3, "distance": 1500, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 120, "equipment": [], "intensity_zone": "Z3", "stroke_rate_optional": true, "notes": "EN2 Salo Ch4: simulacion larga", "fuente_pag": "Ch4"}
+        {
+          "set_id": "salo-en2",
+          "description": "3x1500 @85% ritmo OW (desc 120s)",
+          "meters": 4500,
+          "reps": 3,
+          "distance": 1500,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 120,
+          "equipment": [],
+          "intensity_zone": "Z3",
+          "stroke_rate_optional": true,
+          "notes": "Race simulation — practice your event pace and strategy",
+          "fuente_pag": "Ch4"
+        }
       ],
       "taper": [
-        {"set_id": "salo-sharp", "description": "2000 @80% + 5x100 @85% (desc 45s)", "meters": 2500, "reps": 5, "distance": 100, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 45, "equipment": [], "intensity_zone": "Z3", "notes": "Salo: afinar OW largo", "fuente_pag": "Ch4"}
+        {
+          "set_id": "salo-sharp",
+          "description": "2000 @80% + 5x100 @85% (desc 45s)",
+          "meters": 2500,
+          "reps": 5,
+          "distance": 100,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 45,
+          "equipment": [],
+          "intensity_zone": "Z3",
+          "notes": "Open-water endurance — steady, sighting relaxed",
+          "fuente_pag": "Ch4"
+        }
       ],
       "race": [
-        {"set_id": "salo-activ", "description": "1000 suave + 4x100 a ritmo (desc 45s)", "meters": 1400, "reps": 4, "distance": 100, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 45, "equipment": [], "intensity_zone": "Z2", "notes": "Salo: activacion pre-competencia", "fuente_pag": "Ch4"}
+        {
+          "set_id": "salo-activ",
+          "description": "1000 suave + 4x100 a ritmo (desc 45s)",
+          "meters": 1400,
+          "reps": 4,
+          "distance": 100,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 45,
+          "equipment": [],
+          "intensity_zone": "Z2",
+          "notes": "Event pace — swim it like race day",
+          "fuente_pag": "Ch4"
+        }
       ]
     },
     "ow_ultra": {
       "base": [
-        {"set_id": "salo-en1", "description": "45min continuo @75% + 8x50 tecnica", "meters": 3000, "reps": 8, "distance": 50, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 20, "equipment": [], "intensity_zone": "Z2", "notes": "EN1 Salo Ch4: ultra continuo", "fuente_pag": "Ch4"}
+        {
+          "set_id": "salo-en1",
+          "description": "45min continuo @75% + 8x50 tecnica",
+          "meters": 3000,
+          "reps": 8,
+          "distance": 50,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 20,
+          "equipment": [],
+          "intensity_zone": "Z2",
+          "notes": "Technique focus — fewer strokes at the same pace means more efficiency",
+          "fuente_pag": "Ch4"
+        }
       ],
       "build": [
-        {"set_id": "salo-en2", "description": "4x1500 @85% (desc 120s)", "meters": 6000, "reps": 4, "distance": 1500, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 120, "equipment": [], "intensity_zone": "Z3", "notes": "EN2 Salo Ch4: bloques ultra", "fuente_pag": "Ch4"},
-        {"set_id": "salo-sp", "description": "8x200 @88% (desc 45s)", "meters": 1600, "reps": 8, "distance": 200, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 45, "equipment": [], "intensity_zone": "Z4", "notes": "SP Salo Ch3: ritmo ultra", "fuente_pag": "Ch3"}
+        {
+          "set_id": "salo-en2",
+          "description": "4x1500 @85% (desc 120s)",
+          "meters": 6000,
+          "reps": 4,
+          "distance": 1500,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 120,
+          "equipment": [],
+          "intensity_zone": "Z3",
+          "notes": "Threshold — comfortably hard, hold your form",
+          "fuente_pag": "Ch4"
+        },
+        {
+          "set_id": "salo-sp",
+          "description": "8x200 @88% (desc 45s)",
+          "meters": 1600,
+          "reps": 8,
+          "distance": 200,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 45,
+          "equipment": [],
+          "intensity_zone": "Z4",
+          "notes": "Event pace — swim it like race day",
+          "fuente_pag": "Ch3"
+        }
       ],
       "peak": [
-        {"set_id": "salo-en2", "description": "2x3000 @85% ritmo OW (desc 180s)", "meters": 6000, "reps": 2, "distance": 3000, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 180, "equipment": [], "intensity_zone": "Z3", "stroke_rate_optional": true, "notes": "EN2 Salo Ch4: simulacion ultra", "fuente_pag": "Ch4"}
+        {
+          "set_id": "salo-en2",
+          "description": "2x3000 @85% ritmo OW (desc 180s)",
+          "meters": 6000,
+          "reps": 2,
+          "distance": 3000,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 180,
+          "equipment": [],
+          "intensity_zone": "Z3",
+          "stroke_rate_optional": true,
+          "notes": "Race simulation — practice your event pace and strategy",
+          "fuente_pag": "Ch4"
+        }
       ],
       "taper": [
-        {"set_id": "salo-sharp", "description": "2000 @80% + 4x200 @85% (desc 60s)", "meters": 2800, "reps": 4, "distance": 200, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 60, "equipment": [], "intensity_zone": "Z3", "notes": "Salo: afinar ultra", "fuente_pag": "Ch4"}
+        {
+          "set_id": "salo-sharp",
+          "description": "2000 @80% + 4x200 @85% (desc 60s)",
+          "meters": 2800,
+          "reps": 4,
+          "distance": 200,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 60,
+          "equipment": [],
+          "intensity_zone": "Z3",
+          "notes": "Sharpening — fast but controlled, stay fresh",
+          "fuente_pag": "Ch4"
+        }
       ],
       "race": [
-        {"set_id": "salo-activ", "description": "1500 suave + 4x100 a ritmo (desc 45s)", "meters": 1900, "reps": 4, "distance": 100, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 45, "equipment": [], "intensity_zone": "Z2", "notes": "Salo: activacion pre-competencia", "fuente_pag": "Ch4"}
+        {
+          "set_id": "salo-activ",
+          "description": "1500 suave + 4x100 a ritmo (desc 45s)",
+          "meters": 1900,
+          "reps": 4,
+          "distance": 100,
+          "stroke": "freestyle",
+          "target_pace_per_100": null,
+          "rest_seconds": 45,
+          "equipment": [],
+          "intensity_zone": "Z2",
+          "notes": "Event pace — swim it like race day",
+          "fuente_pag": "Ch4"
+        }
       ]
     }
   },
   "recovery": [
-    {"set_id": "salo-rec", "description": "4x200 suave + drills (desc 30s) — recovery", "meters": 800, "reps": 4, "distance": 200, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 30, "equipment": [], "intensity_zone": "Z1", "notes": "Salo Ch8: recovery sin velocidad", "fuente_pag": "Ch8"}
+    {
+      "set_id": "salo-rec",
+      "description": "4x200 suave + drills (desc 30s) — recovery",
+      "meters": 800,
+      "reps": 4,
+      "distance": 200,
+      "stroke": "freestyle",
+      "target_pace_per_100": null,
+      "rest_seconds": 30,
+      "equipment": [],
+      "intensity_zone": "Z1",
+      "notes": "Active recovery week — easy swimming, no speed work",
+      "fuente_pag": "Ch8"
+    }
   ],
   "tecnica_ch1": [
-    {"set_id": "salo-ch1", "description": "4x50 drills + DPS (desc 30s) — tecnica Ch1", "meters": 200, "reps": 4, "distance": 50, "stroke": "freestyle", "target_pace_per_100": null, "rest_seconds": 30, "equipment": [], "intensity_zone": "Z1", "notes": "Salo Ch1: menos brazadas a mismo pace = mas eficiencia", "fuente_pag": "Ch1 p.2-4"}
+    {
+      "set_id": "salo-ch1",
+      "description": "4x50 drills + distance per stroke (desc 30s)",
+      "meters": 200,
+      "reps": 4,
+      "distance": 50,
+      "stroke": "freestyle",
+      "target_pace_per_100": null,
+      "rest_seconds": 30,
+      "equipment": [],
+      "intensity_zone": "Z1",
+      "notes": "Technique boost — drills plus distance-per-stroke counting",
+      "fuente_pag": "Ch1 p.2-4"
+    }
   ]
 }

@@ -70,6 +70,12 @@ def salo_dryland_group(grupo: str, limit: Optional[int] = None) -> List[Dict[str
     return items[:limit] if limit else items
 
 
+def salo_prehab_names() -> set:
+    """Nombres del grupo prehab (Ch8): para priorizarlos sin depender del
+    texto visible de notes (que es lenguaje simple para el atleta)."""
+    return {e.get("name", "") for e in salo_dryland_group("prehab")}
+
+
 def salo_dryland_picks(fase: str, feeling: Optional[int],
                        edad: Optional[int]) -> List[Dict[str, Any]]:
     """Core siempre; power solo comp + edad>=14; prehab si feeling<=2.

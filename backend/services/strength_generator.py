@@ -8,6 +8,7 @@ from backend.services.salo_mix import (
     needs_prehab,
     salo_dryland_group,
     salo_dryland_picks,
+    salo_prehab_names,
     to_strength_exercise,
 )
 
@@ -119,7 +120,8 @@ def generate_strength_session(
                 continue  # solo implementos del atleta (+toalla)
             salo_pool.append(to_strength_exercise(item))
         if recovery:
-            prehab = [e for e in salo_pool if e.get("notes", "").startswith("Salo Ch8")]
+            prehab_names = salo_prehab_names()
+            prehab = [e for e in salo_pool if e.get("name") in prehab_names]
             rest = [e for e in salo_pool if e not in prehab]
             if prehab:
                 source_pools = [prehab] + source_pools + ([rest] if rest else [])
@@ -275,6 +277,9 @@ def generate_weekly_strength_plan(
     adaptive se propaga a cada sesion (salo/recovery/edad/injury_notes).
     """
     adaptive = adaptive or {}
+
+    # Igual que nado: normalizar al lunes del bloque (ver swim_generator).
+    week_start = week_start + timedelta(days=(7 - week_start.weekday()) % 7)
 
     from backend.services.macrocycle_calculator import get_phase_for_week
 

@@ -302,6 +302,11 @@ def generate_weekly_swim_plan(
     """
     adaptive = adaptive or {}
 
+    # week_start puede ser cualquier dia (ej. competencia - N semanas), pero
+    # los dias del atleta son weekdays (Lun=0..Dom=6) y la vista es Lun-Dom:
+    # normalizar al lunes dentro del bloque de 7 dias.
+    week_start = week_start + timedelta(days=(7 - week_start.weekday()) % 7)
+
     phase = get_phase_for_week(macrocycle_phases, week_relative)
     phase_name = phase["name"]
 
