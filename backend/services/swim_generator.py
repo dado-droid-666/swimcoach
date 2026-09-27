@@ -7,6 +7,12 @@ from datetime import date
 from backend.services.macrocycle_calculator import get_phase_for_week, get_event_category
 from backend.schemas import CompetitionType, Level, PrimaryGoal
 from backend.services.css_zones import zone_for_pace, spm_for_zone
+from backend.services.salo_mix import (
+    salo_main_sets,
+    salo_mix_for,
+    salo_recovery_sets,
+    salo_technique_sets,
+)
 
 
 def load_template(template_name: str) -> Dict[str, Any]:
@@ -115,29 +121,54 @@ def generate_swim_session(
     event_category: str,
     session_duration_min: int,
     session_number: int,
-    total_sessions_in_week: int
+    total_sessions_in_week: int,
+    adaptive: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
-    """Generate a single swim session."""
-    
+    """Generate a single swim session.
+
+    adaptive (opcional): {salo, recovery, feeling, technique_flag, reason}.
+    Con salo=True el main set sale del libro (MIX EN1/EN2/SP por evento,
+    Ch3/Ch4); recovery/Taper/Race nunca llevan SP (Ch8).
+    """
+    adaptive = adaptive or {}
+    use_salo = bool(adaptive.get("salo"))
+    recovery = bool(adaptive.get("recovery"))
+    technique_flag = adaptive.get("technique_flag")
+
     template = load_template(event_category)
     if not template:
         template = load_template("pool_mid")
-    
+
     phase_name = phase["name"]
     intensity_dist = phase["intensity_distribution"]
-    
+
     # Split volume: warmup 20%, main 70%, cooldown 10% (25m multiples)
     warmup_meters = snap_25(daily_volume * 0.2)
     main_meters = snap_25(daily_volume * 0.7)
     cooldown_meters = max(25, snap_25(daily_volume - warmup_meters - main_meters))
-    
-    # Select main set template based on phase
-    main_sets = template.get("main_sets", {}).get(phase_name.lower(), template.get("main_sets", {}).get("base", []))
-    if not main_sets:
-        main_sets = template.get("main_sets", {}).get("base", [])
+
+    if use_salo:
+        main_sets = _salo_main_sets(event_category, phase_name, recovery)
+    else:
+        # Select main set template based on phase
+        main_sets = template.get("main_sets", {}).get(phase_name.lower(), template.get("main_sets", {}).get("base", []))
+        if not main_sets:
+            main_sets = template.get("main_sets", {}).get("base", [])
+        if recovery:
+            # Recovery adaptativo: sin velocidad, como Taper suave.
+            main_sets = [s for s in main_sets if s.get("intensity_zone") not in ("Z4", "Z5")]
+            if not main_sets:
+                main_sets = template.get("main_sets", {}).get("taper", [])
     
     # Calculate template total meters for scaling
     template_main_total = sum(s.get("meters", 0) for s in main_sets)
+
+    # Refuerzo tecnico Ch1: stroke count alto => drills + DPS (solo si hay
+    # velocidad en el plan; en recovery ya va incluido).
+    if technique_flag and not recovery and use_salo:
+        if not any("Ch1" in (s.get("fuente_pag") or "") for s in main_sets):
+            main_sets = list(main_sets) + salo_technique_sets()
+            template_main_total = sum(s.get("meters", 0) for s in main_sets)
     
     # Scale main sets
     scaled_main = []
@@ -194,7 +225,13 @@ def generate_swim_session(
     }
     
     rpe_map = {"Base": 5, "Build": 6, "Peak": 7, "Taper": 4, "Race": 8}
-    
+    rpe_target = rpe_map.get(phase_name, 6)
+    focus = focus_map.get(phase_name, "General")
+    if recovery and phase_name not in ("Taper", "Race"):
+        # Semana recovery adaptativa: carga de Taper aunque la fase diga otra.
+        rpe_target = 4
+        focus = "Recovery adaptativo (feeling bajo)"
+
     return {
         "date": session_date.isoformat(),
         "day_name": session_date.strftime("%A"),
@@ -202,8 +239,8 @@ def generate_swim_session(
         "phase_name": phase_name,
         "total_meters": daily_volume,
         "estimated_duration_min": min(session_duration_min, max(45, daily_volume // 35)),
-        "focus": focus_map.get(phase_name, "General"),
-        "rpe_target": rpe_map.get(phase_name, 6),
+        "focus": focus,
+        "rpe_target": rpe_target,
         "warmup": {
             "meters": warmup_meters,
             "description": warmup_desc,
@@ -222,14 +259,29 @@ def generate_swim_session(
             {"title": "Main set", "desc": f"{len(scaled_main)} sets"},
             {"title": "Cooldown", "desc": cooldown_desc},
         ],
-        "generated_by": "macrocycle_v1",
+        "generated_by": "macrocycle_v1+salo" if use_salo else "macrocycle_v1",
         "parameters_snapshot": {
             "level": level.value,
             "event_category": event_category,
             "phase": phase_name,
-            "daily_volume": daily_volume
+            "daily_volume": daily_volume,
+            "salo_mix": salo_mix_for(event_category) if use_salo else None,
+            "adaptive_reason": adaptive.get("reason"),
         }
     }
+
+
+def _salo_main_sets(event_category: str, phase_name: str,
+                    recovery: bool) -> List[Dict[str, Any]]:
+    """Main sets del libro; recovery/Taper/Race nunca llevan SP (Ch8)."""
+    sets = salo_main_sets(event_category, phase_name)
+    if recovery or phase_name in ("Taper", "Race"):
+        sets = [s for s in sets if s.get("intensity_zone") not in ("Z4", "Z5")]
+        if recovery and not any("recovery" in (s.get("set_id") or "") for s in sets):
+            sets = salo_recovery_sets() + sets
+    if not sets:
+        sets = salo_recovery_sets()
+    return sets
 
 
 def generate_weekly_swim_plan(
@@ -239,23 +291,31 @@ def generate_weekly_swim_plan(
     profile: Dict[str, Any],
     competition_type: CompetitionType,
     pool_events: List[str],
-    ow_distance_km: Optional[float]
+    ow_distance_km: Optional[float],
+    adaptive: Optional[Dict[str, Any]] = None,
 ) -> List[Dict[str, Any]]:
-    """Generate swim sessions for a week."""
-    
+    """Generate swim sessions for a week.
+
+    adaptive (opcional): {salo, recovery, volume_factor, feeling,
+    technique_flag, reason}. El volumen perdido jamas se reapila: solo se
+    modula el volumen futuro con volume_factor.
+    """
+    adaptive = adaptive or {}
+
     phase = get_phase_for_week(macrocycle_phases, week_relative)
     phase_name = phase["name"]
-    
+
     # Get available days (Mon=0..Sun=6, same as UI checkboxes)
     available_days = profile.get("available_days", [1, 3, 5])
     swim_days_per_week = min(profile.get("swim_days_per_week", 4), len(available_days))
-    
+
     # Select swim days from available days
     swim_days = available_days[:swim_days_per_week]
-    
-    # Calculate weekly volume
+
+    # Calculate weekly volume (modulado por estado adaptativo, nunca apilado)
     base_weekly_volume = profile.get("swim_days_per_week", 4) * profile.get("target_volume_per_session", 3000)
-    weekly_volume = snap_25(base_weekly_volume * phase["swim_volume_mult"])
+    weekly_volume = snap_25(base_weekly_volume * phase["swim_volume_mult"]
+                            * float(adaptive.get("volume_factor", 1.0)))
     
     # Daily volume distribution
     daily_volume = snap_25(weekly_volume / swim_days_per_week) if swim_days_per_week > 0 else 0
@@ -278,7 +338,8 @@ def generate_weekly_swim_plan(
             event_category=event_category,
             session_duration_min=profile.get("session_duration_min", 90),
             session_number=i,
-            total_sessions_in_week=swim_days_per_week
+            total_sessions_in_week=swim_days_per_week,
+            adaptive=adaptive,
         )
         sessions.append(session)
     

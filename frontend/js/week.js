@@ -82,6 +82,35 @@ async function renderWeek(app, startParam) {
         });
     }
 
+    // Adaptive nudge (Salo + estado del atleta): si hubo sesiones perdidas
+    // esta semana o feeling bajo reciente, sugerir regenerar. Regenerar
+    // adapta el volumen futuro; lo perdido jamas se apila. Nunca bloquea.
+    let adaptNotice = '';
+    try {
+        const todayISO = toISODate(new Date());
+        const missed = days.filter(x => x.iso < todayISO && (x.swim || x.strength)
+            && !(x.swim && x.swim.is_completed) && !(x.strength && x.strength.is_completed)).length;
+        let minFeeling = null;
+        try {
+            const hist = await api.getFeedbackHistory(1, 21);
+            for (const fb of (hist.items || [])) {
+                for (const v of [fb.swim_feeling, fb.strength_feeling]) {
+                    if (v != null && (minFeeling == null || v < minFeeling)) minFeeling = v;
+                }
+            }
+        } catch { /* offline: sin nudge por feeling */ }
+        const weekTouchesToday = startISO <= todayISO && todayISO <= toISODate(addDays(monday, 6));
+        if (weekTouchesToday && (missed >= 2 || (minFeeling != null && minFeeling <= 2))) {
+            const why = missed >= 2 ? `perdiste ${missed} sesiones` : `feeling ${minFeeling}/5`;
+            adaptNotice = `
+                <article class="card" style="margin-bottom: 1rem; border-left: 4px solid var(--primary);">
+                    <strong>¿Ajustamos la semana?</strong>
+                    <div style="color: var(--muted-color); font-size: 0.875rem; margin: 0.25rem 0 0.75rem;">Veo que ${why}. Regenerar adapta el volumen (lo perdido no se apila).${isPro ? '' : ' Necesitas Pro.'}</div>
+                    <button class="big-btn secondary" id="adapt-regen">Adaptar mi semana →</button>
+                </article>`;
+        }
+    } catch { /* el nudge nunca rompe la vista */ }
+
     const prevISO = toISODate(addDays(monday, -7));
     const nextISO = toISODate(addDays(monday, 7));
     const isPro = window.app && window.app.state.tier === 'pro';
@@ -107,6 +136,7 @@ async function renderWeek(app, startParam) {
             </div>
             <div id="week-list">
                 ${emptyNotice}
+                ${adaptNotice}
                 ${days.map(day => `
                     <div class="card day-row ${dayType(day)}" data-date="${day.iso}"
                          ondragover="event.preventDefault()" ondrop="dropSession(event, '${day.iso}')"
@@ -127,6 +157,11 @@ async function renderWeek(app, startParam) {
         </div>
     `;
     document.getElementById('move-mode-btn').addEventListener('click', toggleMoveMode);
+    const adaptBtn = document.getElementById('adapt-regen');
+    if (adaptBtn) adaptBtn.addEventListener('click', () => {
+        const regen = document.getElementById('regen-week');
+        if (regen) regen.click();
+    });
     document.getElementById('regen-week').addEventListener('click', async (e) => {
         e.preventDefault();
         if (!requireProUI()) return;

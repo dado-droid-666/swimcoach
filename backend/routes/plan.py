@@ -140,11 +140,18 @@ def regenerate_week(
     user: User = Depends(require_pro),
     db: Session = Depends(get_db),
 ):
-    """Delete and regenerate one week of swim+strength sessions (Pro)."""
+    """Delete and regenerate one week of swim+strength sessions (Pro).
+
+    La semana se regenera con metodologia Salo + estado adaptativo del
+    atleta (feeling, adherencia, sesiones perdidas, ML): si viene fatigado
+    sale en recovery; si perdio sesiones se ajusta el volumen futuro sin
+    apilar lo perdido.
+    """
     from backend.models import CompetitionGoal
     from backend.services.macrocycle_calculator import calculate_macrocycle, get_phase_for_week
     from backend.services.swim_generator import generate_weekly_swim_plan
     from backend.services.strength_generator import generate_weekly_strength_plan
+    from backend.services.adaptive_state import build_week_adaptive
 
     goal = db.query(CompetitionGoal).filter(CompetitionGoal.user_id == user.id).first()
     if not goal:
@@ -167,16 +174,15 @@ def regenerate_week(
     week_relative = week_offset - macro.total_weeks
     phase = get_phase_for_week(macro.phases, week_relative)
 
-    db.query(TrainingSession).filter(
-        TrainingSession.user_id == user.id,
-        TrainingSession.date >= start,
-        TrainingSession.date <= week_end,
-    ).delete(synchronize_session=False)
-    db.query(StrengthSession).filter(
-        StrengthSession.user_id == user.id,
-        StrengthSession.date >= start,
-        StrengthSession.date <= week_end,
-    ).delete(synchronize_session=False)
+    # Estado adaptativo de la semana objetivo: Salo + feeling/adherencia/
+    # perdidas/ML. La semana regenerada es la semana en foco, asi que el
+    # estado aplica completo (a diferencia de generate, que solo lo aplica
+    # a semana actual/futuras).
+    adaptive = build_week_adaptive(db, user.id, profile, goal, start, date.today())
+    if start + timedelta(days=6) < date.today():
+        # Regenerar una semana pasada: planificada, sin reescribir historia.
+        adaptive.update(recovery=False, volume_factor=1.0,
+                        reason="semana pasada: planificada")
 
     swim_sessions = generate_weekly_swim_plan(
         week_start=start,
@@ -195,7 +201,35 @@ def regenerate_week(
         competition_type=goal.competition_type,
         pool_events=goal.pool_events,
         ow_distance_km=goal.ow_distance_km,
+        adaptive=adaptive,
     )
+
+    swim_days = [date.fromisoformat(s["date"]).weekday() for s in swim_sessions]
+    strength_sessions = generate_weekly_strength_plan(
+        week_start=start,
+        week_relative=week_relative,
+        macrocycle_phases=macro.phases,
+        profile={
+            "available_equipment": profile.available_equipment,
+            "level": profile.level,
+            "strength_days": getattr(profile, "strength_days", None) or [],
+        },
+        swim_days=swim_days,
+        requested_per_week=goal.strength_days_per_week or 2,
+        adaptive=adaptive,
+    )
+
+    db.query(TrainingSession).filter(
+        TrainingSession.user_id == user.id,
+        TrainingSession.date >= start,
+        TrainingSession.date <= week_end,
+    ).delete(synchronize_session=False)
+    db.query(StrengthSession).filter(
+        StrengthSession.user_id == user.id,
+        StrengthSession.date >= start,
+        StrengthSession.date <= week_end,
+    ).delete(synchronize_session=False)
+
     for sess in swim_sessions:
         db.add(TrainingSession(
             user_id=user.id,
@@ -225,6 +259,7 @@ def regenerate_week(
         },
         swim_days=swim_days,
         requested_per_week=goal.strength_days_per_week or 2,
+        adaptive=adaptive,
     )
     for sess in strength_sessions:
         db.add(StrengthSession(

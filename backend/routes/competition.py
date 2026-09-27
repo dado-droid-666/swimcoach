@@ -143,11 +143,16 @@ def _generate_all_sessions(
     
     from ..services.swim_generator import generate_weekly_swim_plan
     from ..services.strength_generator import generate_weekly_strength_plan
-    
+    from ..services.adaptive_state import build_week_adaptive
+
     for week_offset in range(macro.total_weeks):
         week_relative = week_offset - macro.total_weeks
         phase = get_phase_for_week(macro.phases, week_relative)
-        
+
+        # Adaptativo: metodologia Salo siempre; feeling/adherencia/ML solo
+        # en semana actual/futuras (las pasadas quedan planificadas).
+        adaptive = build_week_adaptive(db, user.id, profile, goal, week_start, today)
+
         # Generate swim sessions
         swim_sessions = generate_weekly_swim_plan(
             week_start=week_start,
@@ -165,7 +170,8 @@ def _generate_all_sessions(
             },
             competition_type=goal.competition_type,
             pool_events=goal.pool_events,
-            ow_distance_km=goal.ow_distance_km
+            ow_distance_km=goal.ow_distance_km,
+            adaptive=adaptive,
         )
         
         # Save swim sessions
@@ -199,7 +205,8 @@ def _generate_all_sessions(
                 "strength_days": getattr(profile, "strength_days", None) or []
             },
             swim_days=swim_days,
-            requested_per_week=goal.strength_days_per_week or 2
+            requested_per_week=goal.strength_days_per_week or 2,
+            adaptive=adaptive,
         )
         
         # Save strength sessions

@@ -88,6 +88,7 @@ class AthleteProfileBase(BaseModel):
     session_duration_min: int = Field(ge=45, le=150, default=90)
     ftp_pace_per_100: Optional[int] = Field(default=None, ge=60, le=300)
     injury_notes: str = ""
+    edad: Optional[int] = Field(default=None, ge=8, le=100)
 
 
 class AthleteProfileCreate(AthleteProfileBase):
@@ -106,6 +107,7 @@ class AthleteProfileUpdate(AthleteProfileBase):
     session_duration_min: Optional[int] = Field(default=None, ge=45, le=150)
     ftp_pace_per_100: Optional[int] = Field(default=None, ge=60, le=300)
     injury_notes: Optional[str] = None
+    edad: Optional[int] = Field(default=None, ge=8, le=100)
 
 
 class AthleteProfileResponse(AthleteProfileBase):

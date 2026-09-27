@@ -75,6 +75,7 @@ class AthleteProfile(Base):
     session_duration_min = Column(Integer, default=90)
     ftp_pace_per_100 = Column(Integer, nullable=True)
     injury_notes = Column(Text, default="")
+    edad = Column(Integer, nullable=True)  # Salo Ch11: youth <14 sin power con peso
 
     user = relationship("User", back_populates="profile")
 

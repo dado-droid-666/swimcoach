@@ -3,6 +3,14 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional
 from datetime import date, timedelta
 
+from backend.services.salo_mix import (
+    YOUTH_MIN_AGE_POWER,
+    needs_prehab,
+    salo_dryland_group,
+    salo_dryland_picks,
+    to_strength_exercise,
+)
+
 
 def load_strength_template(template_name: str) -> Dict[str, Any]:
     """Load a strength template from JSON file."""
@@ -32,10 +40,23 @@ def generate_strength_session(
     available_equipment: List[str],
     strength_days_per_week: int,
     session_number: int,
-    total_sessions_in_week: int
+    total_sessions_in_week: int,
+    adaptive: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
-    """Generate a single strength session."""
-    
+    """Generate a single strength session.
+
+    adaptive (opcional): {salo, recovery, feeling, edad, injury_notes,
+    reason}. Con salo=True se mezcla TRX/calistenia/KB existente con
+    core/power/prehab/flex del libro (Ch5/Ch6/Ch7/Ch8). Power con peso solo
+    comp + edad>=14; prehab si feeling<=2 o notas de hombro/rodilla.
+    """
+    adaptive = adaptive or {}
+    use_salo = bool(adaptive.get("salo"))
+    feeling = adaptive.get("feeling")
+    edad = adaptive.get("edad")
+    injury_notes = adaptive.get("injury_notes", "")
+    recovery = bool(adaptive.get("recovery")) or needs_prehab(feeling, injury_notes)
+
     phase_name = phase["name"]
     template_name = get_strength_template_for_phase(phase_name)
     template = load_strength_template(template_name)
@@ -84,6 +105,30 @@ def generate_strength_session(
     if split == "C":  # stamina: bodyweight leads
         source_pools = [base_pool] + ordered
     split_label = {"A": "Pull + Core", "B": "Legs + Hips", "C": "Stamina"}[split]
+
+    # Mezcla Salo (Ch5/Ch6/Ch7/Ch8): core siempre; power solo comp + edad;
+    # prehab primero si hay bandera de recovery/lesion.
+    salo_notes: List[str] = []
+    if use_salo:
+        owned = set(available_equipment or []) | {"bodyweight"}
+        salo_pool = []
+        for item in salo_dryland_picks(phase_name, feeling if recovery else None, edad):
+            if item.get("requiere_supervision") and (edad is not None and edad < YOUTH_MIN_AGE_POWER):
+                continue  # youth: sin power con peso (Ch11)
+            if not set(item.get("equipment", ["bodyweight"])) <= (owned | {"towel"}):
+                continue  # solo implementos del atleta (+toalla)
+            salo_pool.append(to_strength_exercise(item))
+        if recovery:
+            prehab = [e for e in salo_pool if e.get("notes", "").startswith("Salo Ch8")]
+            rest = [e for e in salo_pool if e not in prehab]
+            if prehab:
+                source_pools = [prehab] + source_pools + ([rest] if rest else [])
+                salo_notes.append("prehab Ch8")
+            elif salo_pool:
+                source_pools = [salo_pool] + source_pools
+        elif salo_pool:
+            source_pools = source_pools + [salo_pool]
+            salo_notes.append("core/power Salo")
 
     # Interleave round-robin across each source (owned gear templates +
     # base) so every owned implement shows up instead of the first file
@@ -139,13 +184,18 @@ def generate_strength_session(
         "Taper": "Mobility & recovery",
         "Race": "None"
     }
-    
+    focus = f"{focus_map.get(phase_name, 'General')} · Split {split} ({split_label})"
+    if salo_notes:
+        focus += f" + {'+'.join(salo_notes)}"
+    if recovery and phase_name not in ("Taper", "Race"):
+        focus += " · recovery adaptativo"
+
     return {
         "date": session_date.isoformat(),
         "day_name": session_date.strftime("%A"),
         "week_relative": week_relative,
         "phase_name": phase_name,
-        "focus": f"{focus_map.get(phase_name, 'General')} · Split {split} ({split_label})",
+        "focus": focus,
         "exercises": exercises,
         "estimated_duration_min": duration_map.get(phase_name, 30),
         "equipment_needed": list(set(eq for ex in exercises for eq in ex.get("equipment", ["bodyweight"]))),
@@ -214,14 +264,17 @@ def generate_weekly_strength_plan(
     macrocycle_phases: List[Dict],
     profile: Dict[str, Any],
     swim_days: List[int],  # Days of week used for swim (0-6)
-    requested_per_week: Optional[int] = None
+    requested_per_week: Optional[int] = None,
+    adaptive: Optional[Dict[str, Any]] = None,
 ) -> List[Dict[str, Any]]:
     """Generate strength sessions for a week.
 
     Effective days = min(user request, phase cap) so asking for fewer is
     respected and 4 is possible in Base/Build (3 in Peak, 1 Taper, 0 Race).
     Sessions spill onto swim days when needed (AM/PM split).
+    adaptive se propaga a cada sesion (salo/recovery/edad/injury_notes).
     """
+    adaptive = adaptive or {}
 
     from backend.services.macrocycle_calculator import get_phase_for_week
 
@@ -257,7 +310,8 @@ def generate_weekly_strength_plan(
             available_equipment=profile.get("available_equipment", []) + ["bodyweight"],
             strength_days_per_week=strength_days_per_week,
             session_number=i,
-            total_sessions_in_week=strength_days_per_week
+            total_sessions_in_week=strength_days_per_week,
+            adaptive=adaptive,
         )
         sessions.append(session)
     

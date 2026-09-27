@@ -58,6 +58,11 @@ async function renderProfile(app) {
                         <label for="ftp_pace_per_100">FTP Pace/100m (sec, optional)</label>
                         <input type="number" id="ftp_pace_per_100" name="ftp_pace_per_100" min="60" max="300" value="${app.state.profile?.ftp_pace_per_100 || ''}" placeholder="e.g., 95 = 1:35/100m">
                     </div>
+
+                    <div class="grid" style="margin-bottom: 1rem;">
+                        <label for="edad">Age (youth &lt;14: no loaded power work)</label>
+                        <input type="number" id="edad" name="edad" min="8" max="100" value="${app.state.profile?.edad || ''}" placeholder="years">
+                    </div>
                     
                     <div class="grid" style="margin-bottom: 1rem;">
                         <label for="primary_goal">Primary Goal</label>
@@ -168,6 +173,7 @@ async function saveProfile() {
         primary_goal: formData.get('primary_goal'),
         ftp_pace_per_100: formData.get('ftp_pace_per_100') ? parseInt(formData.get('ftp_pace_per_100')) : null,
         injury_notes: formData.get('injury_notes') || '',
+        edad: formData.get('edad') ? parseInt(formData.get('edad')) : null,
         available_days: Array.from(form.querySelectorAll('input[name="available_days"]:checked')).map(cb => parseInt(cb.value)).filter(d => d >= 0 && d <= 6),
         strength_days: Array.from(form.querySelectorAll('input[name="strength_days"]:checked')).map(cb => parseInt(cb.value)).filter(d => d >= 0 && d <= 6),
         preferred_strokes: Array.from(form.querySelectorAll('input[name="preferred_strokes"]:checked')).map(cb => cb.value),

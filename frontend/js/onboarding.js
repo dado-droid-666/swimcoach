@@ -550,6 +550,7 @@ function completeOnboarding() {
         session_duration_min: parseInt(saved.session_duration_min),
         ftp_pace_per_100: saved.ftp_pace_per_100 ? parseInt(saved.ftp_pace_per_100) : null,
         injury_notes: saved.injury_notes || '',
+        edad: saved.ath_age ? parseInt(saved.ath_age) : null,
         available_equipment: Array.from(new Set([
             ...((saved.swim_equip) ? (Array.isArray(saved.swim_equip) ? saved.swim_equip : [saved.swim_equip]) : []),
             ...((saved.strength_equip) ? (Array.isArray(saved.strength_equip) ? saved.strength_equip : [saved.strength_equip]) : []),

@@ -1,0 +1,45 @@
+{
+  "fuente": "Salo & Riewald, Complete Conditioning for Swimming — DVD p.vi-vii + Ch5/Ch6/Ch7/Ch8/Ch10/Ch11 (solo nombres de ejercicios y uso, sin texto del libro)",
+  "grupos": {
+    "warmup": [
+      {"name": "Caterpillar", "muscle": "full body", "sets": 2, "reps": "30s", "rpe": 4, "tempo": null, "rest": 15, "equipment": ["bodyweight"], "progression": "", "notes": "Salo DVD: dynamic warm-up", "requiere_supervision": false, "fase": "all"},
+      {"name": "Shoulder Internal and External Rotation", "muscle": "rotator cuff", "sets": 2, "reps": "10-12", "rpe": 4, "tempo": null, "rest": 30, "equipment": ["bodyweight"], "progression": "", "notes": "Salo DVD: dynamic warm-up", "requiere_supervision": false, "fase": "all"},
+      {"name": "Helicopter Lunge", "muscle": "legs", "sets": 2, "reps": "8/side", "rpe": 4, "tempo": null, "rest": 30, "equipment": ["bodyweight"], "progression": "", "notes": "Salo DVD: dynamic warm-up", "requiere_supervision": false, "fase": "all"},
+      {"name": "Ankle Rotation", "muscle": "ankles", "sets": 2, "reps": "10/side", "rpe": 3, "tempo": null, "rest": 15, "equipment": ["bodyweight"], "progression": "", "notes": "Salo DVD: dynamic warm-up", "requiere_supervision": false, "fase": "all"},
+      {"name": "Knee Hug", "muscle": "hips", "sets": 2, "reps": "8/side", "rpe": 3, "tempo": null, "rest": 15, "equipment": ["bodyweight"], "progression": "", "notes": "Salo DVD: dynamic warm-up", "requiere_supervision": false, "fase": "all"},
+      {"name": "Leg Cradle", "muscle": "hips", "sets": 2, "reps": "8/side", "rpe": 3, "tempo": null, "rest": 15, "equipment": ["bodyweight"], "progression": "", "notes": "Salo DVD: dynamic warm-up", "requiere_supervision": false, "fase": "all"}
+    ],
+    "core": [
+      {"name": "Prone Bridge", "muscle": "core", "sets": 3, "reps": "30-60s", "rpe": 6, "tempo": "hold", "rest": 45, "equipment": ["bodyweight"], "progression": "longer_hold", "notes": "Salo Ch5: estabilidad", "requiere_supervision": false, "fase": "all"},
+      {"name": "Back Bridge", "muscle": "glutes/core", "sets": 3, "reps": "30-60s", "rpe": 6, "tempo": "hold", "rest": 45, "equipment": ["bodyweight"], "progression": "single_leg", "notes": "Salo Ch5", "requiere_supervision": false, "fase": "all"},
+      {"name": "Side Bridge", "muscle": "obliques", "sets": 3, "reps": "30s/side", "rpe": 6, "tempo": "hold", "rest": 45, "equipment": ["bodyweight"], "progression": "longer_hold", "notes": "Salo Ch5", "requiere_supervision": false, "fase": "all"},
+      {"name": "Dying Bug", "muscle": "core", "sets": 2, "reps": "10/side", "rpe": 5, "tempo": "2020", "rest": 30, "equipment": ["bodyweight"], "progression": "slower_tempo", "notes": "Salo Ch5", "requiere_supervision": false, "fase": "all"},
+      {"name": "Bird Dog", "muscle": "core/back", "sets": 2, "reps": "10/side", "rpe": 5, "tempo": "2020", "rest": 30, "equipment": ["bodyweight"], "progression": "longer_hold", "notes": "Salo Ch5", "requiere_supervision": false, "fase": "all"},
+      {"name": "Leg Drop", "muscle": "lower abs", "sets": 2, "reps": "10-12", "rpe": 6, "tempo": "2010", "rest": 30, "equipment": ["bodyweight"], "progression": "straight_legs", "notes": "Salo Ch5", "requiere_supervision": false, "fase": "all"},
+      {"name": "T Exercise", "muscle": "core/shoulders", "sets": 2, "reps": "8-10", "rpe": 6, "tempo": "2010", "rest": 30, "equipment": ["bodyweight"], "progression": "", "notes": "Salo Ch5", "requiere_supervision": false, "fase": "all"}
+    ],
+    "power": [
+      {"name": "90-Degree Jump Turn", "muscle": "legs/power", "sets": 3, "reps": "5", "rpe": 8, "tempo": "explosive", "rest": 90, "equipment": ["bodyweight"], "progression": "", "notes": "Salo Ch6: solo comp + tecnica supervisada", "requiere_supervision": true, "fase": "comp"},
+      {"name": "Streamline Jump", "muscle": "legs/power", "sets": 3, "reps": "6", "rpe": 8, "tempo": "explosive", "rest": 90, "equipment": ["bodyweight"], "progression": "", "notes": "Salo Ch6: salidas/vueltas", "requiere_supervision": true, "fase": "comp"},
+      {"name": "Seated Medicine Ball Twist", "muscle": "core power", "sets": 3, "reps": "10", "rpe": 7, "tempo": "explosive", "rest": 60, "equipment": ["medicine_ball"], "progression": "", "notes": "Salo Ch6", "requiere_supervision": true, "fase": "comp"},
+      {"name": "Explosive Wall Chest Pass", "muscle": "chest power", "sets": 3, "reps": "8", "rpe": 7, "tempo": "explosive", "rest": 60, "equipment": ["medicine_ball"], "progression": "", "notes": "Salo Ch6", "requiere_supervision": true, "fase": "comp"},
+      {"name": "Hang Clean", "muscle": "full body power", "sets": 4, "reps": "5", "rpe": 8, "tempo": "explosive", "rest": 120, "equipment": ["barbell"], "progression": "load", "notes": "Salo Ch6: solo con coach + edad>=14", "requiere_supervision": true, "fase": "comp"},
+      {"name": "Push Press", "muscle": "shoulders power", "sets": 3, "reps": "6", "rpe": 8, "tempo": "explosive", "rest": 120, "equipment": ["barbell"], "progression": "load", "notes": "Salo Ch6: solo con coach + edad>=14", "requiere_supervision": true, "fase": "comp"}
+    ],
+    "prehab": [
+      {"name": "Shoulder Retraction With External Rotation", "muscle": "rotator cuff", "sets": 2, "reps": "10-12", "rpe": 4, "tempo": "2010", "rest": 30, "equipment": ["bodyweight"], "progression": "band", "notes": "Salo Ch8: swimmer's shoulder", "requiere_supervision": false, "fase": "all"},
+      {"name": "Catch Position External Rotation", "muscle": "rotator cuff", "sets": 2, "reps": "10-12", "rpe": 4, "tempo": "2010", "rest": 30, "equipment": ["bodyweight"], "progression": "band", "notes": "Salo Ch8: posicion de agarre", "requiere_supervision": false, "fase": "all"},
+      {"name": "Chest Punch", "muscle": "serratus", "sets": 2, "reps": "10-12", "rpe": 4, "tempo": "2010", "rest": 30, "equipment": ["bodyweight"], "progression": "", "notes": "Salo Ch8: escapula", "requiere_supervision": false, "fase": "all"},
+      {"name": "Sleeper Stretch", "muscle": "shoulder", "sets": 2, "reps": "30s/side", "rpe": 3, "tempo": "hold", "rest": 15, "equipment": ["bodyweight"], "progression": "", "notes": "Salo Ch8: hombro", "requiere_supervision": false, "fase": "all"},
+      {"name": "Towel Stretch", "muscle": "shoulder", "sets": 2, "reps": "30s/side", "rpe": 3, "tempo": "hold", "rest": 15, "equipment": ["towel"], "progression": "", "notes": "Salo Ch8: hombro", "requiere_supervision": false, "fase": "all"},
+      {"name": "Star Drill (knee)", "muscle": "knee stability", "sets": 2, "reps": "10/leg", "rpe": 4, "tempo": "2010", "rest": 30, "equipment": ["bodyweight"], "progression": "", "notes": "Salo Ch8: rodilla de pechista", "requiere_supervision": false, "fase": "all"},
+      {"name": "Elastic-Band Kick", "muscle": "hip flexors", "sets": 2, "reps": "15/leg", "rpe": 4, "tempo": "2010", "rest": 30, "equipment": ["bands"], "progression": "", "notes": "Salo Ch8: rodilla", "requiere_supervision": false, "fase": "all"}
+    ],
+    "flex": [
+      {"name": "Hip Flexor Stretch", "muscle": "hip flexors", "sets": 2, "reps": "30s", "rpe": 3, "tempo": "hold", "rest": 15, "equipment": ["bodyweight"], "progression": "", "notes": "Salo Ch7: patada", "requiere_supervision": false, "fase": "all"},
+      {"name": "Ankle Stretch", "muscle": "ankles", "sets": 2, "reps": "30s", "rpe": 3, "tempo": "hold", "rest": 15, "equipment": ["bodyweight"], "progression": "", "notes": "Salo Ch7: patada", "requiere_supervision": false, "fase": "all"},
+      {"name": "Streamline Stretch", "muscle": "shoulders/lats", "sets": 3, "reps": "20s", "rpe": 3, "tempo": "hold", "rest": 15, "equipment": ["bodyweight"], "progression": "", "notes": "Salo Ch7: flecha", "requiere_supervision": false, "fase": "all"},
+      {"name": "Spinal Twist", "muscle": "spine", "sets": 2, "reps": "30s/side", "rpe": 3, "tempo": "hold", "rest": 15, "equipment": ["bodyweight"], "progression": "", "notes": "Salo Ch7: rotacion", "requiere_supervision": false, "fase": "all"}
+    ]
+  }
+}
