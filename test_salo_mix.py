@@ -121,6 +121,25 @@ def test_fuerza_mix_trx_kb_y_salo():
     assert any(n in ("Prone Bridge", "Back Bridge", "Side Bridge") for n in names)  # core Salo
 
 
+def test_focus_cabe_en_varchar_postgres():
+    """Guardia durable: focus <=100 (Postgres valida, SQLite no)."""
+    adapt = {"salo": True, "recovery": False, "volume_factor": 1.0,
+             "feeling": 4, "edad": 30, "injury_notes": "", "reason": "t"}
+    adapt_r = {"salo": True, "recovery": True, "volume_factor": 0.7,
+               "feeling": 2, "edad": 30, "injury_notes": "hombro", "reason": "t"}
+    for wk, ph in [(-4, "Base"), (-3, "Build"), (-2, "Peak"), (-1, "Taper")]:
+        for a in (adapt, adapt_r):
+            for s in generate_weekly_strength_plan(
+                    monday(), wk, PHASES, BASE_PROFILE, [0, 1],
+                    requested_per_week=2, adaptive=a):
+                assert len(s["focus"]) <= 100, s["focus"]
+            for s in generate_weekly_swim_plan(
+                    monday(), wk, PHASES, BASE_PROFILE, CompetitionType.POOL,
+                    ["100_free"], None, a):
+                assert len(s["focus"] or "") <= 100, s["focus"]
+                assert len(s["generated_by"]) <= 20, s["generated_by"]
+
+
 def test_fuerza_youth_y_prehab():
     peak_phases = [dict(p, start_week=0, end_week=0) if p["name"] == "Peak" else p for p in PHASES]
     adapt_y = {"salo": True, "recovery": False, "volume_factor": 1.0,

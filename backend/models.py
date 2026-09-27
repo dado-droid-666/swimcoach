@@ -125,7 +125,7 @@ class TrainingSession(Base):
 
     total_meters = Column(Integer, default=0)
     estimated_duration_min = Column(Integer, default=0)
-    focus = Column(String(50), nullable=True)
+    focus = Column(String(100), nullable=True)
     rpe_target = Column(Integer, default=6)
 
     warmup = Column(JSON, default={})
@@ -148,7 +148,7 @@ class StrengthSession(Base):
     week_relative = Column(Integer, nullable=False)
     phase_name = Column(String(20), nullable=False)
 
-    focus = Column(String(50), nullable=False)
+    focus = Column(String(100), nullable=False)
     exercises = Column(JSON, default=[])
     estimated_duration_min = Column(Integer, default=30)
     equipment_needed = Column(JSON, default=[])
