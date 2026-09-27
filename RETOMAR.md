@@ -84,3 +84,49 @@
 - Migraciones Supabase: `$env:DATABASE_URL="<pooler URI>"; python -m alembic upgrade head
 - Esquema decisiones: inglés, dark oceánico, acento aqua #3fd0e6, ML aplica
   (tier→level, factor→reps), retest único CSS,KB/TRX plantilla general.
+
+## Sesión 26-27/09 — Salo + planes adaptativos (commits b4adb5c, 4076fb4, 30716b1)
+- Clon local: `C:\Users\mocon\OneDrive\Documentos\APP SWIM\swimcoach`
+  (venv local con deps modernas solo para tests; prod usa Dockerfile py3.13;
+  en local NO instalar psycopg2, usar sqlite o psycopg v3).
+- Libro Salo integrado: `data/salo_swim.json` (MIX EN1/EN2/SP por
+  pool_sprint/mid/im/distance + ow_short/long/ultra, recovery, tecnica_ch1)
+  y `data/salo_dryland.json` (core/power/prehab/flex/warmup). Taper 2 +
+  Race 1 fijas (ya existían). `get_event_category()` intacto.
+- Fuerza mix: plantillas TRX/KB/BW/bands + splits A/B/C intactos; se mezcla
+  core/power/prehab/flex Salo (`strength_generator.py`). Youth <14 sin power
+  con peso (nuevo campo perfil `edad` + migración d4e5f6a7b8c9). Prehab Ch8
+  si feeling<=2 o injury_notes con hombro/rodilla.
+- Planes vivos: `adaptive_state.py` (feeling min nado+fuerza, adherencia,
+  perdidas contadas SIN reapilar volumen, esfuerzo+trend) + `load_model.py`
+  (M2 en servidor con `frontend/ml/modelo2_bosque.json`, clamp ±25%,
+  fallback conservador; sin historial manda 1.0). `POST /competition/generate`
+  aplica estado solo semana actual/futuras; `POST /plan/week/regenerate`
+  regenera la semana en foco con estado completo. Schemas/API/frontend de
+  sesiones intactos.
+- Descripciones visibles en lenguaje simple (sin EN/SP/Ch): `notes` de ambos
+  JSON reescritos; `fuente_pag` + MIX quedan en datos/snapshot.
+- Días: sesiones ancladas al lunes dentro de cada bloque de 7 días
+  (generadores normalizan `week_start`; antes `inicio_bloque + offset`
+  corría todo si el bloque no empezaba en lunes). Regenerate ya recibía lunes.
+- Frontend: campo `edad` en onboarding (viene de `ath_age`) + profile;
+  aviso "¿Ajustamos la semana?" en `week.js` (≥2 perdidas o feeling≤2,
+  llama al regen existente, nunca bloquea).
+- Migraciones nuevas aplicadas en Supabase (head `e5f6a7b8c9d0`):
+  d4 `edad` en athlete_profiles + e5 `focus`→String(100) en ambas tablas
+  (los sufijos Salo pasaban VARCHAR 50 en Postgres; SQLite no valida).
+- Tests nuevos: `test_salo_mix.py` + `test_adaptive.py` 18/18 PASS.
+  E2E `test_final_all.py` igual que baseline (fallan solo 3 esperados).
+  Lección: correr siempre `alembic current` en prod tras push con migración;
+  probar generate contra Postgres, no solo sqlite.
+- ML retrain: `backend/scripts/export_training_data.py` (CSV anonimizado
+  para M1/M2 con datos reales cuando haya historial). Entrenamiento sigue en
+  entrenamiento-app-cuentas/ml. `technique_flag` Ch1 pendiente: SwimTest no
+  guarda stroke count.
+- OJO seguridad: el password del pooler se expuso en un chat el 27/09 —
+  el usuario lo rotó (verificar que DATABASE_URL en Render quedó con el nuevo).
+- Estado al 27/09 noche: deploy `30716b1` live; usuario hizo "Start new plan"
+  (borró competition+plan, perfil/feedback intactos) y el onboarding Generate
+  se colgó por reinicio de Render a mitad (04:45). PENDIENTE INMEDIATO:
+  onboarding → Generate 1 vez (~60s) → verificar nado Mar/Sáb/Dom +
+  fuerza Lun–Jue, Peak con SP, Taper sin SP, prehab donde toque.
