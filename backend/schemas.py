@@ -361,6 +361,7 @@ class SwimTestCreate(BaseModel):
     tiempo_400_seg: Optional[float] = Field(default=None, ge=60, le=3600)
     tiempo_200_seg: Optional[float] = Field(default=None, ge=20, le=1800)
     tiempo_50_seg: Optional[float] = Field(default=None, ge=15, le=600)
+    stroke_count_50m: Optional[int] = Field(default=None, ge=20, le=120)
     css_pace_100_seg: Optional[float] = Field(default=None, ge=30, le=400)
     edad: Optional[int] = Field(default=None, ge=10, le=100)
     peso_kg: Optional[float] = Field(default=None, ge=30, le=250)

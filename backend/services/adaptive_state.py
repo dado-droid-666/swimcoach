@@ -16,6 +16,9 @@ from backend.models import DailyFeedback, ExerciseLog, TrainingSession, Strength
 from backend.services.load_model import suggest_load_factor
 
 RECOVERY_FEELING = 2
+# Salo Ch1: >=50 brazadas por 50m crol suave indica eficiencia pobre =>
+# refuerzo tecnico (drills + DPS). Rango tipico: eficiente <45, medio 45-55.
+STROKE_COUNT_TECHNIQUE_THRESHOLD = 50
 
 
 def _min_feeling(fb: DailyFeedback) -> Optional[int]:
@@ -144,6 +147,8 @@ def build_week_adaptive(db: Session, user_id: int, profile, goal,
 
     state = compute_athlete_state(db, user_id, today)
     tier = 2
+    technique_flag = None
+    strokes = None
     try:
         from backend.models import SwimTest
         latest = (
@@ -152,6 +157,9 @@ def build_week_adaptive(db: Session, user_id: int, profile, goal,
         )
         if latest is not None and latest.tier in (1, 2, 3):
             tier = latest.tier
+        strokes = getattr(latest, "stroke_count_50m", None) if latest is not None else None
+        if strokes is not None and strokes >= STROKE_COUNT_TECHNIQUE_THRESHOLD:
+            technique_flag = True
     except Exception:
         pass
     ml = suggest_load_factor(state, tier=tier)
@@ -163,7 +171,9 @@ def build_week_adaptive(db: Session, user_id: int, profile, goal,
         "recovery": state["recovery"],
         "volume_factor": round(factor, 3),
         "feeling": state["min_feeling"],
-        "reason": state["reason"] + f" | ml:{ml.get('source')}",
+        "technique_flag": technique_flag,
+        "reason": state["reason"] + f" | ml:{ml.get('source')}" + (
+            f" | tecnica Ch1 ({strokes} brazadas/50m)" if technique_flag else ""),
         "ml_source": ml.get("source"),
         "completion_rate": state["completion_rate"],
         "missed": state["missed"],

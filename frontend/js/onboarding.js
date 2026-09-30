@@ -68,6 +68,10 @@ async function prefillSavedTest() {
             const el = document.getElementById('css_50_sec');
             if (el && !el.value) el.value = t.tiempo_50_seg;
         }
+        if (t.stroke_count_50m != null) {
+            const el = document.getElementById('css_strokes_50');
+            if (el && !el.value) el.value = t.stroke_count_50m;
+        }
         const map = { ath_age: t.edad, ath_weight: t.peso_kg, ath_height: t.altura_cm };
         for (const [id, v] of Object.entries(map)) {
             const el = document.getElementById(id);
@@ -139,7 +143,9 @@ function profileStep(app) {
                 </div>
                 <div style="display: flex; gap: 0.5rem;">
                     <label style="flex: 1;">50m sec (optional)<input type="number" id="css_50_sec" name="css_50_sec" min="0" step="0.1" placeholder="sec" oninput="updateCssPreview()"></label>
+                    <label style="flex: 1;">Strokes per 50m easy freestyle (optional)<input type="number" id="css_strokes_50" name="css_strokes_50" min="20" max="120" placeholder="e.g., 42" oninput="updateCssPreview()"></label>
                 </div>
+                <p style="font-size: 0.8rem; color: var(--muted-color); margin: 0.5rem 0 0;">Count your strokes for one easy 50m of freestyle. 50+ usually means technique work helps — we'll add drill + distance-per-stroke sets.</p>
                 <p id="css-preview" style="font-size: 0.875rem; color: var(--primary); margin: 0.5rem 0 0;"></p>
             </fieldset>
 
@@ -473,7 +479,7 @@ function completeOnboarding() {
     ['level', 'swim_days_per_week', 'target_volume_per_session', 'session_duration_min',
      'ftp_pace_per_100', 'injury_notes', 'primary_goal', 'competition_date', 'competition_type',
      'ow_distance_km', 'ow_conditions', 'strength_days_per_week',
-     'css_400_min', 'css_400_sec', 'css_200_min', 'css_200_sec', 'css_50_sec',
+     'css_400_min', 'css_400_sec', 'css_200_min', 'css_200_sec', 'css_50_sec', 'css_strokes_50',
      'ath_age', 'ath_weight', 'ath_height'].forEach(k => { saved[k] = first(saved[k]); });
 
     // Validate required profile fields (avoid 422 from backend)
@@ -509,7 +515,8 @@ function completeOnboarding() {
         const t200 = secs(saved.css_200_min, saved.css_200_sec);
         const cssPace = window.calcCssPace ? calcCssPace(t400, t200) : null;
         const hasAthleteData = saved.ath_age || saved.ath_weight || saved.ath_height;
-        if ((cssPace != null || hasAthleteData) && window.predictTier) {
+        const hasStrokes = saved.css_strokes_50 ? parseInt(saved.css_strokes_50) : null;
+        if ((cssPace != null || hasAthleteData || hasStrokes) && window.predictTier) {
             const levelNum = { beginner: 1, intermediate: 2, advanced: 3 }[saved.level] || 2;
             const levelName = { 1: 'beginner', 2: 'intermediate', 3: 'advanced' }[levelNum];
             tierInfo = predictTier({
@@ -532,6 +539,7 @@ function completeOnboarding() {
             swimTestPayload = {
                 tiempo_400_seg: t400, tiempo_200_seg: t200,
                 tiempo_50_seg: saved.css_50_sec ? parseFloat(saved.css_50_sec) : null,
+                stroke_count_50m: saved.css_strokes_50 ? parseInt(saved.css_strokes_50) : null,
                 css_pace_100_seg: cssPace,
                 edad: saved.ath_age ? parseInt(saved.ath_age) : null,
                 peso_kg: saved.ath_weight ? parseFloat(saved.ath_weight) : null,

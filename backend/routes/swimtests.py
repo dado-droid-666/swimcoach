@@ -24,6 +24,7 @@ def save_test(
         tiempo_400_seg=data.tiempo_400_seg,
         tiempo_200_seg=data.tiempo_200_seg,
         tiempo_50_seg=data.tiempo_50_seg,
+        stroke_count_50m=data.stroke_count_50m,
         css_pace_100_seg=data.css_pace_100_seg,
         edad=data.edad,
         peso_kg=data.peso_kg,

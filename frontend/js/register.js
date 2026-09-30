@@ -26,6 +26,9 @@ function renderRegister(app) {
                     <input type="password" id="reg-password" name="password" required minlength="8" autocomplete="new-password" placeholder="••••••••">
                 </div>
                 <button type="submit" class="primary" id="register-submit" style="width: 100%;">Create account</button>
+                <p style="text-align: center; margin: 0.75rem 0 0; font-size: 0.8rem; color: var(--muted-color);">
+                    By creating an account you agree to our <a href="#/terms">Terms</a> and <a href="#/privacy">Privacy Policy</a>.
+                </p>
                 <p style="text-align: center; margin: 1rem 0 0; font-size: 0.875rem; color: var(--muted-color);">
                     Already have an account? <a href="#/login">Log in</a>
                 </p>

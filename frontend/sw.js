@@ -1,6 +1,6 @@
 // SwimCoach Service Worker
 // Version: increment when updating static assets
-const CACHE_VERSION = 'v1.0.7';
+const CACHE_VERSION = 'v1.0.8';
 const STATIC_CACHE = `swimcoach-static-${CACHE_VERSION}`;
 const API_CACHE = `swimcoach-api-${CACHE_VERSION}`;
 const OFFLINE_CACHE = `swimcoach-offline-${CACHE_VERSION}`;
@@ -15,6 +15,7 @@ const STATIC_ASSETS = [
     '/js/app.js',
     '/js/api.js',
     '/js/utils.js',
+    '/js/public.js',
     '/js/login.js',
     '/js/register.js',
     '/js/onboarding.js',

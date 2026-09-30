@@ -207,6 +207,7 @@ class SwimTest(Base):
     tiempo_400_seg = Column(Float, nullable=True)
     tiempo_200_seg = Column(Float, nullable=True)
     tiempo_50_seg = Column(Float, nullable=True)
+    stroke_count_50m = Column(Integer, nullable=True)  # Salo Ch1: brazadas por 50m crol suave; alto => drills + DPS
     css_pace_100_seg = Column(Float, nullable=True)
     edad = Column(Integer, nullable=True)
     peso_kg = Column(Float, nullable=True)
