@@ -105,7 +105,7 @@ async function renderSession(app, dateParam) {
             </div>
             
             ${app.state.tier === 'free' ? `
-                <div id="ad-banner" style="margin-top: 2rem; text-align: center; min-height: 90px;">
+                <div class="ad-banner" style="margin-top: 2rem; text-align: center; min-height: 90px;">
                     <div style="font-size: 10px; color: var(--muted-color); text-transform: uppercase; letter-spacing: .08em;">Advertisement</div>
                     <ins class="adsbygoogle"
                          style="display:block"
@@ -144,6 +144,7 @@ async function renderSession(app, dateParam) {
     }
 
     if (window.maybeAutoTour) maybeAutoTour('session');
+    if (window.refreshAds) setTimeout(window.refreshAds, 100);
 }
 
 async function renderRestDay(dateISO) {

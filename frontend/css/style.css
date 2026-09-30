@@ -509,13 +509,14 @@ input:disabled + .slider {
 }
 
 /* AdSense Container */
-#ad-banner {
+.ad-banner {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-#ad-banner ins {
+.ad-banner ins {
     display: block;
 }
 

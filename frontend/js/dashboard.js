@@ -136,7 +136,7 @@ async function renderDashboard(app) {
             
             <!-- AdSense Banner (Free tier) -->
             ${app.state.tier === 'free' ? `
-                <div id="ad-banner" style="margin-top: 2rem; text-align: center; min-height: 90px;">
+                <div class="ad-banner" style="margin-top: 2rem; text-align: center; min-height: 90px;">
                     <div style="font-size: 10px; color: var(--muted-color); text-transform: uppercase; letter-spacing: .08em;">Advertisement</div>
                     <ins class="adsbygoogle"
                          style="display:block"
@@ -152,10 +152,8 @@ async function renderDashboard(app) {
     document.getElementById('app').innerHTML = html;
     if (window.maybeAutoTour) maybeAutoTour('dashboard');
     
-    // Initialize AdSense if needed
-    if (app.state.tier === 'free' && window.adsbygoogle) {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-    }
+    // Initialize AdSense if needed (safe: only unfilled slots)
+    if (window.refreshAds) setTimeout(window.refreshAds, 100);
 }
 
 // Export

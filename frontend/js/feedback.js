@@ -160,7 +160,7 @@ async function renderFeedback(app) {
             </section>
             
             ${app.state.tier === 'free' ? `
-                <div id="ad-banner" style="margin-top: 2rem; text-align: center; min-height: 90px;">
+                <div class="ad-banner" style="margin-top: 2rem; text-align: center; min-height: 90px;">
                     <div style="font-size: 10px; color: var(--muted-color); text-transform: uppercase; letter-spacing: .08em;">Advertisement</div>
                     <ins class="adsbygoogle"
                          style="display:block"
@@ -187,6 +187,7 @@ async function renderFeedback(app) {
     loadHistory(true);
 
     loadExerciseLogs();
+    if (window.refreshAds) setTimeout(window.refreshAds, 100);
 }
 
 async function loadExerciseLogs() {

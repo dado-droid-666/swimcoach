@@ -90,8 +90,8 @@ class App {
         }
         const bottom = document.getElementById('bottomnav');
         if (bottom) {
-            const publicRoutes = ['#/login', '#/register', '#/onboarding'];
-            const hash = window.location.hash || '#/dashboard';
+            const publicRoutes = ['#/', '#/login', '#/register', '#/onboarding', '#/privacy', '#/terms'];
+            const hash = window.location.hash || '#/';
             const isPublic = publicRoutes.some(r => hash.startsWith(r));
             bottom.style.display = (this.state.user && !isPublic) ? 'flex' : 'none';
             bottom.querySelectorAll('.navbtn').forEach(btn => {
@@ -143,12 +143,15 @@ class App {
 
     // Routing
     handleRoute() {
-        const hash = window.location.hash.slice(1) || '/dashboard';
+        const hash = window.location.hash.slice(1) || '/';
         const [path, queryString] = hash.split('?');
         const query = new URLSearchParams(queryString);
         
         // Parse route with params
         const routes = {
+            '/': () => this.renderLanding(),
+            '/privacy': () => this.renderPrivacy(),
+            '/terms': () => this.renderTerms(),
             '/login': () => this.renderLogin(),
             '/register': () => this.renderRegister(),
             '/onboarding': () => this.renderOnboarding(),
@@ -177,7 +180,7 @@ class App {
                 }
                 
                 // Check if onboarding needed (skip for public auth routes)
-                if (path === '/login' || path === '/register') {
+                if (path === '/' || path === '/privacy' || path === '/terms' || path === '/login' || path === '/register') {
                     const params = new URLSearchParams(queryString);
                     handler(params);
                     matched = true;
@@ -216,11 +219,14 @@ class App {
         }
         
         if (!matched) {
-            window.location.hash = '#/dashboard';
+            window.location.hash = this.state.user ? '#/dashboard' : '#/';
         }
     }
 
     // Render methods - will be implemented in separate files
+    renderLanding() { renderLanding(this); }
+    renderPrivacy() { renderPrivacy(this); }
+    renderTerms() { renderTerms(this); }
     renderLogin() { renderLogin(this); }
     renderRegister() { renderRegister(this); }
     renderOnboarding() { renderOnboarding(this); }
@@ -289,33 +295,29 @@ document.addEventListener('DOMContentLoaded', () => {
     window.app = new App();
 });
 
-// AdSense initialization
+// AdSense initialization — push only unfilled slots to avoid double-fill errors
+function pushUnfilledAds() {
+    if (!window.adsbygoogle || !window.app || window.app.state.tier !== 'free') return;
+    const unfilled = document.querySelectorAll('ins.adsbygoogle:not([data-ad-status])');
+    if (!unfilled.length) return;
+    try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (e) {
+        // Ignore AdSense errors (adblock, offline)
+    }
+}
+
 function initAdSense() {
-    // Check if user is on free tier (will be updated after auth)
-    // AdSense script is loaded in index.html
-    // Ads are conditionally rendered in components based on tier
-    
-    // Auto-refresh ads on route change for free tier
+    // Each view pushes its own <ins> right after render.
+    // Global hashchange is a safety net with a tick delay — no blind push.
     window.addEventListener('hashchange', () => {
-        if (window.adsbygoogle && window.app && window.app.state.tier === 'free') {
-            try {
-                (window.adsbygoogle = window.adsbygoogle || []).push({});
-            } catch (e) {
-                // Ignore AdSense errors
-            }
-        }
+        setTimeout(pushUnfilledAds, 300);
     });
 }
 
 // Function to refresh AdSense ads (called after route changes for free tier)
 window.refreshAds = function() {
-    if (window.adsbygoogle && window.app && window.app.state.tier === 'free') {
-        try {
-            (window.adsbygoogle = window.adsbygoogle || []).push({});
-        } catch (e) {
-            // Ignore AdSense errors
-        }
-    }
+    pushUnfilledAds();
 }
 
 // Export for other modules
