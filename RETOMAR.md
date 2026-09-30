@@ -1,4 +1,4 @@
-# SwimCoach — Retomar después (guardado 23/09/2026 noche)
+# SwimCoach — Retomar después (actualizado 30/09/2026)
 
 ## Producción
 - LIVE: https://swimcoach-ss5j.onrender.com (plan Free + Supabase pooler 6543).
@@ -129,4 +129,26 @@
   (borró competition+plan, perfil/feedback intactos) y el onboarding Generate
   se colgó por reinicio de Render a mitad (04:45). PENDIENTE INMEDIATO:
   onboarding → Generate 1 vez (~60s) → verificar nado Mar/Sáb/Dom +
-  fuerza Lun–Jue, Peak con SP, Taper sin SP, prehab donde toque.
+   fuerza Lun–Jue, Peak con SP, Taper sin SP, prehab donde toque.
+
+## Sesión 30/09 — AdSense aprobación + verificación prod (`782ba5c`)
+- `frontend/ads.txt` creado (`google.com, pub-4540036176937342, DIRECT,
+  f08c47fec0942fa0`); servido en `/ads.txt` vía StaticFiles. Verificado live.
+- Páginas públicas nuevas `frontend/js/public.js`: `#/` landing con contenido
+  real (cómo funciona, CSS zones, strength, FAQ, 1 banner) + `#/privacy`
+  (cláusula AdSense/cookies, opt-out, derechos, contacto) + `#/terms`
+  (Pro $100 MXN, liability natación, leyes México). Sin login → crawler OK.
+- Router `app.js`: rutas `/`, `/privacy`, `/terms` públicas; default `#/` si no
+  hay sesión; bottomnav oculto en públicas; `renderLanding` redirige a
+  dashboard si ya hay usuario.
+- Fix anuncios: eliminado `div#ad-banner` duplicado oculto de `index.html`;
+  CSS `#ad-banner`→`.ad-banner`; vistas usan `class`; `pushUnfilledAds()`
+  (solo `ins:not([data-ad-status])`, delay 100/300ms) en dashboard/session/
+  feedback/landing. Antes session/feedback nunca hacían push (vacíos).
+- Footer con Home/Privacy/Terms/Contact (`swimcoach.app@gmail.com` —
+  confirmar si es correo real).
+- Verificación prod 30/09: `/api/health` ok, `/ads.txt` correcto,
+  `/` + `/js/public.js` nuevos live, head Alembic local `e5f6a7b8c9d0`.
+  Usuario confirmó Generate OK (nado Mar/Sáb/Dom + fuerza Lun–Jue).
+- Usuario solicitó revisión AdSense el 30/09. No clicar anuncios propios.
+  Si rechazan, corregir según motivo exacto.
