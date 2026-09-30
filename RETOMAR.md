@@ -152,3 +152,15 @@
   Usuario confirmó Generate OK (nado Mar/Sáb/Dom + fuerza Lun–Jue).
 - Usuario solicitó revisión AdSense el 30/09. No clicar anuncios propios.
   Si rechazan, corregir según motivo exacto.
+
+## Sesión 30/09 noche — SW v1.0.8 + stroke count Ch1 (`b029d6a`)
+- `frontend/sw.js` → `v1.0.8` + `/js/public.js` al cache (PWA no sirve viejo).
+- `register.js`: consentimiento con links Terms/Privacy.
+- Stroke count cerrado: migración `f6a7b8c9d0e1` (`stroke_count_50m` en
+  swim_tests) + schema 20-120 + ruta + campo onboarding paso 1 (prefill,
+  guardado). `adaptive_state`: ≥50 brazadas/50m → `technique_flag=True`,
+  generador agrega sets Ch1 drills+DPS (verificado 58→True, 40→None).
+- Tests: 5 adaptive + 13 salo OK; E2E paridad baseline (400/404 esperados).
+- PENDIENTE USUARIO tras deploy: `alembic upgrade head` en Supabase/Render
+  (head `f6a7b8c9d0e1`) + `alembic current`. NO correr alembic en sqlite
+  local (sello viejo `b2c3`, falla; dev usa create_all + ALTER manual).
