@@ -90,9 +90,12 @@ class App {
         }
         const bottom = document.getElementById('bottomnav');
         if (bottom) {
-            const publicRoutes = ['#/', '#/login', '#/register', '#/onboarding', '#/privacy', '#/terms'];
+            // NOTE: '#/' must be exact-match — startsWith('#/') is true for
+            // every hash (e.g. '#/dashboard') and would hide the bottomnav.
+            const publicPrefixes = ['#/login', '#/register', '#/onboarding', '#/privacy', '#/terms'];
             const hash = window.location.hash || '#/';
-            const isPublic = publicRoutes.some(r => hash.startsWith(r));
+            const isPublic = hash === '#/' || hash === '#' ||
+                publicPrefixes.some(r => hash.startsWith(r));
             bottom.style.display = (this.state.user && !isPublic) ? 'flex' : 'none';
             bottom.querySelectorAll('.navbtn').forEach(btn => {
                 const route = btn.dataset.route;
@@ -148,10 +151,9 @@ class App {
         const query = new URLSearchParams(queryString);
         
         // Parse route with params
+        // NOTE: '/' must be LAST — matching is prefix-based (startsWith)
+        // and every path starts with '/', so it would swallow all routes.
         const routes = {
-            '/': () => this.renderLanding(),
-            '/privacy': () => this.renderPrivacy(),
-            '/terms': () => this.renderTerms(),
             '/login': () => this.renderLogin(),
             '/register': () => this.renderRegister(),
             '/onboarding': () => this.renderOnboarding(),
@@ -163,7 +165,10 @@ class App {
             '/feedback': () => this.renderFeedback(),
             '/profile': () => this.renderProfile(),
             '/upgrade': () => this.renderUpgrade(),
-            '/settings': () => this.renderSettings()
+            '/settings': () => this.renderSettings(),
+            '/privacy': () => this.renderPrivacy(),
+            '/terms': () => this.renderTerms(),
+            '/': () => this.renderLanding()
         };
         
         // Match route
