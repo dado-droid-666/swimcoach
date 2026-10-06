@@ -164,3 +164,16 @@
 - PENDIENTE USUARIO tras deploy: `alembic upgrade head` en Supabase/Render
   (head `f6a7b8c9d0e1`) + `alembic current`. NO correr alembic en sqlite
   local (sello viejo `b2c3`, falla; dev usa create_all + ALTER manual).
+
+## Incidente 04/10 — router tragaba todas las rutas (`0f66228`, SW `9f4972c`)
+- Causa: landing `'/'` primera en tabla `routes` + match por prefijo
+  (`startsWith`) → TODA la app renderizaba landing; login/register
+  inalcanzables, taps "muertos", sin POST en logs. Gemelo en `updateNav`
+  (`startsWith('#/')` ocultaba bottomnav siempre). Introducido en cambio
+  AdSense del 30/09.
+- Fix: `'/'`, `'/privacy'`, `'/terms'` al final de `routes`; `'#/'`
+  exact-match en `updateNav`. Verificado con simulación (8 rutas OK).
+- Lección PWA: el fix estuvo live pero el SW `v1.0.8` seguía sirviendo el
+  `app.js` roto desde cache (sw.js sin cambios → navegador no actualiza).
+  Bump a `v1.0.9` para forzar refresh. REGLA: todo cambio de JS cacheado
+  (`app.js` y cía.) exige bump de `CACHE_VERSION` en `sw.js`.
