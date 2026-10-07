@@ -177,3 +177,13 @@
   `app.js` roto desde cache (sw.js sin cambios → navegador no actualiza).
   Bump a `v1.0.9` para forzar refresh. REGLA: todo cambio de JS cacheado
   (`app.js` y cía.) exige bump de `CACHE_VERSION` en `sw.js`.
+
+## Incidente 07/10 — Generate muerto tras validación (`resetGenBtn`, SW `v1.1.0`)
+- Causa: `completeOnboarding` ponía `window._generating=true` pero los 4
+  `return` de validación salían sin liberarlo → todo tap posterior moría en
+  silencio (`if (window._generating) return`), cero tráfico al servidor.
+  Reconstruido con logs Render (reset 200, ni un POST /competition/generate).
+- Fix: helper `resetGenBtn()` (flag + botón) en los 4 returns + `.finally()`
+  reutilizándolo. Test Node con stubs DOM: T1/T2 validación libera flag y
+  rehabilita botón; T3 retry tras fallo llega al servidor y cae en dashboard.
+- Migración f6 aplicada por el usuario en Supabase (`e5→f6`, head OK).

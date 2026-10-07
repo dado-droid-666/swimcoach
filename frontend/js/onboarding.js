@@ -464,12 +464,20 @@ function updateVolumePreview() {
     el.style.color = weekly > cap ? 'var(--warning-color)' : 'var(--muted-color)';
 }
 
+function resetGenBtn() {
+    window._generating = false;
+    const b = document.getElementById('generate-btn');
+    if (b) { b.disabled = false; b.textContent = 'Generate My Plan'; }
+}
+
 function completeOnboarding() {
     // Anti-double-click: generation takes ~30s and used to duplicate plans
     if (window._generating) return;
     window._generating = true;
     const genBtn = document.getElementById('generate-btn');
     if (genBtn) { genBtn.disabled = true; genBtn.textContent = 'Generating… (~30s, do not click again)'; }
+    // Validation exits below must call resetGenBtn(): otherwise the flag
+    // stays stuck and every later tap dies silently (no server traffic).
     const saved = JSON.parse(localStorage.getItem('onboarding_data') || '{}');
     // First value wins (user may go Back/Next and re-save a step)
     const first = (v, dflt) => {
@@ -486,22 +494,26 @@ function completeOnboarding() {
     if (!saved.level || !saved.swim_days_per_week || !saved.target_volume_per_session || !saved.session_duration_min) {
         window.app.showError('Please complete Step 1 (profile) before generating your plan.');
         window.location.hash = '#/onboarding?step=1';
+        resetGenBtn();
         return;
     }
     if (!saved.competition_date || !saved.competition_type) {
         window.app.showError('Please set a competition date and type (Step 4).');
         window.location.hash = '#/onboarding?step=4';
+        resetGenBtn();
         return;
     }
     const poolEvents = saved.pool_events ? (Array.isArray(saved.pool_events) ? saved.pool_events : [saved.pool_events]) : [];
     if (saved.competition_type === 'pool' && poolEvents.length === 0) {
         window.app.showError('Select at least one pool event.');
         window.location.hash = '#/onboarding?step=4';
+        resetGenBtn();
         return;
     }
     if (saved.competition_type === 'open_water' && !saved.ow_distance_km) {
         window.app.showError('Select an open-water distance.');
         window.location.hash = '#/onboarding?step=4';
+        resetGenBtn();
         return;
     }
     
@@ -607,11 +619,7 @@ function completeOnboarding() {
                 });
         })
         .catch(err => window.app.showError(err.message))
-        .finally(() => {
-            window._generating = false;
-            const b = document.getElementById('generate-btn');
-            if (b) { b.disabled = false; b.textContent = 'Generate My Plan'; }
-        });
+        .finally(() => resetGenBtn());
 }
 
 function toggleEquipment(checkbox) {
