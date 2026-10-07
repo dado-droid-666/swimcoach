@@ -146,7 +146,7 @@
   (solo `ins:not([data-ad-status])`, delay 100/300ms) en dashboard/session/
   feedback/landing. Antes session/feedback nunca hacían push (vacíos).
 - Footer con Home/Privacy/Terms/Contact (`swimcoach.app@gmail.com` —
-  confirmar si es correo real).
+  cuenta real del usuario, verificada 04/10: recibe correos OK).
 - Verificación prod 30/09: `/api/health` ok, `/ads.txt` correcto,
   `/` + `/js/public.js` nuevos live, head Alembic local `e5f6a7b8c9d0`.
   Usuario confirmó Generate OK (nado Mar/Sáb/Dom + fuerza Lun–Jue).
