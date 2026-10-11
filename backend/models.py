@@ -39,6 +39,7 @@ class User(Base):
     hashed_password = Column(String(255), nullable=False)
     full_name = Column(String(255), nullable=False)
     is_active = Column(Boolean, default=True)
+    is_admin = Column(Boolean, default=False)  # owner: manual grant via Supabase; gates admin endpoints
     created_at = Column(DateTime, default=datetime.utcnow)
 
     subscription_tier = Column(Enum(SubscriptionTier), default=SubscriptionTier.FREE)

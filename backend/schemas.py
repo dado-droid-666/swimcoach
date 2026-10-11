@@ -57,6 +57,20 @@ class UserLogin(BaseModel):
     password: str
 
 
+class PasswordChange(BaseModel):
+    current_password: str
+    new_password: str = Field(min_length=8, max_length=128)
+
+
+class AdminResetRequest(BaseModel):
+    email: EmailStr
+
+
+class AdminResetResponse(BaseModel):
+    email: str
+    temp_password: str  # shown ONCE — owner passes it via secure channel
+
+
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"

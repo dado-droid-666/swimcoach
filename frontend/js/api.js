@@ -91,6 +91,13 @@ class ApiClient {
         return this.request('/auth/account', { method: 'DELETE' });
     }
 
+    async changePassword(currentPassword, newPassword) {
+        return this.request('/auth/change-password', {
+            method: 'POST',
+            body: { current_password: currentPassword, new_password: newPassword }
+        });
+    }
+
     async getMe() {
         return this.request('/auth/me');
     }

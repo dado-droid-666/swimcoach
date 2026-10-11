@@ -4,6 +4,7 @@
 | File | What | How to run (from repo root) |
 |---|---|---|
 | `test_final_all.py` | E2E baseline: register → profile → competition → generate → plan → feedback → stats → subscription | `.\venv\Scripts\python.exe -m tests.test_final_all` |
+| `test_password.py` | Password endpoints on isolated sqlite (change OK/401/422/anon + admin reset 403/200-temp/404; 13 checks, DB file removed after) | `.\venv\Scripts\python.exe tests/test_password.py` |
 | `test_adaptive.py` | Unit funcs: recovery/adherence/planned-weeks/ML-clamp/effort-trend (in-memory sqlite) | `.\venv\Scripts\python.exe -c "import sys; sys.path.insert(0,'tests'); import test_adaptive as t; [getattr(t,n)() for n in dir(t) if n.startswith('test_')]; print('OK')"` |
 | `test_salo_mix.py` | Unit funcs: Salo MIX sets (13 tests, same runner pattern) | same pattern with `test_salo_mix` |
 

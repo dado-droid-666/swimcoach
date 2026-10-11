@@ -35,6 +35,25 @@ async function renderSettings(app) {
             </section>
 
             <section class="card" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+                <h2 style="margin: 0 0 1rem;">Change password</h2>
+                <form id="password-form" onsubmit="return false;">
+                    <div style="margin-bottom: 1rem;">
+                        <label for="pw-current">Current password</label>
+                        <input type="password" id="pw-current" autocomplete="current-password" required minlength="1">
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label for="pw-new">New password (min 8 characters)</label>
+                        <input type="password" id="pw-new" autocomplete="new-password" required minlength="8">
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label for="pw-confirm">Confirm new password</label>
+                        <input type="password" id="pw-confirm" autocomplete="new-password" required minlength="8">
+                    </div>
+                    <button type="submit" class="primary" id="pw-submit" onclick="changePassword()">Update password</button>
+                </form>
+            </section>
+
+            <section class="card" style="margin-bottom: 1.5rem; padding: 1.5rem;">
                 <h2 style="margin: 0 0 1rem;">Data & Privacy</h2>
                 
                 <div style="display: flex; flex-direction: column; gap: 1rem;">
@@ -82,6 +101,39 @@ async function renderSettings(app) {
 function exportData() {
     if (window.exportSwimData && window.app) return window.exportSwimData(window.app);
     alert('Export not available - please log in first');
+}
+
+async function changePassword() {
+    const current = document.getElementById('pw-current').value;
+    const next = document.getElementById('pw-new').value;
+    const confirm = document.getElementById('pw-confirm').value;
+    if (!current || !next) {
+        window.app.showError('Please complete all password fields.');
+        return;
+    }
+    if (next.length < 8) {
+        window.app.showError('New password must be at least 8 characters.');
+        return;
+    }
+    if (next !== confirm) {
+        window.app.showError('New passwords do not match.');
+        return;
+    }
+    const btn = document.getElementById('pw-submit');
+    btn.disabled = true;
+    btn.textContent = 'Updating…';
+    try {
+        await api.changePassword(current, next);
+        document.getElementById('pw-current').value = '';
+        document.getElementById('pw-new').value = '';
+        document.getElementById('pw-confirm').value = '';
+        window.app.showSuccess('Password updated.');
+    } catch (err) {
+        window.app.showError(err.message || 'Password update failed');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Update password';
+    }
 }
 
 function clearCache() {
@@ -137,6 +189,7 @@ async function confirmDeleteAccount() {
 // Export
 window.renderSettings = renderSettings;
 window.exportData = exportData;
+window.changePassword = changePassword;
 window.clearCache = clearCache;
 window.confirmDeleteAll = confirmDeleteAll;
 window.confirmDeleteAccount = confirmDeleteAccount;

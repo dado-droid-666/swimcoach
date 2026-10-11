@@ -208,8 +208,7 @@
 - PENDIENTE Plan B passwords: `models.py` is_admin + migración `g7` en
   working tree SIN commit (retomar pasos 2-5 aprobados).
 
-## Sesión C (higiene + auditoría + CI)
-- `.env.example` unificado (dev + prod comentado); `.env.production.example`
+## Sesión C (higiene + auditoría + CI)- `.env.example` unificado (dev + prod comentado); `.env.production.example`
   → `tools/attic/`; `render.yaml` comentado var por var (solo comentarios;
   OJO: declara Render DB pero el live es Supabase pooler vía dashboard).
 - `docs/ops.md`: runbooks (migración, admin, reset, wake) + tests/CI.
@@ -220,3 +219,13 @@
 - `tools/audit_spec.py`: diff-based, buckets UI→specs / training→training.md.
 - `.github/workflows/ci.yml` non-blocking: node --check, audits, alembic
   heads (single head), units, E2E sqlite.
+
+## Plan B passwords — ejecutado (commit pendiente de push con el resto)
+- Migración `g7b8c9d0e1f2` (`users.is_admin`) + `require_admin` + schemas
+  (`PasswordChange`, `AdminResetRequest/Response`) + `POST /auth/change-password`
+  + `POST /auth/admin-reset-password` (temp 12 chars `secrets`, se muestra 1 vez).
+- Frontend: `api.changePassword` + sección en Settings + SW `v1.1.2`.
+- `tests/test_password.py`: 13/13 PASS (OK/401/422/anon/403/temp/404);
+  E2E en paridad; audit_ui OK.
+- PENDIENTE USUARIO post-deploy: `alembic upgrade head` (→`g7b8c9d0e1f2`) en
+  Supabase + `is_admin=true` propio + probar change y reset.

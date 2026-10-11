@@ -105,3 +105,10 @@ def require_pro(user: User = Depends(get_current_user)) -> User:
     if user.subscription_tier != SubscriptionTier.PRO:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Pro feature. Upgrade to access.")
     return user
+
+
+def require_admin(user: User = Depends(get_current_user)) -> User:
+    """Owner-only gate. Grant via Supabase (users.is_admin = true) after g7."""
+    if not user.is_admin:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin access required.")
+    return user
