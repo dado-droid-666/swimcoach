@@ -8,9 +8,12 @@
 Phase 2 adds the daily scheduler (reminder_time/reminder_tz already modeled).
 """
 import json
+import logging
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+
+log = logging.getLogger("swimcoach.push")
 
 from backend.auth import get_current_user, require_admin
 from backend.config import get_settings
@@ -31,15 +34,16 @@ def _vapid_configured() -> bool:
     return bool(settings.vapid_public_key and settings.vapid_private_key)
 
 
-def send_push(subscription: PushSubscription, title: str, body: str, url: str = "/#/session/today") -> bool:
-    """Send one Web Push message. Returns True on 2xx; False otherwise
-    (caller counts; 404/410 subscriptions should be pruned by Phase 2)."""
+def send_push(subscription: PushSubscription, title: str, body: str, url: str = "/#/session/today") -> tuple[bool, str]:
+    """Send one Web Push message. Returns (ok, reason) where reason is a
+    short, secret-free diagnostic (e.g. 'unauthorized', 'gone', 'no-lib').
+    Callers count; 404/410 subscriptions should be pruned by Phase 2."""
     try:
-        from pywebpush import WebPushException, webpush
+        from pywebpush import webpush
     except ImportError:
-        return False
+        return False, "no-lib: pywebpush not installed"
     if not _vapid_configured():
-        return False
+        return False, "no-vapid: keys missing"
     try:
         webpush(
             subscription_info={
@@ -50,9 +54,22 @@ def send_push(subscription: PushSubscription, title: str, body: str, url: str = 
             vapid_private_key=settings.vapid_private_key,
             vapid_claims={"sub": settings.vapid_claims_email},
         )
-        return True
-    except Exception:
-        return False
+        return True, "sent"
+    except Exception as exc:  # noqa: BLE001 — diagnostic path, never secrets
+        reason = _push_error_reason(exc)
+        log.warning("push failed sub=%s reason=%s", subscription.id, reason)
+        return False, reason
+
+
+def _push_error_reason(exc: Exception) -> str:
+    status_code = getattr(getattr(exc, "response", None), "status_code", None)
+    if status_code == 404 or status_code == 410:
+        return f"gone: endpoint expired ({status_code})"
+    if status_code == 401 or status_code == 403:
+        return f"unauthorized: bad VAPID signature ({status_code})"
+    if status_code:
+        return f"push-service-{status_code}: {type(exc).__name__}"
+    return f"transport: {type(exc).__name__}"
 
 
 @router.get("/vapid-key", response_model=VapidKeyResponse)
@@ -113,9 +130,12 @@ def test_push(
     if not _vapid_configured():
         raise HTTPException(status_code=503, detail="Push not configured (VAPID keys missing)")
     sent = failed = 0
+    details: list[str] = []
     for sub in subs:
-        if send_push(sub, "SwimCoach test 🏊", "Push notifications are working."):
+        ok, reason = send_push(sub, "SwimCoach test 🏊", "Push notifications are working.")
+        if ok:
             sent += 1
         else:
             failed += 1
-    return TestPushResponse(sent=sent, failed=failed)
+            details.append(f"sub {sub.id}: {reason}")
+    return TestPushResponse(sent=sent, failed=failed, details=details)

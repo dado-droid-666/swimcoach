@@ -92,6 +92,7 @@ class VapidKeyResponse(BaseModel):
 class TestPushResponse(BaseModel):
     sent: int
     failed: int
+    details: List[str] = []
 
 
 class Token(BaseModel):
