@@ -25,6 +25,10 @@ class Settings(BaseSettings):
     umami_website_id: str = ""
     sentry_dsn: str = ""
 
+    vapid_public_key: str = ""
+    vapid_private_key: str = ""
+    vapid_claims_email: str = "mailto:swimcoach.app@gmail.com"
+
     class Config:
         env_file = ".env"
         case_sensitive = False

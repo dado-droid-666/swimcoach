@@ -44,6 +44,16 @@ User logs in with it, then sets their own via Settings → Change password.
 Open `/api/health` (200 fast = awake), `/`, `/ads.txt`. Keep traffic flowing
 for ~2h around AdSense resubmits.
 
+### Web Push VAPID (one-time setup)
+```powershell
+.\venv\Scripts\python.exe tools/gen_vapid.py   # prints 2 lines, keep secret
+```
+Put both lines in Render dashboard → Environment (`VAPID_PUBLIC_KEY`,
+`VAPID_PRIVATE_KEY`) + local `.env`. Never commit them. Verify:
+`GET /api/notifications/vapid-key` returns the public key; as admin,
+`POST /api/notifications/test` sends a live push to your own subscriptions
+(requires enabling the toggle in Settings first).
+
 ## Tests & CI
 - Suite: `python -m tests.test_final_all` (E2E; only expected 400/404) + unit
   funcs in `tests/test_adaptive.py`, `tests/test_salo_mix.py` (no pytest in venv).

@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 
 from .config import get_settings
 from .database import init_db
-from .routes import auth, profile, competition, plan, feedback, stats, subscription, swimtests
+from .routes import auth, profile, competition, plan, feedback, stats, subscription, swimtests, notifications
 
 settings = get_settings()
 
@@ -42,6 +42,7 @@ app.include_router(feedback.router)
 app.include_router(swimtests.router)
 app.include_router(stats.router)
 app.include_router(subscription.router)
+app.include_router(notifications.router)
 
 
 @app.get("/api/health")

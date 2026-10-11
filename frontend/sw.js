@@ -1,6 +1,6 @@
 // SwimCoach Service Worker
 // Version: increment when updating static assets
-const CACHE_VERSION = 'v1.2.1';
+const CACHE_VERSION = 'v1.3.0';
 const STATIC_CACHE = `swimcoach-static-${CACHE_VERSION}`;
 const API_CACHE = `swimcoach-api-${CACHE_VERSION}`;
 const OFFLINE_CACHE = `swimcoach-offline-${CACHE_VERSION}`;
@@ -160,6 +160,40 @@ async function cacheFirstStatic(request) {
         return new Response('Offline', { status: 503 });
     }
 }
+
+// Web Push (Phase 1: manual test sends; scheduler lands in Phase 2)
+self.addEventListener('push', (event) => {
+    let data = { title: 'SwimCoach', body: 'Time to train! 🏊', url: '/#/session/today' };
+    try {
+        if (event.data) data = Object.assign(data, event.data.json());
+    } catch (e) { /* plain-text or empty push: keep defaults */ }
+    event.waitUntil(
+        self.registration.showNotification(data.title, {
+            body: data.body,
+            icon: '/assets/icons/icon-192.png',
+            badge: '/assets/icons/icon-144.png',
+            tag: 'swimcoach-push',
+            renotify: false,
+            data: { url: data.url || '/#/session/today' }
+        })
+    );
+});
+
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    const url = (event.notification.data && event.notification.data.url) || '/#/session/today';
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+            for (const client of list) {
+                if (client.url.includes(self.location.origin) && 'focus' in client) {
+                    client.navigate(url);
+                    return client.focus();
+                }
+            }
+            if (clients.openWindow) return clients.openWindow(url);
+        })
+    );
+});
 
 // Background sync for offline feedback
 self.addEventListener('sync', (event) => {

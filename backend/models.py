@@ -57,6 +57,7 @@ class User(Base):
     feedback = relationship("DailyFeedback", back_populates="user")
     exercise_logs = relationship("ExerciseLog", back_populates="user")
     swim_tests = relationship("SwimTest", back_populates="user")
+    push_subscriptions = relationship("PushSubscription", back_populates="user")
 
 
 class AthleteProfile(Base):
@@ -77,6 +78,8 @@ class AthleteProfile(Base):
     ftp_pace_per_100 = Column(Integer, nullable=True)
     injury_notes = Column(Text, default="")
     edad = Column(Integer, nullable=True)  # Salo Ch11: youth <14 sin power con peso
+    reminder_time = Column(String(5), nullable=True)  # "HH:MM" local, Phase 2 scheduler; null = default 07:00
+    reminder_tz = Column(String(64), nullable=True)  # IANA tz, Phase 2; null = server local
 
     user = relationship("User", back_populates="profile")
 
@@ -219,3 +222,19 @@ class SwimTest(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="swim_tests")
+
+
+class PushSubscription(Base):
+    """Web Push endpoint per user (Phase 1: storage + manual test sends)."""
+
+    __tablename__ = "push_subscriptions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    endpoint = Column(Text, nullable=False, unique=True)
+    p256dh = Column(String(255), nullable=False)
+    auth = Column(String(255), nullable=False)
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User", back_populates="push_subscriptions")

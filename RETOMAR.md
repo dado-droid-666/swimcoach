@@ -237,3 +237,16 @@
   E2E en paridad; audit_ui OK.
 - PENDIENTE USUARIO post-deploy: `alembic upgrade head` (→`g7b8c9d0e1f2`) en
   Supabase + `is_admin=true` propio + probar change y reset.
+
+## Push Fase 1 técnica (infra, sin scheduler)
+- Migración `h8c9d0e1f2a3`: `push_subscriptions` + `reminder_time/tz` en perfil
+  (hora configurable modelada ya; scheduler en Fase 2).
+- `routes/notifications.py`: vapid-key (pública), subscribe upsert, unsubscribe,
+  test solo-admin (404 sin subs → 503 sin VAPID). `pywebpush` en requirements.
+- SW: handlers `push`/`notificationclick` (→`#/session/today`).
+- Settings: toggle real con estados (On/Off/Blocked/Unsupported) + `api.js`.
+- `tools/gen_vapid.py` (keys nunca en git); `tests/test_notifications.py` 16/16
+  (cazó orden 404/503 + cookie-jar en asserts anón).
+- Local sqlite parchado a mano (reminder_*; deriva documentada).
+- PENDIENTE USUARIO: generar VAPID (`tools/gen_vapid.py`) → envs Render+local
+  → toggle en Settings → `POST /notifications/test` como admin.

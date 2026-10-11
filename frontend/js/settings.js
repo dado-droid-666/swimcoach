@@ -9,15 +9,15 @@ async function renderSettings(app) {
             
             <section class="card" style="margin-bottom: 1.5rem; padding: 1.5rem;">
                 <h2 style="margin: 0 0 1rem;">Notifications</h2>
-                <p style="color: var(--muted-color); margin-bottom: 1rem;">Push notifications coming in future update</p>
-                
+                <p style="color: var(--muted-color); margin-bottom: 1rem;">Daily training reminders (push). iOS needs the installed PWA.</p>
+
                 <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: var(--muted-background); border-radius: 0.5rem;">
                     <div>
-                        <strong>Daily Training Reminder</strong>
-                        <div style="color: var(--muted-color); font-size: 0.875rem;">Get notified at your preferred training time</div>
+                        <strong>Training reminders</strong>
+                        <div id="push-status" style="color: var(--muted-color); font-size: 0.875rem;">Checking…</div>
                     </div>
                     <label class="switch">
-                        <input type="checkbox" disabled>
+                        <input type="checkbox" id="push-toggle" onchange="togglePush(this)">
                         <span class="slider"></span>
                     </label>
                 </div>
@@ -97,6 +97,84 @@ async function renderSettings(app) {
     `;
     
     document.getElementById('app').innerHTML = html;
+    refreshPushStatus();
+}
+
+function urlBase64ToUint8(input) {
+    const pad = '='.repeat((4 - (input.length % 4)) % 4);
+    const b64 = (input + pad).replace(/-/g, '+').replace(/_/g, '/');
+    const raw = atob(b64);
+    const out = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
+    return out;
+}
+
+async function refreshPushStatus() {
+    const label = document.getElementById('push-status');
+    const toggle = document.getElementById('push-toggle');
+    const set = (text, on) => {
+        if (label) label.textContent = text;
+        if (toggle) toggle.checked = !!on;
+    };
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        set('Not supported in this browser.', false);
+        if (toggle) toggle.disabled = true;
+        return;
+    }
+    try {
+        const reg = await navigator.serviceWorker.ready;
+        const sub = await reg.pushManager.getSubscription();
+        if (sub) { set('On — this device receives reminders.', true); return; }
+        set(Notification.permission === 'denied'
+            ? 'Blocked — enable notifications in browser settings.'
+            : 'Off — turn on to receive reminders.', false);
+    } catch {
+        set('Unavailable right now.', false);
+    }
+}
+
+async function togglePush(checkbox) {
+    const on = checkbox.checked;
+    try {
+        if (on) {
+            const { public_key } = await api.getVapidKey();
+            if (!public_key) {
+                window.app.showError('Push is not configured on the server yet.');
+                checkbox.checked = false;
+                return;
+            }
+            const permission = await Notification.requestPermission();
+            if (permission !== 'granted') {
+                window.app.showError('Notification permission denied.');
+                checkbox.checked = false;
+                await refreshPushStatus();
+                return;
+            }
+            const reg = await navigator.serviceWorker.ready;
+            let sub = await reg.pushManager.getSubscription();
+            if (!sub) {
+                sub = await reg.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8(public_key)
+                });
+            }
+            await api.subscribePush(sub.toJSON());
+            window.app.showSuccess('Reminders enabled on this device.');
+        } else {
+            const reg = await navigator.serviceWorker.ready;
+            const sub = await reg.pushManager.getSubscription();
+            if (sub) {
+                await api.unsubscribePush(sub.endpoint).catch(() => {});
+                await sub.unsubscribe().catch(() => {});
+            }
+            window.app.showSuccess('Reminders disabled on this device.');
+        }
+    } catch (err) {
+        checkbox.checked = !on;
+        window.app.showError(err.message || 'Could not change reminder setting');
+    } finally {
+        await refreshPushStatus();
+    }
 }
 
 function exportData() {
@@ -195,6 +273,8 @@ async function confirmDeleteAccount() {
 
 // Export
 window.renderSettings = renderSettings;
+window.togglePush = togglePush;
+window.refreshPushStatus = refreshPushStatus;
 window.exportData = exportData;
 window.changePassword = changePassword;
 window.clearCache = clearCache;

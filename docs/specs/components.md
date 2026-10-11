@@ -73,3 +73,15 @@ showFieldError('login-error', 'Incorrect email or password.'); // helpers in uti
 - DO clear on input (`oninput="hideFieldError('…')"`).
 - DON'T replace the top toast: network/500/unknown errors still go to `app.showError`.
 - Form containers (onboarding, profile) stack label-above-input at every width (`.onboarding-container .grid, .profile-view .grid { 1fr }`) so long options/placeholders never truncate.
+
+## switch + push flow (Phase 1)
+```html
+<label class="switch">
+  <input type="checkbox" id="push-toggle" onchange="togglePush(this)">
+  <span class="slider"></span>
+</label>
+```
+- DO pair the switch with a status line (`#push-status`) refreshed on paint: On / Off / Blocked (browser denied) / Not supported / Unavailable.
+- DO revert `checkbox.checked` on failure and explain (denied → browser settings path; empty VAPID → "not configured", never a dead toggle).
+- Flow: toggle → `requestPermission()` → `pushManager.subscribe(VAPID)` → `POST /subscribe` (upsert) → `refreshPushStatus()`. Off unsubscribes server + browser. Admin test: `POST /notifications/test` → SW `push` event → notification (click → `#/session/today`).
+- Scheduler + time-picker are Phase 2 (`reminder_time`/`reminder_tz` already modeled in migration h8).

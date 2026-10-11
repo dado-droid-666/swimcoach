@@ -71,6 +71,29 @@ class AdminResetResponse(BaseModel):
     temp_password: str  # shown ONCE — owner passes it via secure channel
 
 
+class PushKeys(BaseModel):
+    p256dh: str = Field(max_length=255)
+    auth: str = Field(max_length=255)
+
+
+class PushSubscriptionCreate(BaseModel):
+    endpoint: str = Field(max_length=2000)
+    keys: PushKeys
+
+
+class PushUnsubscribe(BaseModel):
+    endpoint: str = Field(max_length=2000)
+
+
+class VapidKeyResponse(BaseModel):
+    public_key: str  # urlsafe-base64; empty = push not configured
+
+
+class TestPushResponse(BaseModel):
+    sent: int
+    failed: int
+
+
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"

@@ -102,6 +102,28 @@ class ApiClient {
         return this.request('/auth/me');
     }
 
+    // Web Push (Phase 1)
+    async getVapidKey() {
+        return this.request('/notifications/vapid-key');
+    }
+
+    async subscribePush(subscription) {
+        return this.request('/notifications/subscribe', {
+            method: 'POST',
+            body: {
+                endpoint: subscription.endpoint,
+                keys: { p256dh: subscription.keys.p256dh, auth: subscription.keys.auth }
+            }
+        });
+    }
+
+    async unsubscribePush(endpoint) {
+        return this.request('/notifications/subscribe', {
+            method: 'DELETE',
+            body: { endpoint }
+        });
+    }
+
     // Profile
     async getProfile() {
         return this.request('/profile');
