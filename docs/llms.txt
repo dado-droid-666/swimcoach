@@ -1,0 +1,35 @@
+# SwimCoach — llms.txt (internal index for AI agents and new engineers)
+
+SwimCoach is a competition-focused swim periodization PWA (vanilla JS SPA +
+FastAPI + Supabase Postgres). Free tier with ads + Pro $100 MXN/mo via MercadoPago.
+
+## Start here (read in order)
+1. docs/specs/principles.md — binding product/design/engineering decisions
+2. docs/specs/patterns.md — SPA shell, router rules, view convention, PWA cache rule
+3. docs/specs/components.md — component usage + do's/don'ts (copy snippets)
+4. docs/specs/tokens.md + frontend/css/tokens.css — closed token set (no new literals)
+5. docs/specs/training.md — plan-generation methodology mirror (Salo, zones, adaptive rules)
+6. RETOMAR.md — session log + live pendings (AdSense review, Starter trigger)
+
+## Repo map
+- frontend/index.html — shell regions; frontend/js/app.js — router+state (hash routes, '/' LAST)
+- frontend/js/ — one global per view (renderX(app)); api.js — fetch wrapper (no timeout; 401→login)
+- frontend/css/ — pico.min.css, style.css (legacy), tokens.css (canonical, loads last)
+- frontend/sw.js — STATIC_ASSETS cache-first; bump CACHE_VERSION with every cached-file change
+- backend/main.py — FastAPI + StaticFiles frontend; backend/routes/ — one file per domain
+- backend/services/ — swim_generator, strength_generator, adaptive_state, salo_mix, css_zones, load_model (M2), macrocycle_calculator, mercadopago_service
+- backend/models.py + schemas.py + routes/* — keep in sync; migrations/versions/ — linear chain (prod head f6a7b8c9d0e1 as of 07/10)
+- data/salo_swim.json + data/salo_dryland.json — book MIX; data/drill_library.json — warmup drills
+- tests/ (root test_*.py pending move to tests/ in Session B); test_final_all.py is the E2E baseline
+
+## Iron rules (from incidents)
+- Router: prefix match, '/' LAST; '#/' exact-match in updateNav (04/10).
+- SW bump with every cached static change (04/10, 07/10).
+- No silent returns on user actions; guards release locks + restore buttons (07/10 _generating).
+- No new color literals outside tokens.css (audit fails CI).
+- Spec change rides with its code change (sync rule).
+- Prod DB: Supabase pooler 6543 (no IPv6 on Free); never run alembic on local sqlite (stale stamp).
+
+## Live
+- Prod: https://swimcoach-ss5j.onrender.com (Free + sleep) | Repo main | AdSense ca-pub-4540036176937342 (in review)
+- Contact: swimcoach.app@gmail.com (verified 04/10)

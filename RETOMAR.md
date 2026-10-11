@@ -187,3 +187,9 @@
   reutilizándolo. Test Node con stubs DOM: T1/T2 validación libera flag y
   rehabilita botón; T3 retry tras fallo llega al servidor y cae en dashboard.
 - Migración f6 aplicada por el usuario en Supabase (`e5→f6`, head OK).
+
+## Sesión A (AI-ready, art. Smashing) — specs + tokens, cero visual
+- `docs/specs/`: principles, tokens, components, patterns, training (espejo
+  backend) + `docs/llms.txt` índice interno. `frontend/css/tokens.css` set
+  cerrado (paridad 28/28 con mirror legacy verificada por script).
+- `index.html` carga tokens.css; SW `v1.1.1` (+tokens en STATIC_ASSETS).

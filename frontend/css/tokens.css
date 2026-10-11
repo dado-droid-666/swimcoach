@@ -1,0 +1,67 @@
+/* SwimCoach design tokens — CLOSED SET (canonical).
+ *
+ * Spec: docs/specs/tokens.md
+ * Rule (CONTRIBUTING): no new hex/rgb/hsl anywhere in frontend code.
+ * Add the token here first, then use var(--name). The audit script
+ * (tools/audit_ui.py) fails CI on any color literal outside this file.
+ *
+ * NOTE (2026-10): frontend/css/style.css still carries its own legacy
+ * :root mirror with identical values. Do NOT add new vars there; new
+ * tokens go here only. Session B consolidates into this file.
+ * This sheet loads AFTER style.css; identical values => zero visual diff.
+ */
+:root {
+    /* Brand */
+    --primary: #3fd0e6;
+    --primary-hover: #2bb8cf;
+    --primary-background: #3fd0e622;
+
+    /* Semantic */
+    --success-color: #2ecc71;
+    --success-background: #2ecc7122;
+    --warning-color: #f59e0b;
+    --warning-background: #f59e0b22;
+    --error-color: #ff3b5c;
+    --error-background: #ff3b5c22;
+    --muted-color: #9db6cc;
+    --muted-background: #0e2b45cc;
+
+    /* Surfaces & text (dark ocean) */
+    --bg-deep: #061a2e;
+    --bg-card: #0e2b45cc;
+    --bg-card2: #154466cc;
+    --border-color: #1f4b6b;
+    --text-ocean: #f2f7fb;
+    --text-on-primary: #06333b;
+
+    /* Phase colors (macrocycle badges, week bars) */
+    --phase-base: #10b981;
+    --phase-build: #f59e0b;
+    --phase-peak: #ef4444;
+    --phase-taper: #8b5cf6;
+    --phase-race: #ec4899;
+    --phase-unknown: #6b7280;
+
+    /* Decorative waves (landing background) */
+    --wave-3: #0e5c86;
+    --wave-2: #146f9e;
+    --wave-1: #1c86ba;
+
+    /* Spacing */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+
+    /* Border radius */
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 1rem;
+    --radius-full: 9999px;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
