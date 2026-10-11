@@ -193,3 +193,17 @@
   backend) + `docs/llms.txt` índice interno. `frontend/css/tokens.css` set
   cerrado (paridad 28/28 con mirror legacy verificada por script).
 - `index.html` carga tokens.css; SW `v1.1.1` (+tokens en STATIC_ASSETS).
+
+## Sesión B (orden físico) — tests/ + attic (`0a5555a`, `ab2fee6`)
+- 14 `test_*.py` raíz → `tests/` (vivos: final_all, adaptive, salo_mix) y
+  `tests/attic/` (11 obsoletos) + READMEs; suite vía `python -m`
+  (`tests/__init__.py`); paridad E2E verificada antes/después.
+- Raíz → `tools/attic/` + README (check_tables, generate_icons×2,
+  cookies.txt, railway.toml muerto, deploy.sh); `cookies.txt` a `.gitignore`
+  (era cookie real commiteada — asumir expirada; no repetir).
+- `backend/jobs/` (vacío) eliminado; `ads_service.py` → `attic_ads_service.py`
+  con nota (frontend usa IDs hardcodeados); `frontend/README.md` del shell.
+- Local sqlite parchado a mano (edad, stroke_count_50m, is_admin) — documenta
+  deriva dev (create_all vs migraciones); nunca alembic en local.
+- PENDIENTE Plan B passwords: `models.py` is_admin + migración `g7` en
+  working tree SIN commit (retomar pasos 2-5 aprobados).
