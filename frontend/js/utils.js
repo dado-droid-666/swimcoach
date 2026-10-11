@@ -116,6 +116,25 @@ function paintPill(box) {
 window.pillClick = pillClick;
 window.paintPill = paintPill;
 
+// Inline field errors (rendered under the field via .field-error,
+// instead of the top toast). Toast stays as fallback for non-field errors.
+function showFieldError(id, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.style.display = 'block';
+}
+
+function hideFieldError(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = '';
+    el.style.display = 'none';
+}
+
+window.showFieldError = showFieldError;
+window.hideFieldError = hideFieldError;
+
 // Log out: server cookie + local session state, keep tour-seen flag,
 // then go to login so another user can sign in.
 async function logOut() {

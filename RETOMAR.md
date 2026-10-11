@@ -220,6 +220,14 @@
 - `.github/workflows/ci.yml` non-blocking: node --check, audits, alembic
   heads (single head), units, E2E sqlite.
 
+## Quick wins 26/10 — grid + errores inline (commit siguiente)
+- Grid: `.onboarding-container .grid, .profile-view .grid` a 1 columna
+  (labels arriba, inputs full-width; fin del truncado "Intermediat…").
+- `.field-error` + `show/hideFieldError` (utils.js): login/register/
+  change-password muestran error de credenciales bajo el campo; resto al toast.
+- Test stubs login: T1 credenciales→inline sin toast, T2 red→toast sin inline.
+- SW `v1.2.0` (login/register/settings/style/profile cacheados).
+
 ## Plan B passwords — ejecutado (commit pendiente de push con el resto)
 - Migración `g7b8c9d0e1f2` (`users.is_admin`) + `require_admin` + schemas
   (`PasswordChange`, `AdminResetRequest/Response`) + `POST /auth/change-password`

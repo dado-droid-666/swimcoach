@@ -47,7 +47,8 @@ async function renderSettings(app) {
                     </div>
                     <div style="margin-bottom: 1rem;">
                         <label for="pw-confirm">Confirm new password</label>
-                        <input type="password" id="pw-confirm" autocomplete="new-password" required minlength="8">
+                        <input type="password" id="pw-confirm" autocomplete="new-password" required minlength="8" oninput="hideFieldError('pw-error')">
+                        <p class="field-error" id="pw-error"></p>
                     </div>
                     <button type="submit" class="primary" id="pw-submit" onclick="changePassword()">Update password</button>
                 </form>
@@ -108,17 +109,18 @@ async function changePassword() {
     const next = document.getElementById('pw-new').value;
     const confirm = document.getElementById('pw-confirm').value;
     if (!current || !next) {
-        window.app.showError('Please complete all password fields.');
+        showFieldError('pw-error', 'Please complete all password fields.');
         return;
     }
     if (next.length < 8) {
-        window.app.showError('New password must be at least 8 characters.');
+        showFieldError('pw-error', 'New password must be at least 8 characters.');
         return;
     }
     if (next !== confirm) {
-        window.app.showError('New passwords do not match.');
+        showFieldError('pw-error', 'New passwords do not match.');
         return;
     }
+    hideFieldError('pw-error');
     const btn = document.getElementById('pw-submit');
     btn.disabled = true;
     btn.textContent = 'Updating…';
@@ -129,7 +131,12 @@ async function changePassword() {
         document.getElementById('pw-confirm').value = '';
         window.app.showSuccess('Password updated.');
     } catch (err) {
-        window.app.showError(err.message || 'Password update failed');
+        const msg = err.message || 'Password update failed';
+        if (/incorrect|current password|401/i.test(msg)) {
+            showFieldError('pw-error', 'Current password is incorrect.');
+        } else {
+            window.app.showError(msg);
+        }
     } finally {
         btn.disabled = false;
         btn.textContent = 'Update password';

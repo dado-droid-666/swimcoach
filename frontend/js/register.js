@@ -23,7 +23,8 @@ function renderRegister(app) {
                 </div>
                 <div style="margin-bottom: 1.5rem;">
                     <label for="reg-password">Password (min 8 characters)</label>
-                    <input type="password" id="reg-password" name="password" required minlength="8" autocomplete="new-password" placeholder="••••••••">
+                    <input type="password" id="reg-password" name="password" required minlength="8" autocomplete="new-password" placeholder="••••••••" oninput="hideFieldError('reg-error')">
+                    <p class="field-error" id="reg-error"></p>
                 </div>
                 <button type="submit" class="primary" id="register-submit" style="width: 100%;">Create account</button>
                 <p style="text-align: center; margin: 0.75rem 0 0; font-size: 0.8rem; color: var(--muted-color);">
@@ -45,13 +46,14 @@ function renderRegister(app) {
         const email = document.getElementById('reg-email').value.trim();
         const password = document.getElementById('reg-password').value;
         if (!fullName || !email || !password) {
-            app.showError('Please complete all fields.');
+            showFieldError('reg-error', 'Please complete all fields.');
             return;
         }
         if (password.length < 8) {
-            app.showError('Password must be at least 8 characters.');
+            showFieldError('reg-error', 'Password must be at least 8 characters.');
             return;
         }
+        hideFieldError('reg-error');
         btn.disabled = true;
         btn.textContent = 'Creating…';
         try {
@@ -59,7 +61,12 @@ function renderRegister(app) {
             await app.checkAuth();
             window.location.hash = '#/onboarding';
         } catch (err) {
-            app.showError(err.message || 'Registration failed');
+            const msg = err.message || 'Registration failed';
+            if (/already registered|email|password|422|400/i.test(msg)) {
+                showFieldError('reg-error', msg);
+            } else {
+                app.showError(msg);
+            }
         } finally {
             btn.disabled = false;
             btn.textContent = 'Create account';

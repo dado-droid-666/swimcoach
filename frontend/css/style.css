@@ -130,6 +130,22 @@ main {
     }
 }
 
+/* Onboarding + profile forms: stack label above input, full-width fields.
+   The generic 2/3-col .grid squeezed label+input side-by-side in 600px
+   containers and truncated long options/placeholders (10/26). */
+.onboarding-container .grid,
+.profile-view .grid {
+    grid-template-columns: 1fr;
+}
+
+/* Inline field errors (below the field, not the top toast) */
+.field-error {
+    display: none;
+    color: var(--error-color);
+    font-size: 13px;
+    margin: 0.375rem 0 0;
+}
+
 /* Forms */
 label {
     display: block;

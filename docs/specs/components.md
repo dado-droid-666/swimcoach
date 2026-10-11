@@ -60,3 +60,16 @@ Fixed 5 tabs (`Today/Week/Plan/Log/Profile`), `data-route` driven, hidden on pub
 Labels above inputs; min/max/step set (`min="20" max="120"` for strokes); server re-validates everything (422 friendly).
 - DO prefill from server (`getLatestTest`) so users never retype.
 - DON'T trust client validation alone.
+
+## field-error (inline, under the field)
+```html
+<input type="password" id="login-password" oninput="hideFieldError('login-error')">
+<p class="field-error" id="login-error"></p>
+```
+```js
+showFieldError('login-error', 'Incorrect email or password.'); // helpers in utils.js
+```
+- DO use for credential/field errors (login, register, change-password): they render under the field in `var(--error-color)`.
+- DO clear on input (`oninput="hideFieldError('…')"`).
+- DON'T replace the top toast: network/500/unknown errors still go to `app.showError`.
+- Form containers (onboarding, profile) stack label-above-input at every width (`.onboarding-container .grid, .profile-view .grid { 1fr }`) so long options/placeholders never truncate.

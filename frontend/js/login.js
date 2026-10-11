@@ -19,7 +19,8 @@ function renderLogin(app) {
                 </div>
                 <div style="margin-bottom: 1.5rem;">
                     <label for="login-password">Password</label>
-                    <input type="password" id="login-password" name="password" required autocomplete="current-password" placeholder="••••••••">
+                    <input type="password" id="login-password" name="password" required autocomplete="current-password" placeholder="••••••••" oninput="hideFieldError('login-error')">
+                    <p class="field-error" id="login-error"></p>
                 </div>
                 <button type="submit" class="primary" id="login-submit" style="width: 100%;">Log in</button>
                 <p style="text-align: center; margin: 1rem 0 0; font-size: 0.875rem; color: var(--muted-color);">
@@ -37,9 +38,10 @@ function renderLogin(app) {
         const email = document.getElementById('login-email').value.trim();
         const password = document.getElementById('login-password').value;
         if (!email || !password) {
-            app.showError('Please enter email and password.');
+            showFieldError('login-error', 'Please enter email and password.');
             return;
         }
+        hideFieldError('login-error');
         btn.disabled = true;
         btn.textContent = 'Logging in…';
         try {
@@ -47,7 +49,14 @@ function renderLogin(app) {
             await app.checkAuth();
             window.location.hash = '#/dashboard';
         } catch (err) {
-            app.showError(err.message || 'Login failed');
+            // Field-level error under the password (toast stays as fallback
+            // for non-credential failures like network errors).
+            const msg = err.message || 'Login failed';
+            if (/invalid credentials|incorrect|401/i.test(msg)) {
+                showFieldError('login-error', 'Incorrect email or password.');
+            } else {
+                app.showError(msg);
+            }
         } finally {
             btn.disabled = false;
             btn.textContent = 'Log in';
