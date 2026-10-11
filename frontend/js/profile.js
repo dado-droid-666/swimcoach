@@ -26,6 +26,16 @@ async function renderProfile(app) {
                     <a href="#/upgrade" class="primary">${tier === 'pro' ? 'Manage Subscription' : 'Upgrade to Pro'}</a>
                 </div>
             </section>
+
+            <section class="card" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+                    <div>
+                        <strong>⚙️ App settings</strong>
+                        <div style="font-size: 0.875rem; color: var(--muted-color);">Password, data, cache and about</div>
+                    </div>
+                    <a href="#/settings" class="secondary" style="text-decoration: none; padding: 0.5rem 1rem;">Open</a>
+                </div>
+            </section>
             
             <section class="card" style="margin-bottom: 1.5rem; padding: 1.5rem;">
                 <h2 style="margin: 0 0 1rem;">Profile Settings</h2>
