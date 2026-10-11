@@ -20,3 +20,6 @@ Thumbs.db
 
 # Temp
 *.log
+
+# Never commit browser cookie jars / session tokens (see tools/attic/README.md)
+cookies.txt

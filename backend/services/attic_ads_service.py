@@ -1,3 +1,6 @@
+# ATTIC (Session B, 2026-10-11): AdSense helpers disconnected from the app.
+# Frontend uses hardcoded slot IDs; Render ADSENSE_* envs are unwired.
+# Kept for a future server-driven ads config. Do not import (nothing does).
 from typing import Optional
 from backend.config import get_settings
 
