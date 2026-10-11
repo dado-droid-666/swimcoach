@@ -62,14 +62,24 @@ def send_push(subscription: PushSubscription, title: str, body: str, url: str = 
 
 
 def _push_error_reason(exc: Exception) -> str:
-    status_code = getattr(getattr(exc, "response", None), "status_code", None)
+    resp = getattr(exc, "response", None)
+    status_code = getattr(resp, "status_code", None)
+    # FCM/mozilla return a short JSON error body naming the exact cause
+    # (public, secret-free). Truncate defensively.
+    body = ""
+    try:
+        if resp is not None and hasattr(resp, "text"):
+            body = (resp.text or "")[:200]
+    except Exception:
+        body = ""
+    suffix = f" :: {body}" if body else ""
     if status_code == 404 or status_code == 410:
-        return f"gone: endpoint expired ({status_code})"
+        return f"gone: endpoint expired ({status_code}){suffix}"
     if status_code == 401 or status_code == 403:
-        return f"unauthorized: bad VAPID signature ({status_code})"
+        return f"unauthorized: bad VAPID signature ({status_code}){suffix}"
     if status_code:
-        return f"push-service-{status_code}: {type(exc).__name__}"
-    return f"transport: {type(exc).__name__}"
+        return f"push-service-{status_code}: {type(exc).__name__}{suffix}"
+    return f"transport: {type(exc).__name__}{suffix}"
 
 
 @router.get("/vapid-key", response_model=VapidKeyResponse)
