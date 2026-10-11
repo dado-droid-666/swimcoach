@@ -1,0 +1,69 @@
+# Grandfathered UI findings (check\trelpath\tsnippet). Fix code + delete line to un-grandfather; never re-baseline blindly.
+color-literal	frontend/css/style.css	#3fd0e6 :: --primary: #3fd0e6;
+color-literal	frontend/css/style.css	#2bb8cf :: --primary-hover: #2bb8cf;
+color-literal	frontend/css/style.css	#3fd0e622 :: --primary-background: #3fd0e622;
+color-literal	frontend/css/style.css	#2ecc71 :: --success-color: #2ecc71;
+color-literal	frontend/css/style.css	#2ecc7122 :: --success-background: #2ecc7122;
+color-literal	frontend/css/style.css	#F59E0B :: --warning-color: #F59E0B;
+color-literal	frontend/css/style.css	#f59e0b22 :: --warning-background: #f59e0b22;
+color-literal	frontend/css/style.css	#ff3b5c :: --error-color: #ff3b5c;
+color-literal	frontend/css/style.css	#ff3b5c22 :: --error-background: #ff3b5c22;
+color-literal	frontend/css/style.css	#9db6cc :: --muted-color: #9db6cc;
+color-literal	frontend/css/style.css	#0e2b45cc :: --muted-background: #0e2b45cc;
+color-literal	frontend/css/style.css	#1f4b6b :: --border-color: #1f4b6b;
+color-literal	frontend/css/style.css	#061a2e :: --bg-deep: #061a2e;
+color-literal	frontend/css/style.css	#0e2b45cc :: --bg-card: #0e2b45cc;
+color-literal	frontend/css/style.css	#154466cc :: --bg-card2: #154466cc;
+color-literal	frontend/css/style.css	#f2f7fb :: --text-ocean: #f2f7fb;
+color-literal	frontend/css/style.css	rgba( :: --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+color-literal	frontend/css/style.css	rgba( :: --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0,
+color-literal	frontend/css/style.css	rgba( :: --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0
+color-literal	frontend/css/style.css	#061a2e :: background: linear-gradient(180deg, #061a2e 0%, #0a2e4a 45%, #0c3b5c
+color-literal	frontend/css/style.css	rgba( :: box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+color-literal	frontend/css/style.css	rgba( :: box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+color-literal	frontend/css/style.css	#ccc :: border: 1px solid #ccc;
+color-literal	frontend/css/style.css	#111827 :: color: #111827;
+color-literal	frontend/css/style.css	#082238ee :: #navbar { background: #082238ee; backdrop-filter: blur(20px); -webk
+color-literal	frontend/css/style.css	#1a4568 :: .countdown { text-align: center; padding: 26px 10px; border-radius: 1
+color-literal	frontend/css/style.css	#1b365d33 :: .tipo-fuerza { background: #1b365d33; color: #6ea8ff; }
+color-literal	frontend/css/style.css	#1a6b7a33 :: .tipo-alberca { background: #1a6b7a33; color: #3fd0e6; }
+color-literal	frontend/css/style.css	#5a657033 :: .tipo-descanso { background: #5a657033; color: #b8bfc9; }
+color-literal	frontend/css/style.css	#8b1e3f33 :: .tipo-competencia { background: #8b1e3f33; color: #ff6b8f; }
+color-literal	frontend/css/style.css	#2ecc71 :: .done-badge { font-size: 12px; font-weight: 700; color: #2ecc71; back
+color-literal	frontend/css/style.css	#0a2438 :: .big-btn { display: block; width: 100%; margin-top: 16px; padding: 16
+color-literal	frontend/css/style.css	#0a2438 :: button.primary, .primary { background: var(--text-ocean); color: #0a2
+color-literal	frontend/css/style.css	#fff :: button.primary:hover, .primary:hover { background: #fff; border-color: #
+color-literal	frontend/css/style.css	#082238ee :: .bottomnav { position: fixed; left: 0; right: 0; bottom: 0; display
+color-literal	frontend/css/style.css	#3d6ac9 :: .day-row.tipo-fuerza { border-left-color: #3d6ac9; }
+color-literal	frontend/css/style.css	#1fb6cd :: .day-row.tipo-alberca { border-left-color: #1fb6cd; }
+color-literal	frontend/css/style.css	#5a6570 :: .day-row.tipo-descanso { border-left-color: #5a6570; }
+color-literal	frontend/css/style.css	#ff3b5c :: .day-row.tipo-competencia { border-left-color: #ff3b5c; }
+color-literal	frontend/css/style.css	#06333b :: .timer-btn.suggested { background: var(--primary); border-color: var(
+color-literal	frontend/css/style.css	rgba( :: .registro-overlay { position: fixed; inset: 0; z-index: 1000; backgroun
+color-literal	frontend/css/style.css	#2ecc7122 :: .esfuerzo-btn.selected { border-color: var(--success-color); backgr
+color-literal	frontend/css/style.css	rgba( :: 0%, 100% { box-shadow: 0 0 0 9999px rgba(4,14,26,.66), 0 0 0 0 rgba(63,
+color-literal	frontend/css/style.css	rgba( :: 50% { box-shadow: 0 0 0 9999px rgba(4,14,26,.66), 0 0 0 10px rgba(63,20
+color-literal	frontend/index.html	#061a2e :: <meta name="theme-color" content="#061a2e">
+color-literal	frontend/index.html	#0e5c86 :: <svg class="wave3" viewBox="0 0 1600 200" preserveAspectRatio="none">
+color-literal	frontend/index.html	#146f9e :: <svg class="wave2" viewBox="0 0 1600 200" preserveAspectRatio="none">
+color-literal	frontend/index.html	#1c86ba :: <svg class="wave1" viewBox="0 0 1600 200" preserveAspectRatio="none">
+color-literal	frontend/js/app.js	#06333b :: banner.style.cssText = 'margin-top: 1rem; padding: 1rem; background:
+color-literal	frontend/js/app.js	#10b981 :: 'Base': '#10b981',
+color-literal	frontend/js/app.js	#f59e0b :: 'Build': '#f59e0b',
+color-literal	frontend/js/app.js	#ef4444 :: 'Peak': '#ef4444',
+color-literal	frontend/js/app.js	#8b5cf6 :: 'Taper': '#8b5cf6',
+color-literal	frontend/js/app.js	#ec4899 :: 'Race': '#ec4899'
+color-literal	frontend/js/app.js	#6b7280 :: return colors[phaseName] || '#6b7280';
+color-literal	frontend/js/dashboard.js	#10b981 :: <div style="font-size: 2rem; font-weight: bold; color: ${stats.avg_sw
+color-literal	frontend/js/dashboard.js	#10b981 :: <div style="font-size: 2rem; font-weight: bold; color: ${stats.comple
+color-literal	frontend/js/dashboard.js	#3d6ac9 :: <article class="card session-card" style="cursor: pointer; border-lef
+color-literal	frontend/js/tour.js	rgba( :: 'border:3px solid var(--primary);border-radius:14px;box-shadow:0 0 0 99
+console	frontend/js/session.js	console.error('[player] start failed:', err);
+console	frontend/js/session.js	console.error('[player] prev failed:', err);
+console	frontend/js/session.js	console.error('[player] finish failed:', err);
+console	frontend/js/session.js	console.error('[player] next failed:', err);
+console	frontend/js/upgrade.js	console.log('Could not load billing portal');
+console	frontend/sw.js	console.log('[SW] Caching static assets');
+console	frontend/sw.js	console.log('[SW] Network failed, trying cache:', request.url);
+console	frontend/sw.js	console.log('[SW] Failed to sync:', request.url);
+dup-id	frontend/js/week.js	id="regen-week" also line 118

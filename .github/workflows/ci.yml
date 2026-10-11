@@ -1,0 +1,75 @@
+name: CI (non-blocking)
+
+# Session C: strict UI audit + spec sync + JS syntax + Python suite.
+# Non-blocking on purpose (continue-on-error): alerts, never blocks deploys.
+# Tighten to required checks once the team grows (see CONTRIBUTING plan).
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  ui:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: JS syntax (every frontend script + SW)
+        run: |
+          for f in frontend/js/*.js frontend/sw.js; do node --check "$f" || exit 1; done
+      - name: UI audit (strict — new literals/ids/console fail)
+        run: python3 tools/audit_ui.py
+      - name: Spec sync (code must ride with its spec)
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            AUDIT_BASE="${{ github.event.pull_request.base.sha }}" AUDIT_HEAD="${{ github.sha }}" python3 tools/audit_spec.py
+          elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
+            AUDIT_BASE="${{ github.event.before }}" AUDIT_HEAD="${{ github.sha }}" python3 tools/audit_spec.py
+          else
+            python3 tools/audit_spec.py
+          fi
+    continue-on-error: true
+
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install deps
+        run: pip install -r backend/requirements.txt
+      - name: Migration heads (must be single linear head)
+        run: python -m alembic heads
+        env:
+          SECRET_KEY: ci-dummy
+          MP_ACCESS_TOKEN: TEST-ci
+          MP_PUBLIC_KEY: TEST-ci
+      - name: Unit funcs (adaptive + salo, no pytest in repo)
+        run: |
+          python - <<'EOF'
+          import sys; sys.path.insert(0, 'tests')
+          import test_adaptive as t
+          ts = [n for n in dir(t) if n.startswith('test_')]
+          [getattr(t, n)() for n in ts]
+          print(len(ts), 'adaptive OK')
+          import test_salo_mix as s
+          ss = [n for n in dir(s) if n.startswith('test_')]
+          [getattr(s, n)() for n in ss]
+          print(len(ss), 'salo OK')
+          EOF
+      - name: E2E suite (sqlite; only expected 400/404)
+        run: python -m tests.test_final_all
+        env:
+          SECRET_KEY: ci-dummy
+          MP_ACCESS_TOKEN: TEST-ci
+          MP_PUBLIC_KEY: TEST-ci
+        env:
+          SECRET_KEY: ci-dummy
+          MP_ACCESS_TOKEN: TEST-ci
+          MP_PUBLIC_KEY: TEST-ci
+    continue-on-error: true

@@ -1,0 +1,51 @@
+# Ops runbook (envs, deploys, DB, runbooks)
+
+## Environments
+| | Local dev | Prod (Render) |
+|---|---|---|
+| URL | http://localhost:8000 | https://swimcoach-ss5j.onrender.com |
+| DB | `sqlite:///./swim_coach.db` (auto-created via `create_all`) | Supabase Postgres via pooler `:6543` (IPv4; Render Free has no IPv6) |
+| Migrations | **Never run alembic locally** (stamp stale by design) | `alembic upgrade head` against pooler URI, then `alembic current` |
+| Sleep | n/a | Free plan sleeps ~15 min idle; cold boot ~17s; `/api/health` warms it |
+
+Env source of truth: `.env.example` (copy to `.env` locally). Dashboard vars in
+`render.yaml` (commented). App refuses to boot without `SECRET_KEY`,
+`MP_ACCESS_TOKEN`, `MP_PUBLIC_KEY`.
+
+## Deploy
+Push to `main` → Render autoDeploy (~2 min). After deploy, hard-refresh
+(Ctrl+Shift+R) — SW serves cached JS otherwise. **Any change to a file in
+`sw.js` STATIC_ASSETS needs a `CACHE_VERSION` bump in the same commit.**
+
+## Runbooks
+### Apply a migration on prod
+```powershell
+$env:DATABASE_URL="postgresql://postgres.REF:PASSWORD@aws-0-us-east-1.pooler.supabase.com:6543/postgres"
+.\venv\Scripts\python.exe -m alembic current   # expect previous head
+.\venv\Scripts\python.exe -m alembic upgrade head
+.\venv\Scripts\python.exe -m alembic current   # expect new head
+```
+Never paste the URI in chat. Prod head history: `e5f6a7b8c9d0` (27/09) → `f6a7b8c9d0e1` (07/10) → `g7b8c9d0e1f2` (pending: apply post-deploy).
+
+### Grant admin (one-time per owner)
+Supabase → Table Editor → `users` → your row → `is_admin = true`.
+Requires migration `g7` applied first. Nobody can self-promote (only admins can).
+
+### Owner password reset (no email infra)
+```bash
+curl -X POST https://swimcoach-ss5j.onrender.com/api/auth/admin-reset-password \
+  -H "Content-Type: application/json" -H "Cookie: access_token=<YOUR_ADMIN_JWT_OR_SESSION>" \
+  -d '{"email":"user@example.com"}'
+# => {"email": "...", "temp_password": "..."} — shown ONCE, pass via secure channel
+```
+User logs in with it, then sets their own via Settings → Change password.
+
+### Wake prod before demos/crawls
+Open `/api/health` (200 fast = awake), `/`, `/ads.txt`. Keep traffic flowing
+for ~2h around AdSense resubmits.
+
+## Tests & CI
+- Suite: `python -m tests.test_final_all` (E2E; only expected 400/404) + unit
+  funcs in `tests/test_adaptive.py`, `tests/test_salo_mix.py` (no pytest in venv).
+- CI (`.github/workflows/ci.yml`, non-blocking): `node --check` on frontend JS,
+  `audit_ui` (strict), `audit_spec` (diff-based), E2E suite on sqlite.

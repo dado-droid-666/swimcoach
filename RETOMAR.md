@@ -207,3 +207,16 @@
   deriva dev (create_all vs migraciones); nunca alembic en local.
 - PENDIENTE Plan B passwords: `models.py` is_admin + migración `g7` en
   working tree SIN commit (retomar pasos 2-5 aprobados).
+
+## Sesión C (higiene + auditoría + CI)
+- `.env.example` unificado (dev + prod comentado); `.env.production.example`
+  → `tools/attic/`; `render.yaml` comentado var por var (solo comentarios;
+  OJO: declara Render DB pero el live es Supabase pooler vía dashboard).
+- `docs/ops.md`: runbooks (migración, admin, reset, wake) + tests/CI.
+- `tools/audit_ui.py` estricto + `audit_baseline.txt` (68 grandfathered):
+  color fuera de tokens, console, dup-id, ad-label/client. Cazó bug real en
+  desarrollo: `.strip()` se comía el espacio final de la clave → fix con
+  `rstrip()` en `key_of`. Probado: pasa en limpio, falla con `#deadbe` nuevo.
+- `tools/audit_spec.py`: diff-based, buckets UI→specs / training→training.md.
+- `.github/workflows/ci.yml` non-blocking: node --check, audits, alembic
+  heads (single head), units, E2E sqlite.
