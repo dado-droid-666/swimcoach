@@ -247,6 +247,10 @@
 - Settings: toggle real con estados (On/Off/Blocked/Unsupported) + `api.js`.
 - `tools/gen_vapid.py` (keys nunca en git); `tests/test_notifications.py` 16/16
   (cazó orden 404/503 + cookie-jar en asserts anón).
+- Bug real tras `failed:1` mudo: `pywebpush==1.14.0` incompatible con
+  `cryptography` moderno (`TypeError: curve must be an EllipticCurve
+  instance` en `encode()`; reproducido local con traceback). Fix: bump a
+  `pywebpush==2.5.0` (send path verificado hasta red con endpoint falso).
 - Local sqlite parchado a mano (reminder_*; deriva documentada).
 - PENDIENTE USUARIO: generar VAPID (`tools/gen_vapid.py`) → envs Render+local
   → toggle en Settings → `POST /notifications/test` como admin.
