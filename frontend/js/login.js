@@ -49,11 +49,14 @@ function renderLogin(app) {
             await app.checkAuth();
             window.location.hash = '#/dashboard';
         } catch (err) {
-            // Field-level error under the password (toast stays as fallback
-            // for non-credential failures like network errors).
+            // Every login failure renders UNDER the password field —
+            // the top toast is only a fallback if the element is missing.
             const msg = err.message || 'Login failed';
-            if (/invalid credentials|incorrect|401/i.test(msg)) {
-                showFieldError('login-error', 'Incorrect email or password.');
+            const el = document.getElementById('login-error');
+            if (el) {
+                showFieldError('login-error', /invalid credentials|incorrect|401/i.test(msg)
+                    ? 'Incorrect email or password.'
+                    : msg);
             } else {
                 app.showError(msg);
             }
