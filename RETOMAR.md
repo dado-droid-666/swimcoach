@@ -263,3 +263,18 @@
 - `SetSchema(extra="allow")` deja pasar `method` (verificado generator→API).
 - Test `test_titulo_escala_con_contenido` (14/14 salo); E2E paridad; SW `v1.3.1`.
 - PENDIENTE USUARIO: regenerar plan y comparar con sus fotos.
+
+## Cierre 26/10 noche — quick wins + saga push (aparcar)
+- Quick wins prod (`54c7b71`, `e89a1ab`, SW `v1.2.1`): grid apilado onboarding/
+  profile (fin truncado), `.field-error` bajo password en login/register/
+  settings, login siempre-inline (todo fallo bajo el campo). Verificado por usuario.
+- Push saga (Edge/Windows, endpoint WNS): TypeError→pywebpush 2.5.0; 400 vacío→
+  TTL 86400 solo WNS (issue #162); instrumentación exc.message/keypair_match/
+  endpoint_hosts/sub_keyfps/bare-mode. Display directo OK, permiso OK, keys OK.
+- Hallazgo: `NO-SUB` en el perfil + 4 filas stale (subs 4-7); viva sub 8 con fp
+  `912842796ee496e0` vs server sub 7 `27f8b1c24df02eb5` (mismatch confirmado).
+  `sent:2` pero sin mostrar → pendiente comparar tras toggle fresco.
+- PENDIENTES MAÑANA: (1) re-test push + comparar huellas → podar stale
+  (`DELETE push_subscriptions` menos la viva) → cerrar Fase 1; (2) veredicto
+  fotos títulos; (3) reintento AdSense → trigger Starter si falla; (4) push
+  Fase 2 (scheduler) y plan C email cuando se pida.
