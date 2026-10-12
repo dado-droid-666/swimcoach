@@ -49,7 +49,12 @@ def _ttl_for(endpoint: str) -> int:
     return 0
 
 
-def send_push(subscription: PushSubscription, title: str, body: str, url: str = "/#/session/today") -> tuple[bool, str]:
+def send_push(subscription: PushSubscription, title: str, body: str, url: str = "/#/session/today", bare: bool = False) -> tuple[bool, str]:
+    """Send one Web Push message. Returns (ok, reason) where reason is a
+    short, secret-free diagnostic (e.g. 'unauthorized', 'gone', 'no-lib').
+    Callers count; 404/410 subscriptions should be pruned by Phase 2.
+    bare=True sends NO payload: needs no decryption, so a displayed bare
+    push with a silent encrypted one proves a keys mismatch."""
     """Send one Web Push message. Returns (ok, reason) where reason is a
     short, secret-free diagnostic (e.g. 'unauthorized', 'gone', 'no-lib').
     Callers count; 404/410 subscriptions should be pruned by Phase 2."""
@@ -65,7 +70,7 @@ def send_push(subscription: PushSubscription, title: str, body: str, url: str = 
                 "endpoint": subscription.endpoint,
                 "keys": {"p256dh": subscription.p256dh, "auth": subscription.auth},
             },
-            data=json.dumps({"title": title, "body": body, "url": url}),
+            **({} if bare else {"data": json.dumps({"title": title, "body": body, "url": url})}),
             vapid_private_key=settings.vapid_private_key,
             vapid_claims={"sub": settings.vapid_claims_email},
             ttl=_ttl_for(subscription.endpoint),
@@ -177,6 +182,7 @@ def unsubscribe(
 
 @router.post("/test", response_model=TestPushResponse)
 def test_push(
+    bare: bool = False,
     admin: User = Depends(require_admin),
     db: Session = Depends(get_db),
 ):
@@ -202,7 +208,7 @@ def test_push(
                 ((sub.p256dh or "") + (sub.auth or "")).encode()).hexdigest()[:16]
         except Exception:
             pass
-        ok, reason = send_push(sub, "SwimCoach test 🏊", "Push notifications are working.")
+        ok, reason = send_push(sub, "SwimCoach test 🏊", "Push notifications are working.", bare=bare)
         if ok:
             sent += 1
         else:
