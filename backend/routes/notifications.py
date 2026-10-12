@@ -62,6 +62,31 @@ def send_push(subscription: PushSubscription, title: str, body: str, url: str = 
         return False, reason
 
 
+def _keypair_info() -> dict:
+    """Non-secret metadata: do the configured keys form a valid pair?
+    Returns {configured, keypair_match, endpoint_host} — never key material."""
+    if not _vapid_configured():
+        return {"configured": False}
+    try:
+        from cryptography.hazmat.primitives.asymmetric import ec
+
+        def b64url(data: bytes) -> str:
+            import base64
+            return base64.urlsafe_b64encode(data).decode().rstrip("=")
+
+        def unb64url(data: str) -> bytes:
+            import base64
+            return base64.urlsafe_b64decode(data + "=" * (-len(data) % 4))
+
+        priv = int.from_bytes(unb64url(settings.vapid_private_key.strip()), "big")
+        derived = ec.derive_private_key(priv, ec.SECP256R1())
+        nums = derived.public_key().public_numbers()
+        derived_pub = b64url(b"\x04" + nums.x.to_bytes(32, "big") + nums.y.to_bytes(32, "big"))
+        return {"configured": True, "keypair_match": derived_pub == settings.vapid_public_key.strip()}
+    except Exception:
+        return {"configured": True, "keypair_match": False, "keys_parseable": False}
+
+
 def _push_error_reason(exc: Exception) -> str:
     resp = getattr(exc, "response", None)
     status_code = getattr(resp, "status_code", None)
@@ -148,11 +173,18 @@ def test_push(
         raise HTTPException(status_code=503, detail="Push not configured (VAPID keys missing)")
     sent = failed = 0
     details: list[str] = []
+    hosts: list[str] = []
     for sub in subs:
+        try:
+            from urllib.parse import urlparse
+            hosts.append(urlparse(sub.endpoint).hostname or "?")
+        except Exception:
+            hosts.append("?")
         ok, reason = send_push(sub, "SwimCoach test 🏊", "Push notifications are working.")
         if ok:
             sent += 1
         else:
             failed += 1
             details.append(f"sub {sub.id}: {reason}")
-    return TestPushResponse(sent=sent, failed=failed, details=details)
+    return TestPushResponse(sent=sent, failed=failed, details=details,
+                            keypair=_keypair_info(), endpoint_hosts=sorted(set(hosts)))

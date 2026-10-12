@@ -93,6 +93,8 @@ class TestPushResponse(BaseModel):
     sent: int
     failed: int
     details: List[str] = []
+    keypair: Dict[str, Any] = {}
+    endpoint_hosts: List[str] = []
 
 
 class Token(BaseModel):
