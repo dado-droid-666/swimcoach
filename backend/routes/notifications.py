@@ -35,6 +35,20 @@ def _vapid_configured() -> bool:
     return bool(settings.vapid_public_key and settings.vapid_private_key)
 
 
+def _ttl_for(endpoint: str) -> int:
+    """WNS (Edge on Windows, *.notify.windows.com) rejects TTL=0 with
+    `400 Bad Request` and an empty body (pywebpush issue #162; their docs
+    example uses TTL 600). FCM/Mozilla accept 0, so only WNS gets a day —
+    harmless elsewhere, and late reminders still have value."""
+    try:
+        from urllib.parse import urlparse
+        if (urlparse(endpoint).hostname or "").endswith("notify.windows.com"):
+            return 86400
+    except Exception:
+        pass
+    return 0
+
+
 def send_push(subscription: PushSubscription, title: str, body: str, url: str = "/#/session/today") -> tuple[bool, str]:
     """Send one Web Push message. Returns (ok, reason) where reason is a
     short, secret-free diagnostic (e.g. 'unauthorized', 'gone', 'no-lib').
@@ -54,6 +68,7 @@ def send_push(subscription: PushSubscription, title: str, body: str, url: str = 
             data=json.dumps({"title": title, "body": body, "url": url}),
             vapid_private_key=settings.vapid_private_key,
             vapid_claims={"sub": settings.vapid_claims_email},
+            ttl=_ttl_for(subscription.endpoint),
         )
         return True, "sent"
     except Exception as exc:  # noqa: BLE001 — diagnostic path, never secrets
