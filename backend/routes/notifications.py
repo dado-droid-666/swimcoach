@@ -9,6 +9,7 @@ Phase 2 adds the daily scheduler (reminder_time/reminder_tz already modeled).
 """
 import json
 import logging
+import re
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -64,15 +65,21 @@ def send_push(subscription: PushSubscription, title: str, body: str, url: str = 
 def _push_error_reason(exc: Exception) -> str:
     resp = getattr(exc, "response", None)
     status_code = getattr(resp, "status_code", None)
-    # FCM/mozilla return a short JSON error body naming the exact cause
-    # (public, secret-free). Truncate defensively.
-    body = ""
+    # pywebpush puts status + reason + FCM body into exc.message
+    # ("Push failed: 400 ... Response body:...") — secret-free, most exact.
+    msg = ""
     try:
-        if resp is not None and hasattr(resp, "text"):
-            body = (resp.text or "")[:200]
+        raw = getattr(exc, "message", "") or str(exc)
+        msg = re.sub(r"\s+", " ", raw).strip()[:200]
     except Exception:
-        body = ""
-    suffix = f" :: {body}" if body else ""
+        msg = ""
+    if not msg:
+        try:
+            if resp is not None and hasattr(resp, "text"):
+                msg = re.sub(r"\s+", " ", resp.text or "").strip()[:200]
+        except Exception:
+            msg = ""
+    suffix = f" :: {msg}" if msg else ""
     if status_code == 404 or status_code == 410:
         return f"gone: endpoint expired ({status_code}){suffix}"
     if status_code == 401 or status_code == 403:
