@@ -198,3 +198,29 @@ def test_notes_sin_codigos():
     for g in dry["grupos"].values():
         for e in g:
             assert not re.search(r"Salo|Ch\d|DVD", e["notes"]), e["notes"]
+
+
+def test_titulo_escala_con_contenido():
+    """Título (description) == lo que se nada; texto del libro vive en method.
+    Incidente 10/26: '3x800…' titulaba un '3×400m' (y '30min+8x50' un 40×25m)."""
+    adapt = {"salo": True, "recovery": False, "volume_factor": 1.0, "reason": "t"}
+    sessions = generate_weekly_swim_plan(
+        monday(), -2, PHASES, BASE_PROFILE, CompetitionType.POOL, ["1500_free"], None, adapt)
+    assert sessions
+    n_rewritten = 0
+    for s in sessions:
+        for st in s["main_set"]:
+            # Aritmética interna intacta tras el rewrite.
+            if st.get("distance"):
+                assert st["meters"] == st["reps"] * st["distance"], st
+            if "method" not in st:
+                continue  # descripción sin números: se deja tal cual
+            n_rewritten += 1
+            # El título usa los valores escalados reales…
+            assert st["description"].startswith(f'{st["reps"]}×{st["distance"]}m'), st
+            # …y el método conserva el texto del libro (con sus números originales).
+            assert st["method"] != st["description"], st
+            assert any(ch.isdigit() for ch in st["method"]), st
+            # Sin jerga visible tampoco en el subtítulo.
+            assert not re.search(r"EN1|EN2|\bSP\b|Ch\d|Salo", st["method"]), st["method"]
+    assert n_rewritten > 0, "se esperaba al menos un set reescrito"

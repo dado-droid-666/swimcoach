@@ -254,3 +254,12 @@
 - Local sqlite parchado a mano (reminder_*; deriva documentada).
 - PENDIENTE USUARIO: generar VAPID (`tools/gen_vapid.py`) → envs Render+local
   → toggle en Settings → `POST /notifications/test` como admin.
+
+## Títulos escalados (bug 2 fotos: título libro vs contenido escalado)
+- `summarize_set` + `apply_scaled_description`: `description` = lo que se nada
+  ("40×25m freestyle"), libro intacto en `method`; sin dígitos no se toca.
+- Vista: título escalado + subtítulo `method`; player: título escalado,
+  desc = `method`. Planes viejos sin campos → fallback idéntico a hoy.
+- `SetSchema(extra="allow")` deja pasar `method` (verificado generator→API).
+- Test `test_titulo_escala_con_contenido` (14/14 salo); E2E paridad; SW `v1.3.1`.
+- PENDIENTE USUARIO: regenerar plan y comparar con sus fotos.

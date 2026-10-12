@@ -12,6 +12,9 @@ ow_ultra`, plus `recovery` and `tecnica_ch1`. Data: `data/salo_swim.json`
 ## Session structure
 - Volume split: warmup 20% (drill blocks from `drill_library.json`) /
   main 70% / cooldown 10%. **Every distance is a 25m multiple** (`snap_25`).
+- Set titles always match scaled content: numeric template descriptions are
+  rewritten to `description` ("40×25m freestyle") with book text preserved in
+  `method` (10/26 title/content mismatch incident). Non-numeric keep text.
 - CSS zones Z1–Z5 + SPM per zone (`css_zones.py`); FTP pace ≈ CSS anchor;
   metronome sets surface exact SPM.
 - Generation is **idempotent**: new plan deletes the previous one

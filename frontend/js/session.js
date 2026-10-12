@@ -225,6 +225,7 @@ function renderSwimTab(swim) {
                                 <h4 style="margin: 0;">Set ${i + 1}: ${set.description}</h4>
                                 <span style="background: var(--primary-background); color: var(--primary); padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.75rem;">${set.intensity_zone || 'Z2'}</span>
                             </header>
+                            ${set.method && set.method !== set.description ? `<p style="margin: 0 0 0.5rem; font-size: 0.8rem; color: var(--muted-color); font-style: italic;">${set.method}</p>` : ''}
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.5rem; font-size: 0.875rem; color: var(--muted-color);">
                                 <div><strong>${set.reps}×${set.distance}m</strong> ${set.stroke}</div>
                                 <div>Rest: ${set.rest_seconds}s</div>
@@ -311,7 +312,7 @@ function buildPlayerBlocks(swim, strength) {
             blocks.push({
                 kind: 'swim', tag: `Main set ${i + 1}/${swim.main_set.length}${s.css_zone ? ` · ${s.css_zone}` : ''}`,
                 title: s.description || `Set ${i + 1}`,
-                desc: `${s.reps}×${s.distance}m ${s.stroke || ''}`.trim(),
+                desc: s.method || `${s.reps}×${s.distance}m ${s.stroke || ''}`.trim(),
                 sub: [`Rest ${s.rest_seconds || 0}s`, s.target_pace_per_100 ? `Pace ${formatPace(s.target_pace_per_100)}` : null, (s.equipment || []).length ? `Gear: ${s.equipment.join(', ')}` : null, s.stroke_rate_spm ? `⏱️ ${s.stroke_rate_spm} SPM` : (s.target_spm ? `${s.target_spm} SPM` : null), s.notes || null].filter(Boolean).join(' · ')
             });
         });

@@ -87,6 +87,40 @@ def snap_25(meters: float) -> int:
     return max(25, int(round(meters / 25.0)) * 25)
 
 
+def summarize_set(scaled: Dict) -> str:
+    """What you'll actually swim, from SCALED fields (never template text).
+
+    Template descriptions keep book numbers ("3x800…") that no longer match
+    after volume scaling — rendering those as titles contradicted the set
+    rows (10/26 incident). Descriptions with digits get rewritten; plain
+    ones ("Long aerobic") stay untouched.
+    """
+    reps = scaled.get("reps") or 1
+    dist = scaled.get("distance")
+    stroke = (scaled.get("stroke") or "").strip()
+    if dist:
+        core = f"{reps}×{dist}m"
+    else:
+        core = f"{scaled.get('meters') or 0}m"
+    return f"{core} {stroke}".strip()
+
+
+def apply_scaled_description(scaled: Dict) -> Dict:
+    """Rewrite a numeric template description to its scaled summary.
+
+    Book text moves to `method` (provenance); `description` becomes what
+    you'll actually swim. Non-numeric descriptions are left alone.
+    Idempotent: already-rewritten sets (description has no book text left
+    but `method` exists) are untouched.
+    """
+    book = scaled.get("description") or ""
+    if not book or scaled.get("method") or not any(ch.isdigit() for ch in book):
+        return scaled
+    scaled["method"] = book
+    scaled["description"] = summarize_set(scaled)
+    return scaled
+
+
 def scale_set_meters(template_set: Dict, target_meters: int, template_total: int) -> Dict:
     """Scale a template set to match target meters (25m multiples)."""
     if template_total == 0:
@@ -185,6 +219,7 @@ def generate_swim_session(
         css_anchor = ftp_pace or estimate_pace(level, None, "Z3")
         scaled["css_zone"] = zone_for_pace(css_anchor, scaled.get("target_pace_per_100"))
         scaled["target_spm"] = spm_for_zone(scaled["css_zone"])
+        scaled = apply_scaled_description(scaled)
         scaled_main.append(scaled)
 
     # Metronome: unlock stroke-rate guidance on intense sets (template
