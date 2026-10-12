@@ -189,12 +189,19 @@ def test_push(
     sent = failed = 0
     details: list[str] = []
     hosts: list[str] = []
+    keyfps: dict[str, str] = {}
     for sub in subs:
         try:
             from urllib.parse import urlparse
             hosts.append(urlparse(sub.endpoint).hostname or "?")
         except Exception:
             hosts.append("?")
+        try:
+            import hashlib
+            keyfps[str(sub.id)] = hashlib.sha256(
+                ((sub.p256dh or "") + (sub.auth or "")).encode()).hexdigest()[:16]
+        except Exception:
+            pass
         ok, reason = send_push(sub, "SwimCoach test 🏊", "Push notifications are working.")
         if ok:
             sent += 1
@@ -202,4 +209,5 @@ def test_push(
             failed += 1
             details.append(f"sub {sub.id}: {reason}")
     return TestPushResponse(sent=sent, failed=failed, details=details,
-                            keypair=_keypair_info(), endpoint_hosts=sorted(set(hosts)))
+                            keypair=_keypair_info(), endpoint_hosts=sorted(set(hosts)),
+                            sub_keyfps=keyfps)

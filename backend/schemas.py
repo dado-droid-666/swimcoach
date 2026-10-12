@@ -95,6 +95,7 @@ class TestPushResponse(BaseModel):
     details: List[str] = []
     keypair: Dict[str, Any] = {}
     endpoint_hosts: List[str] = []
+    sub_keyfps: Dict[str, str] = {}  # sub id -> sha256(p256dh+auth)[:16], to compare with live browser keys
 
 
 class Token(BaseModel):
