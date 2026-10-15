@@ -11,7 +11,7 @@ async function renderSettings(app) {
                 <h2 style="margin: 0 0 1rem;">Notifications</h2>
                 <p style="color: var(--muted-color); margin-bottom: 1rem;">Daily training reminders (push). iOS needs the installed PWA.</p>
 
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: var(--muted-background); border-radius: 0.5rem;">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: var(--muted-background); border-radius: 0.5rem; margin-bottom: 1rem;">
                     <div>
                         <strong>Training reminders</strong>
                         <div id="push-status" style="color: var(--muted-color); font-size: 0.875rem;">Checking…</div>
@@ -21,6 +21,16 @@ async function renderSettings(app) {
                         <span class="slider"></span>
                     </label>
                 </div>
+
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <label style="flex: 1; min-width: 140px;">Reminder time
+                        <input type="time" id="reminder-time" value="07:00" onchange="saveReminderPrefs()">
+                    </label>
+                    <label style="flex: 2; min-width: 180px;">Time zone
+                        <select id="reminder-tz" onchange="saveReminderPrefs()"></select>
+                    </label>
+                </div>
+                <p style="color: var(--muted-color); font-size: 0.8rem; margin: 0.5rem 0 0;">Training days only — rest days stay silent. Reminder fires once per day.</p>
             </section>
             
             <section class="card" style="margin-bottom: 1.5rem; padding: 1.5rem;">
@@ -98,6 +108,45 @@ async function renderSettings(app) {
     
     document.getElementById('app').innerHTML = html;
     refreshPushStatus();
+    loadReminderPrefs();
+}
+
+const REMINDER_TZS = [
+    'America/Mexico_City', 'America/Bogota', 'America/Lima', 'America/Santiago',
+    'America/Argentina/Buenos_Aires', 'America/New_York', 'America/Chicago',
+    'America/Denver', 'America/Los_Angeles', 'Atlantic/Azores', 'Europe/London',
+    'Europe/Madrid', 'Europe/Berlin', 'Africa/Cairo', 'Asia/Dubai', 'Asia/Kolkata',
+    'Asia/Singapore', 'Asia/Tokyo', 'Australia/Sydney', 'Pacific/Auckland', 'UTC'
+];
+
+async function loadReminderPrefs() {
+    const timeEl = document.getElementById('reminder-time');
+    const tzEl = document.getElementById('reminder-tz');
+    if (!timeEl || !tzEl) return;
+    let detected = 'UTC';
+    try { detected = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; } catch { /* noop */ }
+    const zones = REMINDER_TZS.includes(detected) ? REMINDER_TZS : [detected, ...REMINDER_TZS];
+    tzEl.innerHTML = zones.map(z => `<option value="${z}">${z.replace('_', ' ')}</option>`).join('');
+    try {
+        const p = await api.getProfile();
+        if (p.reminder_time) timeEl.value = p.reminder_time;
+        if (p.reminder_tz && zones.includes(p.reminder_tz)) tzEl.value = p.reminder_tz;
+        else tzEl.value = detected;
+    } catch {
+        tzEl.value = detected;
+    }
+}
+
+async function saveReminderPrefs() {
+    const timeEl = document.getElementById('reminder-time');
+    const tzEl = document.getElementById('reminder-tz');
+    if (!timeEl || !tzEl) return;
+    try {
+        await api.updateProfile({ reminder_time: timeEl.value || null, reminder_tz: tzEl.value || null });
+    } catch (err) {
+        window.app.showError(err.message || 'Could not save reminder time');
+        loadReminderPrefs();
+    }
 }
 
 function urlBase64ToUint8(input) {
@@ -275,6 +324,8 @@ async function confirmDeleteAccount() {
 window.renderSettings = renderSettings;
 window.togglePush = togglePush;
 window.refreshPushStatus = refreshPushStatus;
+window.loadReminderPrefs = loadReminderPrefs;
+window.saveReminderPrefs = saveReminderPrefs;
 window.exportData = exportData;
 window.changePassword = changePassword;
 window.clearCache = clearCache;

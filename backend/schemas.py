@@ -3,6 +3,11 @@ from typing import Optional, List, Dict, Any
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 from enum import Enum
 
+import re as _re
+from zoneinfo import available_timezones as _available_timezones
+
+_TIME_RE = _re.compile(r"^([01]\d|2[03]):([0-5]\d)$")
+
 
 class UserRole(str, Enum):
     ATHLETE = "athlete"
@@ -130,6 +135,22 @@ class AthleteProfileBase(BaseModel):
     ftp_pace_per_100: Optional[int] = Field(default=None, ge=60, le=300)
     injury_notes: str = ""
     edad: Optional[int] = Field(default=None, ge=8, le=100)
+    reminder_time: Optional[str] = Field(default=None, description='"HH:MM" local reminder time')
+    reminder_tz: Optional[str] = Field(default=None, description="IANA timezone, e.g. America/Mexico_City")
+
+    @field_validator("reminder_time")
+    @classmethod
+    def _check_time(cls, v):
+        if v is not None and not _TIME_RE.match(v):
+            raise ValueError("reminder_time must be HH:MM (24h)")
+        return v
+
+    @field_validator("reminder_tz")
+    @classmethod
+    def _check_tz(cls, v):
+        if v is not None and v not in _available_timezones():
+            raise ValueError("reminder_tz must be a valid IANA timezone")
+        return v
 
 
 class AthleteProfileCreate(AthleteProfileBase):
@@ -149,6 +170,8 @@ class AthleteProfileUpdate(AthleteProfileBase):
     ftp_pace_per_100: Optional[int] = Field(default=None, ge=60, le=300)
     injury_notes: Optional[str] = None
     edad: Optional[int] = Field(default=None, ge=8, le=100)
+    reminder_time: Optional[str] = Field(default=None, description='"HH:MM" local reminder time')
+    reminder_tz: Optional[str] = Field(default=None, description="IANA timezone, e.g. America/Mexico_City")
 
 
 class AthleteProfileResponse(AthleteProfileBase):

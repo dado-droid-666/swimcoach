@@ -29,6 +29,8 @@ class Settings(BaseSettings):
     vapid_private_key: str = ""
     vapid_claims_email: str = "mailto:swimcoach.app@gmail.com"
 
+    cron_secret: str = ""  # shared secret for POST /api/notifications/dispatch-due (external/Render cron)
+
     class Config:
         env_file = ".env"
         case_sensitive = False

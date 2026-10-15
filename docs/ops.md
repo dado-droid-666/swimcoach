@@ -54,6 +54,19 @@ Put both lines in Render dashboard → Environment (`VAPID_PUBLIC_KEY`,
 `POST /api/notifications/test` sends a live push to your own subscriptions
 (requires enabling the toggle in Settings first).
 
+### Reminder cron (Phase 2, Render Cron Job ~$1/mo, needs card on file)
+1. Generate a secret (32 hex chars, same recipe as SECRET_KEY) and set
+   `CRON_SECRET` in Render env vars (+ local `.env` for manual triggers).
+2. Render dashboard → New → **Cron Job** → same repo → command: ignored
+   (Render calls a URL, not code) — set **Schedule** `*/15 * * * *` and
+   **URL**: `POST https://swimcoach-ss5j.onrender.com/api/notifications/dispatch-due`
+   with header `X-Cron-Secret: <secret>`. (If the cron UI only supports GET,
+   keep the external-cron fallback: cron-job.org → same URL+header every 15 min.)
+3. Verify: trigger once manually and check `{checked, sent, skipped}`;
+   user rows get `reminder_last_sent = today` (Supabase) only on success —
+   failures retry on the next tick inside the 30-min window.
+4. Rotate the secret like a password if ever exposed (Render env + cron job).
+
 ## Tests & CI
 - Suite: `python -m tests.test_final_all` (E2E; only expected 400/404) + unit
   funcs in `tests/test_adaptive.py`, `tests/test_salo_mix.py` (no pytest in venv).

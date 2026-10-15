@@ -11,7 +11,7 @@ import json
 import logging
 import re
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Header, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
@@ -20,7 +20,7 @@ log = logging.getLogger("swimcoach.push")
 from backend.auth import get_current_user, require_admin
 from backend.config import get_settings
 from backend.database import get_db
-from backend.models import PushSubscription, User
+from backend.models import PushSubscription, User, AthleteProfile, TrainingSession, StrengthSession
 from backend.schemas import (
     PushSubscriptionCreate,
     PushUnsubscribe,
@@ -244,3 +244,81 @@ def push_receipts(admin: User = Depends(require_admin)):
     """List recent push-event receipts (newest last). Empty = no event fired
     since last restart: delivery or decrypt issue, not display."""
     return {"receipts": list(_PUSH_RECEIPTS)}
+
+
+class DispatchResponse(BaseModel):
+    checked: int = 0
+    sent: int = 0
+    skipped: int = 0
+
+
+def _user_now(tz_name: str | None):
+    """Now in the user's timezone (UTC fallback on bad/missing tz)."""
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    try:
+        return datetime.now(ZoneInfo(tz_name)) if tz_name else datetime.now(ZoneInfo("UTC"))
+    except Exception:
+        from datetime import timezone
+        return datetime.now(timezone.utc)
+
+
+@router.post("/dispatch-due", response_model=DispatchResponse)
+def dispatch_due(
+    x_cron_secret: str | None = Header(default=None),
+    db: Session = Depends(get_db),
+):
+    """Cron entrypoint (external cron or Render Cron Job, every ~15 min).
+
+    Sends training reminders due in the last 30 min per user's clock,
+    at most once per user per day. Rest days are skipped entirely.
+    Idempotent: safe to call more often than the cron interval.
+    """
+    import hmac
+    if not settings.cron_secret or not hmac.compare_digest(x_cron_secret or "", settings.cron_secret):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid cron secret")
+    from datetime import timedelta
+
+    checked = sent = skipped = 0
+    subs_by_user: dict[int, list[PushSubscription]] = {}
+    for sub in db.query(PushSubscription).all():
+        subs_by_user.setdefault(sub.user_id, []).append(sub)
+    for user_id, subs in subs_by_user.items():
+        checked += 1
+        profile = db.query(AthleteProfile).filter(AthleteProfile.user_id == user_id).first()
+        now = _user_now(profile.reminder_tz if profile else None)
+        today = now.date()
+        if profile is not None and profile.reminder_last_sent == today:
+            skipped += 1
+            continue
+        hh, mm = (profile.reminder_time if profile and profile.reminder_time else "07:00").split(":")
+        due_at = now.replace(hour=int(hh), minute=int(mm), second=0, microsecond=0)
+        if not (due_at <= now <= due_at + timedelta(minutes=30)):
+            skipped += 1
+            continue
+        swim = db.query(TrainingSession).filter(
+            TrainingSession.user_id == user_id, TrainingSession.date == today).first()
+        strength = db.query(StrengthSession).filter(
+            StrengthSession.user_id == user_id, StrengthSession.date == today).first()
+        if swim is None and strength is None:
+            skipped += 1  # rest day: no reminder (user decision)
+            continue
+        parts = []
+        if swim is not None:
+            parts.append(f"{swim.total_meters / 1000:.1f}km swim".replace(".0km", "km"))
+        if strength is not None:
+            focus = (strength.focus or "strength").split("(")[0].strip()
+            parts.append(focus)
+        body = "Today: " + " + ".join(parts) + " — open your session 💪"
+        ok_any = False
+        for sub in subs:
+            ok, _ = send_push(sub, "SwimCoach reminder 🏊", body)
+            ok_any = ok_any or ok
+            if ok:
+                sent += 1
+        if profile is not None and ok_any:
+            profile.reminder_last_sent = today
+        else:
+            skipped += 1
+    db.commit()
+    return DispatchResponse(checked=checked, sent=sent, skipped=skipped)

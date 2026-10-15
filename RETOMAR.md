@@ -274,6 +274,16 @@
 - Hallazgo: `NO-SUB` en el perfil + 4 filas stale (subs 4-7); viva sub 8 con fp
   `912842796ee496e0` vs server sub 7 `27f8b1c24df02eb5` (mismatch confirmado).
   `sent:2` pero sin mostrar → pendiente comparar tras toggle fresco.
+
+## Push Fase 2 — scheduler (Render Cron $1/mes)
+- Migración `h9` (`reminder_last_sent` DATE, dedup persistente) + `reminder_time/tz`
+  validados en schemas (`HH:MM`, IANA) + `CRON_SECRET` en config.
+- `POST /dispatch-due` (secreto constant-time): ventana 30min por tz de usuario,
+  1/día, descanso omitido, mensaje del plan de hoy, retry en siguiente tick.
+- Settings: time-picker (reloj + 21 zonas + auto-detect) vía `PUT /profile`.
+- `tests/test_dispatch.py` 11/11; E2E paridad; audit_ui OK; SW `v1.4.0`.
+- PENDIENTE USUARIO: `alembic upgrade head` (→`h9d0e1f2a3b4`) + `CRON_SECRET` en
+  Render + crear Cron Job `*/15` → trigger manual → verificar push real.
 - PENDIENTES MAÑANA: (1) re-test push + comparar huellas → podar stale
   (`DELETE push_subscriptions` menos la viva) → cerrar Fase 1; (2) veredicto
   fotos títulos; (3) reintento AdSense → trigger Starter si falla; (4) push

@@ -85,3 +85,4 @@ showFieldError('login-error', 'Incorrect email or password.'); // helpers in uti
 - DO revert `checkbox.checked` on failure and explain (denied → browser settings path; empty VAPID → "not configured", never a dead toggle).
 - Flow: toggle → `requestPermission()` → `pushManager.subscribe(VAPID)` → `POST /subscribe` (upsert) → `refreshPushStatus()`. Off unsubscribes server + browser. Admin test: `POST /notifications/test` → SW `push` event → notification (click → `#/session/today`).
 - Scheduler + time-picker are Phase 2 (`reminder_time`/`reminder_tz` already modeled in migration h8).
+- Reminder time-picker (Settings): `input[type=time]` + IANA select (browser zone pre-detected); saves via `PUT /api/profile`; server revalidates format + zone (422).

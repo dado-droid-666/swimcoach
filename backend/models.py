@@ -80,6 +80,7 @@ class AthleteProfile(Base):
     edad = Column(Integer, nullable=True)  # Salo Ch11: youth <14 sin power con peso
     reminder_time = Column(String(5), nullable=True)  # "HH:MM" local, Phase 2 scheduler; null = default 07:00
     reminder_tz = Column(String(64), nullable=True)  # IANA tz, Phase 2; null = server local
+    reminder_last_sent = Column(Date, nullable=True)  # dedup guard: last day a reminder was sent
 
     user = relationship("User", back_populates="profile")
 

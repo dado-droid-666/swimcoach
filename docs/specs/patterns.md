@@ -52,3 +52,10 @@ function renderX(app) {
 - `sw.js` `STATIC_ASSETS` is cache-first. **Any change to a listed file
   requires a `CACHE_VERSION` bump in the same commit** (04/10 + 07/10).
 - New static file? Add it to `STATIC_ASSETS` too.
+
+## Reminder dispatch (Phase 2)
+`POST /api/notifications/dispatch-due` (header `X-Cron-Secret`, constant-time)
+every ~15 min: users with subs + `reminder_time` inside [now-30min, now] in
+their `reminder_tz` + `reminder_last_sent != today` + session today (rest days
+skipped) → `send_push` → stamp date. Idempotent; failures retry next tick.
+`CRON_SECRET` empty = 401 to everything.
