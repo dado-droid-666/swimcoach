@@ -1,6 +1,6 @@
 // SwimCoach Service Worker
 // Version: increment when updating static assets
-const CACHE_VERSION = 'v1.3.1';
+const CACHE_VERSION = 'v1.3.2';
 const STATIC_CACHE = `swimcoach-static-${CACHE_VERSION}`;
 const API_CACHE = `swimcoach-api-${CACHE_VERSION}`;
 const OFFLINE_CACHE = `swimcoach-offline-${CACHE_VERSION}`;
@@ -164,18 +164,29 @@ async function cacheFirstStatic(request) {
 // Web Push (Phase 1: manual test sends; scheduler lands in Phase 2)
 self.addEventListener('push', (event) => {
     let data = { title: 'SwimCoach', body: 'Time to train! 🏊', url: '/#/session/today' };
+    let hadData = false;
     try {
-        if (event.data) data = Object.assign(data, event.data.json());
+        if (event.data) { data = Object.assign(data, event.data.json()); hadData = true; }
     } catch (e) { /* plain-text or empty push: keep defaults */ }
+    // Diagnostic beacon: proves the event FIRED (vs silent drop before us).
+    // Fire-and-forget; never blocks the notification. Temporary (Phase 1 debug).
+    const beacon = fetch('/api/notifications/push-receipt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ at: Date.now(), had_data: hadData })
+    }).catch(() => {});
     event.waitUntil(
-        self.registration.showNotification(data.title, {
-            body: data.body,
-            icon: '/assets/icons/icon-192.png',
-            badge: '/assets/icons/icon-144.png',
-            tag: 'swimcoach-push',
-            renotify: false,
-            data: { url: data.url || '/#/session/today' }
-        })
+        Promise.all([
+            beacon,
+            self.registration.showNotification(data.title, {
+                body: data.body,
+                icon: '/assets/icons/icon-192.png',
+                badge: '/assets/icons/icon-144.png',
+                tag: 'swimcoach-push',
+                renotify: false,
+                data: { url: data.url || '/#/session/today' }
+            })
+        ])
     );
 });
 

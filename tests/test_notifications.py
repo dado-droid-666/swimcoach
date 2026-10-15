@@ -114,6 +114,19 @@ check("anon test -> 401", r.status_code == 401, r.status_code)
 r = client.post("/api/notifications/test", headers=owner_h)
 check("admin w/o own subs -> 404", r.status_code == 404, r.status_code)
 
+# --- 8. push-receipt beacon (diagnostic): anon POST accepted, admin-only GET ---
+r = anon.post("/api/notifications/push-receipt", json={"at": 123456789, "had_data": True})
+check("receipt anon POST -> 202", r.status_code == 202, r.status_code)
+r = anon.post("/api/notifications/push-receipt", json={"at": "nan"})
+check("receipt bad shape -> 422", r.status_code == 422, r.status_code)
+r = anon.get("/api/notifications/push-receipts")
+check("receipts anon -> 401", r.status_code == 401, r.status_code)
+r = client.get("/api/notifications/push-receipts", headers=user_h)
+check("receipts non-admin -> 403", r.status_code == 403, r.status_code)
+r = client.get("/api/notifications/push-receipts", headers=owner_h)
+check("receipts admin 200 + sees beacon", r.status_code == 200 and any(
+    x.get("at") == 123456789 for x in r.json().get("receipts", [])), r.text[:100])
+
 print(f"\n{len(PASS)} passed, {len(FAIL)} failed: {FAIL}")
 os.remove(TEST_DB)
 sys.exit(1 if FAIL else 0)

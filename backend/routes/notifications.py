@@ -12,6 +12,7 @@ import logging
 import re
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 log = logging.getLogger("swimcoach.push")
@@ -29,6 +30,12 @@ from backend.schemas import (
 
 router = APIRouter(prefix="/api/notifications", tags=["notifications"])
 settings = get_settings()
+
+# Diagnostic receipt buffer (temporary, Phase 1 debug): SW push handlers
+# POST here when the event FIRES. In-memory (lost on restart/sleep),
+# capped at 20, no PII. Lets us separate "event never fired" (delivery or
+# decrypt) from "fired but not displayed".
+_PUSH_RECEIPTS: list[dict] = []
 
 
 def _vapid_configured() -> bool:
@@ -217,3 +224,23 @@ def test_push(
     return TestPushResponse(sent=sent, failed=failed, details=details,
                             keypair=_keypair_info(), endpoint_hosts=sorted(set(hosts)),
                             sub_keyfps=keyfps)
+
+
+class PushReceipt(BaseModel):
+    at: int = Field(ge=0)  # client Date.now()
+    had_data: bool = False
+
+
+@router.post("/push-receipt", status_code=202)
+def push_receipt(data: PushReceipt):
+    """Anonymous diagnostic: SW proves its push handler FIRED (temporary)."""
+    _PUSH_RECEIPTS.append({"at": data.at, "had_data": data.had_data})
+    del _PUSH_RECEIPTS[:-20]
+    return {"message": "noted"}
+
+
+@router.get("/push-receipts")
+def push_receipts(admin: User = Depends(require_admin)):
+    """List recent push-event receipts (newest last). Empty = no event fired
+    since last restart: delivery or decrypt issue, not display."""
+    return {"receipts": list(_PUSH_RECEIPTS)}
