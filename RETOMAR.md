@@ -65,7 +65,8 @@
 - Conteos exactos: días entreno == días nado; fuerza vacío/auto o exacto.
 - Logout visible (profile + settings) + fix rebote post-Generate (recarga
   estado antes del dashboard).
-- Cuentas prod: moconette (id 3,temporal Temporal-1234 puesta y verificada),
+- Cuentas prod: moconette (id 3, temporal puesta y verificada; valor redactado
+  20/10 — rotar y no volver a escribir contraseñas en el repo),
   daniel (id 4, OW 28feb2027). Debug users borrados.
 - Tests 14 PASS (400/404 esperados). SW v1.0.6.
 
