@@ -17,8 +17,10 @@ ow_ultra`, plus `recovery` and `tecnica_ch1`. Data: `data/salo_swim.json`
   `method` (10/26 title/content mismatch incident). Non-numeric keep text.
 - CSS zones Z1–Z5 + SPM per zone (`css_zones.py`); FTP pace ≈ CSS anchor;
   metronome sets surface exact SPM.
-- Generation is **idempotent**: new plan deletes the previous one
-  (`competition/generate`); button locks during ~60s.
+- Generation is **idempotent and atomic**: all rows are built in memory first,
+  then the previous plan is replaced in one transaction (`competition/generate`);
+  a failure rolls back and keeps the old plan. Button locks during ~60s.
+  Legacy NULL/string profile fields are normalized before the generators run.
 
 ## Strength
 - Templates TRX/KB/BW/bands + split A/B/C (A=Pull+Core TRX, B=Legs+Hips KB,
