@@ -303,6 +303,7 @@
   legacy con NULL (`_profile_snapshot`), `api.js` adjunta `status`/`data`,
   `app.js` muestra pantalla de reintento en 500 (nunca onboarding falso),
   regla migration-first en README/CONTRIBUTING/ops, SW `v1.4.1`.
+  Commits `186c329` + `1ee89e0`; deploy verificado (SW `v1.4.1` en prod).
 - **PENDIENTE USUARIO:** aplicar `h9` si aún no; reintentar plan con moconette
   y confirmar que aparece completo. Rotar la contraseña temporal de moconette
   (está escrita en este archivo) y borrarla al confirmar.
