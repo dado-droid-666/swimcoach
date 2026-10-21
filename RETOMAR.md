@@ -320,7 +320,8 @@
   distancia** (`8x50 + 4x25` a 2× → `16×50 + 8×25 = 1000m`). `description` se
   reconstruye desde los segmentos; `method` queda solo como provenance y ya
   no se renderiza ni en la tarjeta ni en el player. `total_meters` de sesión =
-  warmup + main real + cooldown. SW `v1.4.2`.
+  warmup + main real + cooldown. SW `v1.4.2`. Commit `2c1453d`; deploy
+  verificado (SW `v1.4.2` en prod).
 - **Tests:** `test_salo_mix` (integridad de los 16 sets, escalado exacto,
   descripción por segmentos, todas las categorías/fases, UI sin `method`);
   `test_generation_safety` 13/13; E2E `Generate macrocycle: 201`; audit_ui OK.
