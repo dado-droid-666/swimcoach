@@ -27,7 +27,7 @@ $env:DATABASE_URL="postgresql://postgres.REF:PASSWORD@aws-0-us-east-1.pooler.sup
 ```
 Never paste the URI in chat. Prod head history: `e5f6a7b8c9d0` (27/09) →
 `f6a7b8c9d0e1` (07/10) → `g7b8c9d0e1f2` → `h8c9d0e1f2a3` (11/10) →
-`h9d0e1f2a3b4` (reminder_last_sent).
+`h9d0e1f2a3b4` (20/10, applied: reminder_last_sent).
 
 **Order matters.** Render autoDeploys `main`. Apply the migration *before*
 merging/pushing code that selects the new column; otherwise every

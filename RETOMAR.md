@@ -283,7 +283,7 @@
   1/día, descanso omitido, mensaje del plan de hoy, retry en siguiente tick.
 - Settings: time-picker (reloj + 21 zonas + auto-detect) vía `PUT /profile`.
 - `tests/test_dispatch.py` 11/11; E2E paridad; audit_ui OK; SW `v1.4.0`.
-- PENDIENTE USUARIO (BLOQUEANTE): `alembic upgrade head` (→`h9d0e1f2a3b4`) +
+- HECHO 20/10: `h9d0e1f2a3b4` aplicada en Supabase. PENDIENTE USUARIO:
   `CRON_SECRET` en Render + crear Cron Job `*/15` → trigger manual → push real.
 - PENDIENTES MAÑANA: (1) re-test push + comparar huellas → podar stale
   (`DELETE push_subscriptions` menos la viva) → cerrar Fase 1; (2) veredicto
@@ -305,6 +305,6 @@
   `app.js` muestra pantalla de reintento en 500 (nunca onboarding falso),
   regla migration-first en README/CONTRIBUTING/ops, SW `v1.4.1`.
   Commits `186c329` + `1ee89e0`; deploy verificado (SW `v1.4.1` en prod).
-- **PENDIENTE USUARIO:** aplicar `h9` si aún no; reintentar plan con moconette
-  y confirmar que aparece completo. Rotar la contraseña temporal de moconette
-  (está escrita en este archivo) y borrarla al confirmar.
+- **CERRADO 20/10:** h9 aplicada, moconette generó el plan y aparece completo.
+  Queda rotar la contraseña temporal de moconette (el valor viejo sigue en el
+  historial de git; el archivo ya está redactado).
