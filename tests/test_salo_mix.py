@@ -15,7 +15,11 @@ from backend.services.salo_mix import (
     salo_mix_for,
     salo_recovery_sets,
 )
-from backend.services.swim_generator import generate_weekly_swim_plan
+from backend.services.swim_generator import (
+    apply_scaled_description,
+    generate_weekly_swim_plan,
+    scale_set_meters,
+)
 from backend.services.strength_generator import generate_weekly_strength_plan
 from backend.schemas import CompetitionType
 
@@ -200,27 +204,127 @@ def test_notes_sin_codigos():
             assert not re.search(r"Salo|Ch\d|DVD", e["notes"]), e["notes"]
 
 
+def test_sets_compuestos_tienen_segments():
+    """Cada set cuyo volumen no es reps×distance debe declarar segmentos.
+
+    Esto evita que el escalador vuelva a inventar una distancia (8x50 ->
+    10x100) o que la suma del set no cuadre.
+    """
+    swim = json.loads((Path("data") / "salo_swim.json").read_text(encoding="utf-8"))
+    sets = ([x for cat in swim["main_sets"].values() for ph in cat.values() for x in ph]
+            + swim["recovery"] + swim["tecnica_ch1"])
+    composite = 0
+    for st in sets:
+        if not st.get("distance") or st["meters"] == st["reps"] * st["distance"]:
+            continue
+        composite += 1
+        segs = st.get("segments")
+        assert segs, f"falta segments: {st['description']}"
+        assert sum(seg.get("meters", seg.get("reps", 1) * seg.get("distance", 0))
+                   for seg in segs) == st["meters"], st
+        for seg in segs:
+            if seg.get("distance"):
+                assert seg["distance"] > 0 and seg["reps"] > 0, seg
+    assert composite == 16, f"se esperaban 16 sets compuestos, hay {composite}"
+
+
+def test_escalado_conserva_distancias_del_libro():
+    """8x50 @95% + 4x25 starts a 1000m => 16x50 + 8x25 (nunca 10x100)."""
+    template = {
+        "description": "8x50 @95% + 4x25 salidas (desc 60s)",
+        "meters": 500,
+        "reps": 8,
+        "distance": 50,
+        "stroke": "freestyle",
+        "intensity_zone": "Z4",
+        "segments": [
+            {"reps": 8, "distance": 50, "label": "@95%"},
+            {"reps": 4, "distance": 25, "label": "starts"},
+        ],
+    }
+    scaled = apply_scaled_description(scale_set_meters(template, 1000, 500))
+    assert scaled["meters"] == 1000, scaled
+    assert scaled["distance"] == 50, scaled
+    assert scaled["segments"][0]["distance"] == 50
+    assert scaled["segments"][1]["distance"] == 25
+    assert scaled["segments"][0]["reps"] == 16
+    assert scaled["segments"][1]["reps"] == 8
+    assert "16×50m @95%" in scaled["description"], scaled
+    assert "8×25m starts" in scaled["description"], scaled
+    assert "×100m" not in scaled["description"], scaled
+    assert scaled["method"] == template["description"]
+
+
 def test_titulo_escala_con_contenido():
     """Título (description) == lo que se nada; texto del libro vive en method.
-    Incidente 10/26: '3x800…' titulaba un '3×400m' (y '30min+8x50' un 40×25m)."""
+    Incidente 10/26: '3x800…' titulaba un '3×400m' (y '30min+8x50' un 40×25m).
+    Incidente 20/10: el method sin escalar se mostraba como segunda receta.
+    """
     adapt = {"salo": True, "recovery": False, "volume_factor": 1.0, "reason": "t"}
     sessions = generate_weekly_swim_plan(
         monday(), -2, PHASES, BASE_PROFILE, CompetitionType.POOL, ["1500_free"], None, adapt)
     assert sessions
     n_rewritten = 0
     for s in sessions:
+        assert s["total_meters"] == (s["warmup"]["meters"]
+                                     + sum(st["meters"] for st in s["main_set"])
+                                     + s["cooldown"]["meters"]), s
         for st in s["main_set"]:
-            # Aritmética interna intacta tras el rewrite.
-            if st.get("distance"):
+            segments = st.get("segments")
+            if segments:
+                assert st["meters"] == sum(seg.get("meters", 0) for seg in segments), st
+            elif st.get("distance"):
                 assert st["meters"] == st["reps"] * st["distance"], st
             if "method" not in st:
                 continue  # descripción sin números: se deja tal cual
             n_rewritten += 1
-            # El título usa los valores escalados reales…
-            assert st["description"].startswith(f'{st["reps"]}×{st["distance"]}m'), st
-            # …y el método conserva el texto del libro (con sus números originales).
+            # El título incluye cada bloque escalado, no solo el primero.
+            for seg in segments or [{"reps": st.get("reps"), "distance": st.get("distance")}]:
+                if seg.get("distance"):
+                    assert f'{seg["reps"]}×{seg["distance"]}m' in st["description"], st
+                elif seg.get("minutes"):
+                    assert f'{seg["minutes"]}min' in st["description"], st
+            # El method conserva el texto del libro (con sus números originales).
             assert st["method"] != st["description"], st
             assert any(ch.isdigit() for ch in st["method"]), st
-            # Sin jerga visible tampoco en el subtítulo.
             assert not re.search(r"EN1|EN2|\bSP\b|Ch\d|Salo", st["method"]), st["method"]
     assert n_rewritten > 0, "se esperaba al menos un set reescrito"
+
+
+def test_ui_no_muestra_el_texto_del_libro():
+    """La tarjeta y el player usan description/segments, nunca method."""
+    js = (Path("frontend") / "js" / "session.js").read_text(encoding="utf-8")
+    assert ".method" not in js, "session.js no debe renderizar method"
+    assert "Set total:" in js
+    assert "breakdown" in js
+
+
+def test_todos_los_eventos_suman_bloques():
+    """Cualquier categoría/fase: total de sesión y set == suma de segmentos."""
+    adapt = {"salo": True, "recovery": False, "volume_factor": 1.0, "reason": "t"}
+    cases = [
+        ("pool_sprint", CompetitionType.POOL, ["50_free"], None),
+        ("pool_mid", CompetitionType.POOL, ["100_free"], None),
+        ("pool_im", CompetitionType.POOL, ["200_im"], None),
+        ("pool_distance", CompetitionType.POOL, ["1500_free"], None),
+        ("ow_short", CompetitionType.OPEN_WATER, [], 2.0),
+        ("ow_long", CompetitionType.OPEN_WATER, [], 10.0),
+        ("ow_ultra", CompetitionType.OPEN_WATER, [], 25.0),
+    ]
+    checked = 0
+    for _cat, comp_type, events, ow_km in cases:
+        for wk in (-6, -3, -2, -1):
+            for s in generate_weekly_swim_plan(
+                    monday(), wk, PHASES, BASE_PROFILE, comp_type, events, ow_km, adapt):
+                assert s["total_meters"] == (s["warmup"]["meters"]
+                                             + sum(st["meters"] for st in s["main_set"])
+                                             + s["cooldown"]["meters"]), s
+                for st in s["main_set"]:
+                    segs = st.get("segments") or []
+                    assert st["meters"] == sum(seg.get("meters", 0) for seg in segs), st
+                    for seg in segs:
+                        if seg.get("distance"):
+                            assert st["description"].find(
+                                f'{seg["reps"]}×{seg["distance"]}m') >= 0, st
+                checked += 1
+    assert checked > 100, checked

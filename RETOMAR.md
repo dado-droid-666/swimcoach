@@ -308,3 +308,22 @@
 - **CERRADO 20/10:** h9 aplicada, moconette generó el plan y aparece completo.
   Queda rotar la contraseña temporal de moconette (el valor viejo sigue en el
   historial de git; el archivo ya está redactado).
+
+## 20/10 — Main set incoherente (8x50+4x25 vs 10x100)
+- **Causa:** `scale_set_meters` escalaba reps **y** distancia; un set de libro
+  de 500m (`8x50 @95% + 4x25 salidas`) se convertía en `10×100m` (1000m).
+  `method` conservaba el texto original sin escalar y `session.js` lo pintaba
+  en cursiva como si fuera una segunda prescripción. El header sumaba los
+  `meters` escalados, pero la tarjeta mostraba dos recetas distintas.
+- **Fix:** `data/salo_swim.json` ahora tiene `segments` explícitos en los 16
+  sets compuestos; `scale_set_meters` escala reps/minutos y **nunca cambia la
+  distancia** (`8x50 + 4x25` a 2× → `16×50 + 8×25 = 1000m`). `description` se
+  reconstruye desde los segmentos; `method` queda solo como provenance y ya
+  no se renderiza ni en la tarjeta ni en el player. `total_meters` de sesión =
+  warmup + main real + cooldown. SW `v1.4.2`.
+- **Tests:** `test_salo_mix` (integridad de los 16 sets, escalado exacto,
+  descripción por segmentos, todas las categorías/fases, UI sin `method`);
+  `test_generation_safety` 13/13; E2E `Generate macrocycle: 201`; audit_ui OK.
+- **PENDIENTE USUARIO:** regenerar el plan de moconette y verificar que el set
+  muestra la estructura del libro (p. ej. `16×50m @95% + 8×25m starts`) y que
+  `Set total` + header suman lo mismo.

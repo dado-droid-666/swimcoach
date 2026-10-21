@@ -219,15 +219,26 @@ function renderSwimTab(swim) {
                     <h3 style="margin: 0 0 0.5rem; color: var(--primary);">🎯 Main Set (${swim.main_set?.reduce((sum, s) => sum + (s.meters || 0), 0) || 0}m)</h3>
                     <p style="margin: 0 0 0.5rem; font-size: 0.875rem; color: var(--muted-color);">Target pace: ~${swim.main_set?.[0]?.target_pace_per_100 ? formatPace(swim.main_set[0].target_pace_per_100) : '—'}</p>
                     
-                    ${swim.main_set?.map((set, i) => `
+                    ${swim.main_set?.map((set, i) => {
+                        const segments = Array.isArray(set.segments) ? set.segments : [];
+                        const breakdown = segments.length > 1
+                            ? segments.map(seg => {
+                                const core = seg.distance
+                                    ? `${seg.reps}×${seg.distance}m`
+                                    : `${seg.minutes}min`;
+                                return `${core}${seg.label ? ` ${seg.label}` : ''} = ${seg.meters}m`;
+                            }).join(' · ')
+                            : '';
+                        const setTotal = set.meters || (set.reps && set.distance ? set.reps * set.distance : 0);
+                        return `
                         <article class="card" style="margin-bottom: 0.75rem; padding: 1rem;">
                             <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                                 <h4 style="margin: 0;">Set ${i + 1}: ${set.description}</h4>
                                 <span style="background: var(--primary-background); color: var(--primary); padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.75rem;">${set.intensity_zone || 'Z2'}</span>
                             </header>
-                            ${set.method && set.method !== set.description ? `<p style="margin: 0 0 0.5rem; font-size: 0.8rem; color: var(--muted-color); font-style: italic;">${set.method}</p>` : ''}
+                            ${breakdown ? `<p style="margin: 0 0 0.5rem; font-size: 0.8rem; color: var(--muted-color);">${breakdown}</p>` : ''}
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.5rem; font-size: 0.875rem; color: var(--muted-color);">
-                                <div><strong>${set.reps}×${set.distance}m</strong> ${set.stroke}</div>
+                                <div><strong>Set total: ${setTotal}m</strong> ${set.stroke || ''}</div>
                                 <div>Rest: ${set.rest_seconds}s</div>
                                 <div>Pace: ${set.target_pace_per_100 ? formatPace(set.target_pace_per_100) : '—'}</div>
                                 <div>Equip: ${set.equipment?.join(', ') || 'None'}</div>
@@ -236,7 +247,8 @@ function renderSwimTab(swim) {
                             </div>
                             ${set.notes ? `<p style="margin: 0.5rem 0 0; font-size: 0.875rem; color: var(--muted-color);">${set.notes}</p>` : ''}
                         </article>
-                    `).join('') || '<p style="color: var(--muted-color);">No main sets defined</p>'}
+                    `;
+                    }).join('') || '<p style="color: var(--muted-color);">No main sets defined</p>'}
                 </section>
                 
                 <section>
@@ -309,10 +321,17 @@ function buildPlayerBlocks(swim, strength) {
     if (swim) {
         if (swim.warmup) blocks.push({ kind: 'swim', tag: 'Warmup', title: `Warmup · ${swim.warmup.meters || 0}m`, desc: swim.warmup.description || 'Easy swimming', sub: (swim.warmup.drills || []).join(' · ') });
         (swim.main_set || []).forEach((s, i) => {
+            const segments = Array.isArray(s.segments) ? s.segments : [];
+            const breakdown = segments.map(seg => {
+                const core = seg.distance
+                    ? `${seg.reps}×${seg.distance}m`
+                    : `${seg.minutes}min`;
+                return `${core}${seg.label ? ` ${seg.label}` : ''} = ${seg.meters}m`;
+            }).join(' · ');
             blocks.push({
                 kind: 'swim', tag: `Main set ${i + 1}/${swim.main_set.length}${s.css_zone ? ` · ${s.css_zone}` : ''}`,
                 title: s.description || `Set ${i + 1}`,
-                desc: s.method || `${s.reps}×${s.distance}m ${s.stroke || ''}`.trim(),
+                desc: breakdown || `Set total ${s.meters || 0}m`,
                 sub: [`Rest ${s.rest_seconds || 0}s`, s.target_pace_per_100 ? `Pace ${formatPace(s.target_pace_per_100)}` : null, (s.equipment || []).length ? `Gear: ${s.equipment.join(', ')}` : null, s.stroke_rate_spm ? `⏱️ ${s.stroke_rate_spm} SPM` : (s.target_spm ? `${s.target_spm} SPM` : null), s.notes || null].filter(Boolean).join(' · ')
             });
         });

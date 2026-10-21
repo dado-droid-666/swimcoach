@@ -118,7 +118,19 @@
           "intensity_zone": "Z4",
           "stroke_rate_optional": true,
           "notes": "Starts and turns — explode, then settle into pace",
-          "fuente_pag": "Ch3"
+          "fuente_pag": "Ch3",
+          "segments": [
+            {
+              "reps": 8,
+              "distance": 50,
+              "label": "@95%"
+            },
+            {
+              "reps": 4,
+              "distance": 25,
+              "label": "starts"
+            }
+          ]
         },
         {
           "set_id": "salo-en1",
@@ -182,7 +194,19 @@
           "equipment": [],
           "intensity_zone": "Z2",
           "notes": "Technique focus — fewer strokes at the same pace means more efficiency",
-          "fuente_pag": "Ch4"
+          "fuente_pag": "Ch4",
+          "segments": [
+            {
+              "reps": 6,
+              "distance": 200,
+              "label": "@75%"
+            },
+            {
+              "reps": 4,
+              "distance": 50,
+              "label": "DPS"
+            }
+          ]
         },
         {
           "set_id": "salo-en2-base",
@@ -418,7 +442,19 @@
           "equipment": [],
           "intensity_zone": "Z2",
           "notes": "Aerobic base — build the engine at controlled effort",
-          "fuente_pag": "Ch4"
+          "fuente_pag": "Ch4",
+          "segments": [
+            {
+              "reps": 3,
+              "distance": 800,
+              "label": "@75%"
+            },
+            {
+              "reps": 1,
+              "distance": 200,
+              "label": "easy"
+            }
+          ]
         },
         {
           "set_id": "salo-en1b",
@@ -432,7 +468,19 @@
           "equipment": [],
           "intensity_zone": "Z2",
           "notes": "Technique focus — fewer strokes at the same pace means more efficiency",
-          "fuente_pag": "Ch4"
+          "fuente_pag": "Ch4",
+          "segments": [
+            {
+              "minutes": 30,
+              "meters": 1600,
+              "label": "continuous @75%"
+            },
+            {
+              "reps": 8,
+              "distance": 50,
+              "label": "technique"
+            }
+          ]
         }
       ],
       "build": [
@@ -511,7 +559,19 @@
           "equipment": [],
           "intensity_zone": "Z2",
           "notes": "Event pace — swim it like race day",
-          "fuente_pag": "Ch4"
+          "fuente_pag": "Ch4",
+          "segments": [
+            {
+              "reps": 1,
+              "distance": 1000,
+              "label": "easy"
+            },
+            {
+              "reps": 4,
+              "distance": 100,
+              "label": "pace"
+            }
+          ]
         }
       ]
     },
@@ -529,7 +589,19 @@
           "equipment": [],
           "intensity_zone": "Z2",
           "notes": "Technique focus — fewer strokes at the same pace means more efficiency",
-          "fuente_pag": "Ch4"
+          "fuente_pag": "Ch4",
+          "segments": [
+            {
+              "reps": 6,
+              "distance": 200,
+              "label": "@75%"
+            },
+            {
+              "reps": 4,
+              "distance": 50,
+              "label": "DPS"
+            }
+          ]
         },
         {
           "set_id": "salo-en2-base",
@@ -590,7 +662,19 @@
           "intensity_zone": "Z4",
           "stroke_rate_optional": true,
           "notes": "Race simulation — practice your event pace and strategy",
-          "fuente_pag": "Ch3/Ch4"
+          "fuente_pag": "Ch3/Ch4",
+          "segments": [
+            {
+              "reps": 3,
+              "distance": 1000,
+              "label": "@85%"
+            },
+            {
+              "reps": 6,
+              "distance": 100,
+              "label": "@90%"
+            }
+          ]
         }
       ],
       "taper": [
@@ -606,7 +690,19 @@
           "equipment": [],
           "intensity_zone": "Z3",
           "notes": "Open-water endurance — steady, sighting relaxed",
-          "fuente_pag": "Ch4"
+          "fuente_pag": "Ch4",
+          "segments": [
+            {
+              "reps": 1,
+              "distance": 1500,
+              "label": "continuous @80%"
+            },
+            {
+              "reps": 4,
+              "distance": 100,
+              "label": "@85%"
+            }
+          ]
         }
       ],
       "race": [
@@ -622,7 +718,19 @@
           "equipment": [],
           "intensity_zone": "Z2",
           "notes": "Event pace — swim it like race day",
-          "fuente_pag": "Ch4"
+          "fuente_pag": "Ch4",
+          "segments": [
+            {
+              "reps": 1,
+              "distance": 800,
+              "label": "easy"
+            },
+            {
+              "reps": 4,
+              "distance": 50,
+              "label": "pace"
+            }
+          ]
         }
       ]
     },
@@ -640,7 +748,19 @@
           "equipment": [],
           "intensity_zone": "Z2",
           "notes": "Open-water endurance — steady, sighting relaxed",
-          "fuente_pag": "Ch4"
+          "fuente_pag": "Ch4",
+          "segments": [
+            {
+              "reps": 3,
+              "distance": 800,
+              "label": "@75%"
+            },
+            {
+              "reps": 1,
+              "distance": 200,
+              "label": "easy"
+            }
+          ]
         },
         {
           "set_id": "salo-en1b",
@@ -654,7 +774,19 @@
           "equipment": [],
           "intensity_zone": "Z2",
           "notes": "Technique focus — fewer strokes at the same pace means more efficiency",
-          "fuente_pag": "Ch4"
+          "fuente_pag": "Ch4",
+          "segments": [
+            {
+              "minutes": 30,
+              "meters": 1600,
+              "label": "continuous @75%"
+            },
+            {
+              "reps": 8,
+              "distance": 50,
+              "label": "technique"
+            }
+          ]
         }
       ],
       "build": [
@@ -717,7 +849,19 @@
           "equipment": [],
           "intensity_zone": "Z3",
           "notes": "Open-water endurance — steady, sighting relaxed",
-          "fuente_pag": "Ch4"
+          "fuente_pag": "Ch4",
+          "segments": [
+            {
+              "reps": 1,
+              "distance": 2000,
+              "label": "@80%"
+            },
+            {
+              "reps": 5,
+              "distance": 100,
+              "label": "@85%"
+            }
+          ]
         }
       ],
       "race": [
@@ -733,7 +877,19 @@
           "equipment": [],
           "intensity_zone": "Z2",
           "notes": "Event pace — swim it like race day",
-          "fuente_pag": "Ch4"
+          "fuente_pag": "Ch4",
+          "segments": [
+            {
+              "reps": 1,
+              "distance": 1000,
+              "label": "easy"
+            },
+            {
+              "reps": 4,
+              "distance": 100,
+              "label": "pace"
+            }
+          ]
         }
       ]
     },
@@ -751,7 +907,19 @@
           "equipment": [],
           "intensity_zone": "Z2",
           "notes": "Technique focus — fewer strokes at the same pace means more efficiency",
-          "fuente_pag": "Ch4"
+          "fuente_pag": "Ch4",
+          "segments": [
+            {
+              "minutes": 45,
+              "meters": 2600,
+              "label": "continuous @75%"
+            },
+            {
+              "reps": 8,
+              "distance": 50,
+              "label": "technique"
+            }
+          ]
         }
       ],
       "build": [
@@ -814,7 +982,19 @@
           "equipment": [],
           "intensity_zone": "Z3",
           "notes": "Sharpening — fast but controlled, stay fresh",
-          "fuente_pag": "Ch4"
+          "fuente_pag": "Ch4",
+          "segments": [
+            {
+              "reps": 1,
+              "distance": 2000,
+              "label": "@80%"
+            },
+            {
+              "reps": 4,
+              "distance": 200,
+              "label": "@85%"
+            }
+          ]
         }
       ],
       "race": [
@@ -830,7 +1010,19 @@
           "equipment": [],
           "intensity_zone": "Z2",
           "notes": "Event pace — swim it like race day",
-          "fuente_pag": "Ch4"
+          "fuente_pag": "Ch4",
+          "segments": [
+            {
+              "reps": 1,
+              "distance": 1500,
+              "label": "easy"
+            },
+            {
+              "reps": 4,
+              "distance": 100,
+              "label": "pace"
+            }
+          ]
         }
       ]
     }

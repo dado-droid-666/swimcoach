@@ -87,34 +87,127 @@ def snap_25(meters: float) -> int:
     return max(25, int(round(meters / 25.0)) * 25)
 
 
-def summarize_set(scaled: Dict) -> str:
-    """What you'll actually swim, from SCALED fields (never template text).
+def set_segments(template_set: Dict) -> List[Dict]:
+    """Return a book set as one or more structured segments.
 
-    Template descriptions keep book numbers ("3x800…") that no longer match
-    after volume scaling — rendering those as titles contradicted the set
-    rows (10/26 incident). Descriptions with digits get rewritten; plain
-    ones ("Long aerobic") stay untouched.
+    Composite sets ("8x50 @95% + 4x25 starts") carry explicit `segments` in
+    data/salo_swim.json. Simple sets fall back to their reps x distance.
     """
-    reps = scaled.get("reps") or 1
-    dist = scaled.get("distance")
+    raw = template_set.get("segments")
+    if isinstance(raw, list) and raw:
+        return [dict(seg) for seg in raw]
+    if template_set.get("distance"):
+        return [{
+            "reps": template_set.get("reps") or 1,
+            "distance": template_set["distance"],
+        }]
+    return [{"meters": template_set.get("meters") or 0}]
+
+
+def _segment_meters(segment: Dict) -> int:
+    if segment.get("distance"):
+        return max(1, int(segment.get("reps") or 1)) * int(segment["distance"])
+    return int(segment.get("meters") or 0)
+
+
+def _adjust_segment(segment: Dict, delta: int):
+    """Return a copy with one more/less rep or minute, or None if invalid."""
+    seg = dict(segment)
+    if seg.get("distance"):
+        reps = max(1, int(seg.get("reps") or 1)) + delta
+        if reps < 1:
+            return None
+        seg["reps"] = reps
+        seg["meters"] = reps * int(seg["distance"])
+        return seg
+    if seg.get("minutes"):
+        minutes = max(1, int(seg["minutes"])) + delta
+        if minutes < 1:
+            return None
+        pace = (seg.get("meters") or 0) / max(1, int(seg["minutes"]))
+        seg["minutes"] = minutes
+        seg["meters"] = snap_25(minutes * pace) if pace else snap_25(seg.get("meters") or 0)
+        return seg
+    meters = snap_25((seg.get("meters") or 0) + delta * 25)
+    if meters < 25:
+        return None
+    seg["meters"] = meters
+    return seg
+
+
+def _fit_segments(segments: List[Dict], target: int) -> List[Dict]:
+    """Nudge reps/minutes so a set lands as close as possible to its target."""
+    target = max(25, snap_25(target))
+    for _ in range(24):
+        current = sum(_segment_meters(seg) for seg in segments)
+        diff = abs(current - target)
+        if diff == 0:
+            break
+        best = None
+        for i, seg in enumerate(segments):
+            for delta in (1, -1):
+                candidate = _adjust_segment(seg, delta)
+                if candidate is None:
+                    continue
+                new_total = current - _segment_meters(seg) + _segment_meters(candidate)
+                new_diff = abs(new_total - target)
+                if best is None or new_diff < best[0]:
+                    best = (new_diff, i, candidate)
+        if best is None or best[0] >= diff:
+            break
+        segments[best[1]] = best[2]
+    return segments
+
+
+def summarize_set(scaled: Dict) -> str:
+    """What you'll actually swim, built from SCALED segments.
+
+    Composite sets keep their book structure and rep distances:
+    "18×50m @95% + 8×25m starts". The original book string is never used
+    for display (10/26 and 20/10 title/content incidents).
+    """
+    segments = scaled.get("segments")
+    if not segments:
+        reps = scaled.get("reps") or 1
+        dist = scaled.get("distance")
+        core = f"{reps}×{dist}m" if dist else f"{scaled.get('meters') or 0}m"
+        stroke = (scaled.get("stroke") or "").strip()
+        return f"{core} {stroke}".strip()
+
+    parts = []
+    has_label = False
+    for seg in segments:
+        if seg.get("distance"):
+            part = f"{seg.get('reps') or 1}×{seg['distance']}m"
+        elif seg.get("minutes"):
+            part = f"{seg['minutes']}min"
+        else:
+            part = f"{seg.get('meters') or 0}m"
+        label = (seg.get("label") or "").strip()
+        if label:
+            part = f"{part} {label}"
+            has_label = True
+        parts.append(part)
+
+    core = " + ".join(parts)
     stroke = (scaled.get("stroke") or "").strip()
-    if dist:
-        core = f"{reps}×{dist}m"
-    else:
-        core = f"{scaled.get('meters') or 0}m"
-    return f"{core} {stroke}".strip()
+    if stroke:
+        sep = " · " if len(parts) > 1 or has_label else " "
+        core = f"{core}{sep}{stroke}"
+    return core
 
 
 def apply_scaled_description(scaled: Dict) -> Dict:
-    """Rewrite a numeric template description to its scaled summary.
+    """Rewrite a numeric book description from the scaled segments.
 
-    Book text moves to `method` (provenance); `description` becomes what
-    you'll actually swim. Non-numeric descriptions are left alone.
-    Idempotent: already-rewritten sets (description has no book text left
-    but `method` exists) are untouched.
+    The original book text is kept in `method` for provenance only; the UI
+    must never render it as a second prescription.
     """
+    if scaled.get("method"):
+        scaled["description"] = summarize_set(scaled)
+        return scaled
     book = scaled.get("description") or ""
-    if not book or scaled.get("method") or not any(ch.isdigit() for ch in book):
+    if not book or not any(ch.isdigit() for ch in book):
         return scaled
     scaled["method"] = book
     scaled["description"] = summarize_set(scaled)
@@ -122,24 +215,41 @@ def apply_scaled_description(scaled: Dict) -> Dict:
 
 
 def scale_set_meters(template_set: Dict, target_meters: int, template_total: int) -> Dict:
-    """Scale a template set to match target meters (25m multiples)."""
+    """Scale a set by reps/minutes, never by changing the book's rep distance."""
     if template_total == 0:
         return template_set
 
     scale = target_meters / template_total
     scaled = template_set.copy()
-    scaled["meters"] = snap_25(template_set.get("meters", 0) * scale)
-    scaled["reps"] = max(1, round(template_set.get("reps", 1) * scale))
-    if "distance" in scaled:
-        # Snap rep distance first, then fit reps so reps x distance
-        # stays a 25m multiple near the scaled total.
-        rep_m = snap_25(template_set["distance"] * scale)
-        want_total = snap_25(template_set.get("meters", rep_m) * scale)
-        reps = max(1, round(template_set.get("reps", 1) * scale))
-        reps = max(1, int(round(want_total / rep_m))) if rep_m > 0 else reps
-        scaled["distance"] = rep_m
-        scaled["reps"] = reps
-        scaled["meters"] = reps * rep_m
+    segments = []
+    for raw in set_segments(template_set):
+        seg = dict(raw)
+        if seg.get("distance"):
+            reps = max(1, int(round((seg.get("reps") or 1) * scale)))
+            seg["reps"] = reps
+            seg["meters"] = reps * int(seg["distance"])
+        elif seg.get("minutes"):
+            minutes = max(1, int(round(seg["minutes"] * scale)))
+            pace = (seg.get("meters") or 0) / max(1, int(seg["minutes"]))
+            seg["minutes"] = minutes
+            seg["meters"] = snap_25(minutes * pace) if pace else snap_25(
+                (seg.get("meters") or 0) * scale
+            )
+        else:
+            seg["meters"] = snap_25((seg.get("meters") or 0) * scale)
+        segments.append(seg)
+
+    target = snap_25((template_set.get("meters") or 0) * scale)
+    segments = _fit_segments(segments, target)
+    scaled["segments"] = segments
+    scaled["meters"] = sum(_segment_meters(seg) for seg in segments)
+
+    # Keep reps/distance as the primary block for old clients; `meters` is
+    # the set total and includes every segment.
+    primary = next((seg for seg in segments if seg.get("distance")), None)
+    if primary:
+        scaled["reps"] = primary.get("reps")
+        scaled["distance"] = primary.get("distance")
     return scaled
 
 
@@ -267,13 +377,16 @@ def generate_swim_session(
         rpe_target = 4
         focus = "Recovery adaptativo (feeling bajo)"
 
+    actual_main = sum(s.get("meters", 0) for s in scaled_main)
+    actual_total = warmup_meters + actual_main + cooldown_meters
+
     return {
         "date": session_date.isoformat(),
         "day_name": session_date.strftime("%A"),
         "week_relative": week_relative,
         "phase_name": phase_name,
-        "total_meters": daily_volume,
-        "estimated_duration_min": min(session_duration_min, max(45, daily_volume // 35)),
+        "total_meters": actual_total,
+        "estimated_duration_min": min(session_duration_min, max(45, actual_total // 35)),
         "focus": focus,
         "rpe_target": rpe_target,
         "warmup": {
@@ -300,6 +413,8 @@ def generate_swim_session(
             "event_category": event_category,
             "phase": phase_name,
             "daily_volume": daily_volume,
+            "planned_meters": daily_volume,
+            "actual_meters": actual_total,
             "salo_mix": salo_mix_for(event_category) if use_salo else None,
             "adaptive_reason": adaptive.get("reason"),
         }

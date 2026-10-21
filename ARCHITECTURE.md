@@ -35,8 +35,8 @@
 ## Plan generation pipeline
 `macrocycle_calculator` (phases Base→Build→Peak→Taper→Race, volume caps
 12k/16k/25k) → per-session `swim_generator` (Salo MIX by event category from
-`data/salo_swim.json`, CSS Z1–Z5 + SPM, `snap_25` multiples, scaled titles +
-`method` provenance) + `strength_generator` (TRX/KB/BW templates, A/B/C split,
+`data/salo_swim.json`, CSS Z1–Z5 + SPM, `snap_25` multiples, segment-based
+scaled titles, `method` provenance hidden) + `strength_generator` (TRX/KB/BW templates, A/B/C split,
 caps 4/4/3/1/0) → `adaptive_state` (feeling≤2→recovery×0.7, adherence ±,
 strokes≥50→Ch1 drills, youth/prehab rules) → stored as JSON columns.
 Generation is atomic: all rows are built in memory, then the old plan is

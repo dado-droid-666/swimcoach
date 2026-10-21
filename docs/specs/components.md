@@ -81,6 +81,16 @@ with the error, **Try again** (`app.retryProfile()`) and **Log out** instead of
 redirecting to onboarding. `api.js` attaches `status`/`data` to errors so
 views can tell 404 from 500. A server outage must never look like a new user.
 
+## main-set card (single prescription)
+- The card title is the scaled `description`; for composite sets it lists every
+  segment (`16×50m @95% + 8×25m starts · freestyle`).
+- Show `Set total: Xm` and, for composite sets, a per-segment breakdown
+  (`16×50m @95% = 800m · 8×25m starts = 200m`).
+- **Never render `method`** (the unscaled book text) in the card or the guided
+  player. It is provenance only. Old plans without `segments` fall back to
+  `reps×distance` + `Set total`.
+- Header `Main Set (Xm)` sums the same `meters` shown by each card.
+
 ## switch + push flow (Phase 1)
 ```html
 <label class="switch">

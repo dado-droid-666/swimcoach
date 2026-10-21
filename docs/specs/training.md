@@ -12,9 +12,15 @@ ow_ultra`, plus `recovery` and `tecnica_ch1`. Data: `data/salo_swim.json`
 ## Session structure
 - Volume split: warmup 20% (drill blocks from `drill_library.json`) /
   main 70% / cooldown 10%. **Every distance is a 25m multiple** (`snap_25`).
-- Set titles always match scaled content: numeric template descriptions are
-  rewritten to `description` ("40×25m freestyle") with book text preserved in
-  `method` (10/26 title/content mismatch incident). Non-numeric keep text.
+- Composite book sets carry explicit `segments` (reps/distance or
+  minutes/meters). Scaling changes reps/minutes, **never the book's rep
+  distance**: `8x50 @95% + 4x25 starts` at 2× becomes
+  `16×50m @95% + 8×25m starts = 1000m`, not `10×100m`. `description` is
+  rebuilt from the scaled segments; the book string stays in `method` for
+  provenance only and is never rendered (10/26 + 20/10 incidents).
+  Non-numeric descriptions keep their text.
+- Session `total_meters` is always `warmup + actual main + cooldown`, so the
+  session header and the block rows cannot disagree.
 - CSS zones Z1–Z5 + SPM per zone (`css_zones.py`); FTP pace ≈ CSS anchor;
   metronome sets surface exact SPM.
 - Generation is **idempotent and atomic**: all rows are built in memory first,

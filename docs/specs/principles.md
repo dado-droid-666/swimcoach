@@ -23,6 +23,7 @@
 11. **Lost volume is never restacked.** Missed sessions are marked, never rescheduled; only future volume/intensity modulates. (Salo, 2026-09)
 12. **Multiples of 25.** Every distance (reps×dist, sets, totals) is a 25m multiple. (2026-09)
 13. **Days are Mon=0…Sun=6.** Sunday no longer collides; week views are Lun–Dom; dates 100% local `en-CA`. (2026-09)
+14. **One prescription per card.** Scale composite book sets by reps/minutes, never by rep distance; the original book text is provenance and is never rendered. (2026-10)
 
 ## Engineering (mirror: docs/specs/patterns.md)
 14. **Idempotent generation.** Generating deletes the previous plan; button locks during ~60s. (2026-09)
