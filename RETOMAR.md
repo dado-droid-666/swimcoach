@@ -325,6 +325,6 @@
 - **Tests:** `test_salo_mix` (integridad de los 16 sets, escalado exacto,
   descripción por segmentos, todas las categorías/fases, UI sin `method`);
   `test_generation_safety` 13/13; E2E `Generate macrocycle: 201`; audit_ui OK.
-- **PENDIENTE USUARIO:** regenerar el plan de moconette y verificar que el set
-  muestra la estructura del libro (p. ej. `16×50m @95% + 8×25m starts`) y que
-  `Set total` + header suman lo mismo.
+- **CERRADO 20/10:** moconette regeneró el plan y confirmó que el set muestra
+  la estructura del libro (p. ej. `16×50m @95% + 8×25m starts`), con `Set
+  total` y header sumando lo mismo. Sin pendientes de este incidente.
