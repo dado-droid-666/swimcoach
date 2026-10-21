@@ -132,5 +132,7 @@ r = client.put("/api/profile", headers=h, json={"reminder_time": "07:30", "remin
 check("good prefs -> 200 + echoed", r.status_code == 200 and r.json().get("reminder_time") == "07:30", r.status_code)
 
 print(f"\n{len(PASS)} passed, {len(FAIL)} failed: {FAIL}")
-os.remove(TEST_DB)
+engine.dispose()
+if os.path.exists(TEST_DB):
+    os.remove(TEST_DB)
 sys.exit(1 if FAIL else 0)

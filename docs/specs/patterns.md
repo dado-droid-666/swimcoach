@@ -46,7 +46,19 @@ function renderX(app) {
 - User-facing failures always `app.showError(msg)` (5s toast). No silent
   `return` on user-initiated actions (07/10 `_generating` incident).
 - `api.js` 401 → redirect login (except login/register calls); 403 → upgrade
-  message; 422 array details flattened to `field: msg`.
+  message; 422 array details flattened to `field: msg`. Errors carry
+  `status` + `data` so views can distinguish 404 (not found) from 500.
+- A 500 loading the profile is **never** treated as "needs onboarding":
+  `app.profileError` renders a retry/log-out screen instead of redirecting to
+  the onboarding form (20/10 incident: schema drift masked as missing profile).
+
+## Plan generation (atomic)
+`POST /api/competition/generate` builds every swim/strength row in memory
+first, then replaces the old plan in one transaction (delete + macrocycle +
+insert + commit). A generator exception rolls back and leaves the previous
+plan untouched. Never delete/commit the old plan before generation finishes.
+Legacy NULL profile fields are normalized (`_profile_snapshot`) before the
+generators run.
 
 ## Caching (PWA)
 - `sw.js` `STATIC_ASSETS` is cache-first. **Any change to a listed file

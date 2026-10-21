@@ -4,6 +4,7 @@ class App {
         this.state = {
             user: null,
             profile: null,
+            profileError: null,
             competition: null,
             macrocycle: null,
             currentWeek: null,
@@ -50,6 +51,8 @@ class App {
         } catch (error) {
             // Not authenticated
             this.state.user = null;
+            this.state.profile = null;
+            this.state.profileError = null;
             this.state.tier = 'free';
         }
         this.updateNav();
@@ -58,9 +61,50 @@ class App {
     async loadProfile() {
         try {
             this.state.profile = await api.getProfile();
+            this.state.profileError = null;
         } catch (error) {
             this.state.profile = null;
+            // 404 = profile not created yet (onboarding is correct).
+            // 401 = api.js already redirected to login.
+            // Anything else (500/network) is an outage, NOT onboarding.
+            const noProfile = error.status === 404 || error.status === 401;
+            this.state.profileError = noProfile ? null : error;
         }
+    }
+
+    async retryProfile() {
+        await this.loadProfile();
+        if (this.state.profileError) {
+            this.showError('Still unavailable. Please try again in a moment.');
+            return;
+        }
+        await this.loadCompetition();
+        this.handleRoute();
+        this.updateNav();
+    }
+
+    renderServiceError() {
+        const detail = this.state.profileError && this.state.profileError.message
+            ? ` (${this.state.profileError.message})`
+            : '';
+        document.getElementById('app').innerHTML = `
+            <section class="container" style="padding: 2rem 1rem; max-width: 560px; margin: 0 auto;">
+                <div class="card" style="padding: 1.5rem;">
+                    <h2 style="margin-top: 0;">We couldn't load your data</h2>
+                    <p style="color: var(--muted-color);">
+                        The server returned an error while loading your profile${detail}.
+                        Your account and training plan are safe — this is not an onboarding problem.
+                    </p>
+                    <p style="color: var(--muted-color); font-size: 0.875rem;">
+                        If this keeps happening, the service may be updating. Try again in a minute.
+                    </p>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <button class="primary" onclick="app.retryProfile()">Try again</button>
+                        <button class="secondary" onclick="logOut()">Log out</button>
+                    </div>
+                </div>
+            </section>
+        `;
     }
 
     async loadCompetition() {
@@ -96,7 +140,7 @@ class App {
             const hash = window.location.hash || '#/';
             const isPublic = hash === '#/' || hash === '#' ||
                 publicPrefixes.some(r => hash.startsWith(r));
-            bottom.style.display = (this.state.user && !isPublic) ? 'flex' : 'none';
+            bottom.style.display = (this.state.user && !isPublic && !this.state.profileError) ? 'flex' : 'none';
             bottom.querySelectorAll('.navbtn').forEach(btn => {
                 const route = btn.dataset.route;
                 btn.classList.toggle('active', hash.startsWith(route));
@@ -188,6 +232,14 @@ class App {
                 if (path === '/' || path === '/privacy' || path === '/terms' || path === '/login' || path === '/register') {
                     const params = new URLSearchParams(queryString);
                     handler(params);
+                    matched = true;
+                    break;
+                }
+
+                // A server failure is not "no profile": never trap the
+                // athlete in onboarding when the real problem is a 500.
+                if (this.state.user && this.state.profileError) {
+                    this.renderServiceError();
                     matched = true;
                     break;
                 }

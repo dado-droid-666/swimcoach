@@ -30,8 +30,10 @@ TRAIN_CODE = ("backend/services/swim_generator", "backend/services/strength_gene
               "backend/routes/plan", "data/")
 TRAIN_SPEC = ("docs/specs/training.md", "docs/specs/principles.md", "docs/llms.txt")
 
-# Spec files themselves + tokens.css (mechanical) never demand a spec.
-ALWAYS_OK = ("docs/", "frontend/css/tokens.css", "tools/audit_baseline.txt")
+# tokens.css (mechanical) and the audit baseline never demand a spec.
+# NOTE: do not filter docs/ here — spec files must stay in the diff so
+# UI_SPEC/TRAIN_SPEC can match them. Docs are not in the code buckets.
+ALWAYS_OK = ("frontend/css/tokens.css", "tools/audit_baseline.txt")
 
 
 def changed_files(base, head):

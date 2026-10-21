@@ -146,6 +146,7 @@ async function logOut() {
     if (window.app) {
         window.app.state.user = null;
         window.app.state.profile = null;
+        window.app.state.profileError = null;
         window.app.state.competition = null;
         window.app.state.macrocycle = null;
         window.app.state.todaySession = null;

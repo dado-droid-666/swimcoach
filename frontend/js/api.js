@@ -30,14 +30,19 @@ class ApiClient {
                 // Try to refresh or redirect to login
                 if (!url.includes('/auth/login') && !url.includes('/auth/register')) {
                     window.location.hash = '#/login';
-                    throw new Error('Unauthorized');
+                    const err = new Error('Unauthorized');
+                    err.status = 401;
+                    throw err;
                 }
             }
             
             // Handle 403 - forbidden (pro feature)
             if (response.status === 403) {
                 const data = await response.json().catch(() => ({}));
-                throw new Error(data.detail || 'Pro feature - upgrade required');
+                const err = new Error(data.detail || 'Pro feature - upgrade required');
+                err.status = response.status;
+                err.data = data;
+                throw err;
             }
             
             // Handle other errors (422 validation included)
@@ -50,7 +55,12 @@ class ApiClient {
                         return field ? `${field}: ${e.msg}` : e.msg;
                     }).join('; ');
                 }
-                throw new Error(msg);
+                const err = new Error(msg);
+                // Views need to distinguish "no profile yet" (404) from a
+                // server failure (500). Do not make a 500 look like onboarding.
+                err.status = response.status;
+                err.data = data;
+                throw err;
             }
             
             // Parse JSON if present

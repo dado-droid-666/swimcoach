@@ -9,6 +9,10 @@
 - **Distances:** multiples of 25, always.
 - **No silent failures:** every user action surfaces errors; locks/buttons restored on all exits.
 - **Passwords:** bcrypt only; resets via admin endpoint (never read hashes).
+- **Migrations before code.** Render autoDeploys `main`. If new code reads a new
+  column, apply the migration on Supabase *before* that code reaches prod
+  (expand/contract: PR1 nullable migration → apply → PR2 code). A deployed
+  model that references a missing column 500s every profile read.
 
 ## How to add…
 - **Endpoint:** route in `backend/routes/<domain>.py` + schemas + `require_pro` if Pro;
@@ -28,6 +32,7 @@
 - [ ] New/changed tests for new behavior (`tests/README.md` runner patterns)
 - [ ] **`CACHE_VERSION` bumped** if any cached static file changed (rule 04/10)
 - [ ] Migration file included if models changed (never run it locally)
+- [ ] **Migration applied on Supabase before pushing code that reads it** (rule above)
 - [ ] Commit scoped (docs / tests / attic / feature separately); push `main` → Render deploys
 
 ## Repo hygiene

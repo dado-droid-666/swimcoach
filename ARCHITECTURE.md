@@ -39,6 +39,8 @@
 `method` provenance) + `strength_generator` (TRX/KB/BW templates, A/B/C split,
 caps 4/4/3/1/0) → `adaptive_state` (feeling≤2→recovery×0.7, adherence ±,
 strokes≥50→Ch1 drills, youth/prehab rules) → stored as JSON columns.
+Generation is atomic: all rows are built in memory, then the old plan is
+replaced in one transaction. Failures roll back and keep the previous plan.
 
 ## Data & ML
 - `SwimTest` persists CSS tests (never retyped); RPE + `ExerciseLog` feed M2.

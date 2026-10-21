@@ -74,6 +74,13 @@ showFieldError('login-error', 'Incorrect email or password.'); // helpers in uti
 - DON'T replace the top toast: network/500/unknown errors still go to `app.showError`.
 - Form containers (onboarding, profile) stack label-above-input at every width (`.onboarding-container .grid, .profile-view .grid { 1fr }`) so long options/placeholders never truncate.
 
+## service-error (full screen)
+`app.state.profileError` is set for any profile load failure that is **not**
+404 (no profile yet) or 401 (redirected to login). The router renders a card
+with the error, **Try again** (`app.retryProfile()`) and **Log out** instead of
+redirecting to onboarding. `api.js` attaches `status`/`data` to errors so
+views can tell 404 from 500. A server outage must never look like a new user.
+
 ## switch + push flow (Phase 1)
 ```html
 <label class="switch">

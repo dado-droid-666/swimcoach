@@ -1,4 +1,4 @@
-# SwimCoach — Retomar después (actualizado 30/09/2026)
+# SwimCoach — Retomar después (actualizado 20/10/2026)
 
 ## Producción
 - LIVE: https://swimcoach-ss5j.onrender.com (plan Free + Supabase pooler 6543).
@@ -282,9 +282,27 @@
   1/día, descanso omitido, mensaje del plan de hoy, retry en siguiente tick.
 - Settings: time-picker (reloj + 21 zonas + auto-detect) vía `PUT /profile`.
 - `tests/test_dispatch.py` 11/11; E2E paridad; audit_ui OK; SW `v1.4.0`.
-- PENDIENTE USUARIO: `alembic upgrade head` (→`h9d0e1f2a3b4`) + `CRON_SECRET` en
-  Render + crear Cron Job `*/15` → trigger manual → verificar push real.
+- PENDIENTE USUARIO (BLOQUEANTE): `alembic upgrade head` (→`h9d0e1f2a3b4`) +
+  `CRON_SECRET` en Render + crear Cron Job `*/15` → trigger manual → push real.
 - PENDIENTES MAÑANA: (1) re-test push + comparar huellas → podar stale
   (`DELETE push_subscriptions` menos la viva) → cerrar Fase 1; (2) veredicto
   fotos títulos; (3) reintento AdSense → trigger Starter si falla; (4) push
   Fase 2 (scheduler) y plan C email cuando se pida.
+
+## 20/10 — 500 al crear plan = schema drift h9 + hardening
+- **Causa:** el código de Fase 2 (SW `v1.4.0`) se desplegó el 14/10 con
+  `reminder_last_sent` en el modelo, pero Supabase seguía en `h8`. Cualquier
+  SELECT de `athlete_profiles` daba 500 (`UndefinedColumn`). `loadProfile()`
+  se tragaba el error → mandaba a onboarding → `PUT /profile` volvía a 500.
+  Afectó a **todas** las cuentas; moconette solo fue la que intentó un plan.
+- **Fix inmediato:** `alembic upgrade head` en Supabase (`h8`→`h9`), sin
+  redeploy. Sin borrar datos: `generate` reemplaza el plan parcial al reintentar.
+- **Hardening (`tests/test_generation_safety.py`, 11/11):**
+  generación atómica (construye todo en memoria → delete+insert+commit único;
+  si falla, rollback conserva el plan anterior), normalización de perfiles
+  legacy con NULL (`_profile_snapshot`), `api.js` adjunta `status`/`data`,
+  `app.js` muestra pantalla de reintento en 500 (nunca onboarding falso),
+  regla migration-first en README/CONTRIBUTING/ops, SW `v1.4.1`.
+- **PENDIENTE USUARIO:** aplicar `h9` si aún no; reintentar plan con moconette
+  y confirmar que aparece completo. Rotar la contraseña temporal de moconette
+  (está escrita en este archivo) y borrarla al confirmar.

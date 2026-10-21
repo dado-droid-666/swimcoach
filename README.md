@@ -57,4 +57,5 @@ Push to `main` → Render autoDeploy (~2 min) → hard-refresh (Ctrl+Shift+R).
 3. **Spec sync:** UI change → update `docs/specs/*`; methodology change → `docs/specs/training.md`.
 4. **No silent failures:** user-initiated actions always surface errors; guards release locks.
 5. **Passwords are bcrypt hashes** — irreversible by design; resets go through admin endpoint (docs/ops.md).
+6. **Migrations before code:** apply the migration on Supabase *before* deploying code that reads the new column. Render autoDeploys `main`; schema drift 500s every profile read.
 See `CONTRIBUTING.md` (conventions + pre-push checklist) and `ARCHITECTURE.md` (system map).

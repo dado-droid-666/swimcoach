@@ -25,7 +25,16 @@ $env:DATABASE_URL="postgresql://postgres.REF:PASSWORD@aws-0-us-east-1.pooler.sup
 .\venv\Scripts\python.exe -m alembic upgrade head
 .\venv\Scripts\python.exe -m alembic current   # expect new head
 ```
-Never paste the URI in chat. Prod head history: `e5f6a7b8c9d0` (27/09) → `f6a7b8c9d0e1` (07/10) → `g7b8c9d0e1f2` (pending: apply post-deploy).
+Never paste the URI in chat. Prod head history: `e5f6a7b8c9d0` (27/09) →
+`f6a7b8c9d0e1` (07/10) → `g7b8c9d0e1f2` → `h8c9d0e1f2a3` (11/10) →
+`h9d0e1f2a3b4` (reminder_last_sent).
+
+**Order matters.** Render autoDeploys `main`. Apply the migration *before*
+merging/pushing code that selects the new column; otherwise every
+`AthleteProfile` query returns 500 (`UndefinedColumn`) and the app bounces
+users to onboarding. If already deployed, run `alembic upgrade head` — no
+redeploy needed. The 20/10 plan-generation 500 was this drift: prod served
+Fase 2 code (SW `v1.4.0`) while Supabase was still at `h8`.
 
 ### Grant admin (one-time per owner)
 Supabase → Table Editor → `users` → your row → `is_admin = true`.

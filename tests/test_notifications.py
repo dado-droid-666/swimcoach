@@ -128,5 +128,7 @@ check("receipts admin 200 + sees beacon", r.status_code == 200 and any(
     x.get("at") == 123456789 for x in r.json().get("receipts", [])), r.text[:100])
 
 print(f"\n{len(PASS)} passed, {len(FAIL)} failed: {FAIL}")
-os.remove(TEST_DB)
+engine.dispose()
+if os.path.exists(TEST_DB):
+    os.remove(TEST_DB)
 sys.exit(1 if FAIL else 0)
