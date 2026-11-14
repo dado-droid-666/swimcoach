@@ -1,4 +1,4 @@
-# SwimCoach — Retomar después (actualizado 20/10/2026)
+# SwimCoach — Retomar después (actualizado 13/11/2026)
 
 ## Producción
 - LIVE: https://swimcoach-ss5j.onrender.com (plan Free + Supabase pooler 6543).
@@ -328,3 +328,41 @@
 - **CERRADO 20/10:** moconette regeneró el plan y confirmó que el set muestra
   la estructura del libro (p. ej. `16×50m @95% + 8×25m starts`), con `Set
   total` y header sumando lo mismo. Sin pendientes de este incidente.
+
+## 13/11 — Supabase pausado (500 en dispatch) + cron Fase 2 configurado
+- **Síntoma:** `POST /api/notifications/dispatch-due` con secreto correcto
+  devolvía 500; con secreto incorrecto, 401. `/api/health` seguía 200 porque
+  no consulta la DB (engañoso en caídas de base).
+- **Causa:** proyecto Supabase `atypoclonwaxvukwvycy` pausado por inactividad.
+  Dominio NXDOMAIN; pooler `FATAL: (ENOTFOUND) tenant/user ... not found`
+  (puerto 5432). Afectaba login/perfil/planes, no solo el cron.
+- **Fix:** el usuario restauró el proyecto desde el dashboard de Supabase;
+  datos conservados. `database.py` ya tenía `pool_pre_ping=True`, no hizo
+  falta reiniciar Render. Verificado: login OK y dispatch
+  `200 {"checked":2,"sent":0,"skipped":2}`.
+- **Cron Fase 2:** `CRON_SECRET` en Render + cron-job.org cada 15 min, método
+  POST, header `X-Cron-Secret`, timeout 30 s. Test run 200. El ping mantiene
+  Render y Supabase activos, así que evita otra pausa por inactividad.
+- **OJO:** el `DATABASE_URL` de Render usa puerto `5432` (session pooler) y
+  funciona, pero el estándar documentado del proyecto es `6543` (transaction
+  pooler). Revisar sin prisa; no es lo que causó la caída.
+- **Sin verificar aún:** push real end-to-end. `sent:0` fue por hora fuera de
+  la ventana de 30 min (18:07 CDMX con recordatorio 07:00) o día de descanso.
+
+## Plan para mañana — sábado 14/11
+1. Cerrar Push Fase 1: toggle fresco, re-test, comparar huellas; podar
+   suscripciones stale (`DELETE push_subscriptions` salvo la viva) y
+   confirmar un push real a la hora configurada.
+2. Rotar password temporal de moconette (el valor viejo sigue en el historial
+   de git) y verificar login.
+3. Revisar `DATABASE_URL` en Render: comparar con la cadena actual de Supabase
+   y decidir si pasar a `6543` o dejar `5432` documentado.
+4. AdSense: revisar estado/aprobación; si rechazaron, corregir el motivo.
+5. MercadoPago: webhook vacío; configurar solo si ya se va a vender el Pro.
+6. entrenamiento-app: `npx supabase db push` (004 consentimiento) +
+   `netlify deploy --prod`.
+7. Confirmar `FRONTEND_URL` en Render =
+   `https://swimcoach-ss5j.onrender.com`.
+8. Hardening menor: `dispatch-due` debe devolver 401 (no 500) ante un header
+   con caracteres no-ASCII (`hmac.compare_digest` sobre `.encode()` + test).
+9. Opcional: limpiar los 68 avisos grandfathered de `tools/audit_baseline.txt`.
