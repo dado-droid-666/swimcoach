@@ -28,7 +28,7 @@ FastAPI + Supabase Postgres). Free tier with ads + Pro $100 MXN/mo via MercadoPa
 - No silent returns on user actions; guards release locks + restore buttons (07/10 _generating).
 - No new color literals outside tokens.css (audit fails CI).
 - Spec change rides with its code change (sync rule).
-- Prod DB: Supabase pooler 6543 (no IPv6 on Free); never run alembic on local sqlite (stale stamp).
+- Prod DB: Supabase pooler 5432 (session; no IPv6 on Free); 6543 (transaction) also works. Never run alembic on local sqlite (stale stamp).
 
 ## Live
 - Prod: https://swimcoach-ss5j.onrender.com (Free + sleep) | Repo main | AdSense ca-pub-4540036176937342 (in review)

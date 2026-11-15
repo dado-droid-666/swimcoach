@@ -4,7 +4,7 @@
 | | Local dev | Prod (Render) |
 |---|---|---|
 | URL | http://localhost:8000 | https://swimcoach-ss5j.onrender.com |
-| DB | `sqlite:///./swim_coach.db` (auto-created via `create_all`) | Supabase Postgres via pooler `:6543` (IPv4; Render Free has no IPv6) |
+| DB | `sqlite:///./swim_coach.db` (auto-created via `create_all`) | Supabase Postgres via pooler `:5432` (session; live; IPv4; Render Free has no IPv6) |
 | Migrations | **Never run alembic locally** (stamp stale by design) | `alembic upgrade head` against pooler URI, then `alembic current` |
 | Sleep | n/a | Free plan sleeps ~15 min idle; cold boot ~17s; `/api/health` warms it |
 
@@ -20,11 +20,13 @@ Push to `main` → Render autoDeploy (~2 min). After deploy, hard-refresh
 ## Runbooks
 ### Apply a migration on prod
 ```powershell
-$env:DATABASE_URL="postgresql://postgres.REF:PASSWORD@aws-0-us-east-1.pooler.supabase.com:6543/postgres"
+$env:DATABASE_URL="postgresql://postgres.REF:PASSWORD@aws-0-us-east-1.pooler.supabase.com:5432/postgres"
 .\venv\Scripts\python.exe -m alembic current   # expect previous head
 .\venv\Scripts\python.exe -m alembic upgrade head
 .\venv\Scripts\python.exe -m alembic current   # expect new head
 ```
+Live prod uses `:5432` (session pooler); `:6543` (transaction) also works for
+migrations. Don't switch a working `DATABASE_URL` mid-week.
 Never paste the URI in chat. Prod head history: `e5f6a7b8c9d0` (27/09) →
 `f6a7b8c9d0e1` (07/10) → `g7b8c9d0e1f2` → `h8c9d0e1f2a3` (11/10) →
 `h9d0e1f2a3b4` (20/10, applied: reminder_last_sent).
@@ -52,6 +54,10 @@ User logs in with it, then sets their own via Settings → Change password.
 ### Wake prod before demos/crawls
 Open `/api/health` (200 fast = awake), `/`, `/ads.txt`. Keep traffic flowing
 for ~2h around AdSense resubmits.
+DB readiness: `GET /api/health/db` → 200 `{"db":"ok"}`; **503 `{"db":"down"}`
+means the DB is unreachable (e.g. Supabase paused), even if `/api/health` is
+green. `/api/health` stays DB-free on purpose: Render's health check must not
+restart-loop during a DB outage.
 
 ### Web Push VAPID (one-time setup)
 ```powershell

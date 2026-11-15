@@ -3,7 +3,7 @@
 Competition-focused swim periodization PWA. Generates integrated Swim + Strength
 macrocycles from a goal race date. Free tier with ads + Pro ($100 MXN/mo) via MercadoPago.
 
-- **Prod:** https://swimcoach-ss5j.onrender.com (Render Free + sleep; Supabase Postgres via pooler `:6543`)
+- **Prod:** https://swimcoach-ss5j.onrender.com (Render Free + sleep; Supabase Postgres via pooler `:5432`, session)
 - **Docs for humans & AI:** `docs/specs/` (principles, tokens, components, patterns, training) + `docs/llms.txt` index + `docs/ops.md` runbooks
 - **Session log + live pendings:** `RETOMAR.md`
 
@@ -47,7 +47,7 @@ Unit funcs: see `tests/README.md`. Full checks: `node --check frontend/js/*.js` 
 | | Local | Prod |
 |---|---|---|
 | URL | http://localhost:8000 | https://swimcoach-ss5j.onrender.com |
-| DB | sqlite (auto `create_all`; **never run alembic locally**) | Supabase pooler `:6543` (IPv4; no IPv6 on Free) |
+| DB | sqlite (auto `create_all`; **never run alembic locally**) | Supabase pooler `:5432` (session; IPv4; no IPv6 on Free) |
 | Sleep | n/a | Free sleeps ~15 min idle; cold boot ~17s — warm via `/api/health` |
 Push to `main` → Render autoDeploy (~2 min) → hard-refresh (Ctrl+Shift+R).
 

@@ -1,7 +1,7 @@
-# SwimCoach — Retomar después (actualizado 13/11/2026)
+# SwimCoach — Retomar después (actualizado 15/11/2026)
 
 ## Producción
-- LIVE: https://swimcoach-ss5j.onrender.com (plan Free + Supabase pooler 6543).
+- LIVE: https://swimcoach-ss5j.onrender.com (plan Free + Supabase pooler 5432, session).
   Nombre del sitio se queda así (decisión usuario).
 - Repo: https://github.com/dado-droid-666/swimcoach (main, todo pusheado).
 - Cuenta real del usuario existe; perfil reparado (swim 2→3).
@@ -344,8 +344,9 @@
   POST, header `X-Cron-Secret`, timeout 30 s. Test run 200. El ping mantiene
   Render y Supabase activos, así que evita otra pausa por inactividad.
 - **OJO:** el `DATABASE_URL` de Render usa puerto `5432` (session pooler) y
-  funciona, pero el estándar documentado del proyecto es `6543` (transaction
-  pooler). Revisar sin prisa; no es lo que causó la caída.
+  funciona, pero el estándar documentado del proyecto era `6543` (transaction
+  pooler). **Decidido 15/11:** se deja `5432` (funciona; no tocar) y se
+  actualiza la documentación. No fue lo que causó la caída.
 - **Sin verificar aún:** push real end-to-end. `sent:0` fue por hora fuera de
   la ventana de 30 min (18:07 CDMX con recordatorio 07:00) o día de descanso.
 
@@ -355,8 +356,8 @@
    confirmar un push real a la hora configurada.
 2. Rotar password temporal de moconette (el valor viejo sigue en el historial
    de git) y verificar login.
-3. Revisar `DATABASE_URL` en Render: comparar con la cadena actual de Supabase
-   y decidir si pasar a `6543` o dejar `5432` documentado.
+3. ~~Revisar `DATABASE_URL` en Render~~ → resuelto 15/11: se deja `5432`
+   documentado (session pooler; funciona).
 4. AdSense: revisar estado/aprobación; si rechazaron, corregir el motivo.
 5. MercadoPago: webhook vacío; configurar solo si ya se va a vender el Pro.
 6. entrenamiento-app: `npx supabase db push` (004 consentimiento) +
@@ -366,3 +367,34 @@
 8. Hardening menor: `dispatch-due` debe devolver 401 (no 500) ante un header
    con caracteres no-ASCII (`hmac.compare_digest` sobre `.encode()` + test).
 9. Opcional: limpiar los 68 avisos grandfathered de `tools/audit_baseline.txt`.
+
+## 15/11 — Push Fase 1 cerrada (Chrome/FCM) + hardening health
+- **Cron:** pasado de cada 15 min a **cada 10 min** para evitar la carrera con
+  el spin-down de Render (15 min) y el timeout de 30 s de cron-job.org.
+  Test run 200. El ping mantiene despiertos Render y Supabase.
+- **DB:** `DATABASE_URL` sigue en puerto **5432** (session pooler); funciona y
+  se deja así (decisión: no tocar lo que anda). `FRONTEND_URL`, `CRON_SECRET`
+  y VAPID confirmados en Render.
+- **Diagnóstico push Edge/WNS:** el servidor acepta los envíos
+  (`sent:3, failed:0`) pero el SW de Edge no recibe **ni el bare**; el Push
+  local de DevTools sí dispara notificación y recibo → SW y VAPID OK, el
+  problema es la entrega WNS a ese perfil de Edge. No se sigue depurando.
+- **Push Chrome/FCM:** resuscribir en Chrome, notificación recibida y
+  `sent:1, failed:0` tras podar las suscripciones WNS (`fcm.googleapis.com`
+  queda como única suscripción viva).
+- **Recordatorio real:** pendiente de validar a la hora configurada (el test
+  admin ya entrega; el scheduler está probado en unit tests).
+- **Hardening código:**
+  - `GET /api/health/db` nuevo: 200 `{"db":"ok"}` / 503 `{"db":"down"}`.
+    `/api/health` queda liveness sin DB para el health check de Render.
+  - `check_db_connection()` corregido (`text("SELECT 1")`; antes fallaba con
+    SQLAlchemy 2.x).
+  - `dispatch-due`: secreto comparado como bytes UTF-8; header no-ASCII
+    devuelve **401** (antes `compare_digest` lanzaba TypeError → 500).
+  - `tests/test_dispatch.py` ampliado (non-ASCII + health/db 200/503).
+- **moconette:** el usuario decidió quedarse con una temporal como password
+  definitiva. Verificar que sea una **nueva** (no la expuesta en git) y
+  rotarla si hay duda.
+- **Pendiente:** AdSense (estado/aprobación), MercadoPago (webhook cuando se
+  venda), entrenamiento-app (`supabase db push` 004 + Netlify) y opcional
+  limpiar baseline de `audit_ui`.

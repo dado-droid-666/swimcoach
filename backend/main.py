@@ -2,11 +2,11 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from .config import get_settings
-from .database import init_db
+from .database import check_db_connection, init_db
 from .routes import auth, profile, competition, plan, feedback, stats, subscription, swimtests, notifications
 
 settings = get_settings()
@@ -47,7 +47,21 @@ app.include_router(notifications.router)
 
 @app.get("/api/health")
 def health():
+    """Liveness only (fast, no DB). Render healthCheckPath uses this so a DB
+    outage never causes a restart loop. For DB status use /api/health/db."""
     return {"status": "ok", "app": settings.app_name}
+
+
+@app.get("/api/health/db")
+def health_db():
+    """Readiness: verifies the DB connection. 503 when the database is down or
+    unreachable (e.g. Supabase paused), instead of a misleading green health."""
+    if check_db_connection():
+        return {"status": "ok", "app": settings.app_name, "db": "ok"}
+    return JSONResponse(
+        status_code=503,
+        content={"status": "degraded", "app": settings.app_name, "db": "down"},
+    )
 
 
 @app.get("/api")

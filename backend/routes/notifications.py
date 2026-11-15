@@ -7,6 +7,7 @@
 
 Phase 2 adds the daily scheduler (reminder_time/reminder_tz already modeled).
 """
+import hmac
 import json
 import logging
 import re
@@ -112,6 +113,17 @@ def _keypair_info() -> dict:
         return {"configured": True, "keypair_match": derived_pub == settings.vapid_public_key.strip()}
     except Exception:
         return {"configured": True, "keypair_match": False, "keys_parseable": False}
+
+
+def _cron_secret_ok(provided: str | None) -> bool:
+    """Constant-time secret check. Compares UTF-8 bytes so a non-ASCII header
+    returns False (401) instead of raising TypeError (500) from compare_digest."""
+    if not settings.cron_secret:
+        return False
+    return hmac.compare_digest(
+        (provided or "").encode("utf-8"),
+        settings.cron_secret.encode("utf-8"),
+    )
 
 
 def _push_error_reason(exc: Exception) -> str:
@@ -274,8 +286,7 @@ def dispatch_due(
     at most once per user per day. Rest days are skipped entirely.
     Idempotent: safe to call more often than the cron interval.
     """
-    import hmac
-    if not settings.cron_secret or not hmac.compare_digest(x_cron_secret or "", settings.cron_secret):
+    if not _cron_secret_ok(x_cron_secret):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid cron secret")
     from datetime import timedelta
 

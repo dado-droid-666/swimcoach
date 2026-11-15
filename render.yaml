@@ -11,7 +11,7 @@ services:
     buildCommand: "pip install -r backend/requirements.txt"
     # $PORT is injected by Render; --workers 4 (Free has 0.5 CPU — fine for current traffic)
     startCommand: "uvicorn backend.main:app --host 0.0.0.0 --port $PORT --workers 4"
-    healthCheckPath: /api/health  # static dict, no DB — green even if DB is down
+    healthCheckPath: /api/health  # liveness only (no DB); DB readiness = /api/health/db
     autoDeploy: true  # every push to main redeploys (~2 min); avoid pushing right before demos/AdSense crawls
     envVars:
       - key: ENVIRONMENT  # production: disables /docs + /redoc, secure cookies

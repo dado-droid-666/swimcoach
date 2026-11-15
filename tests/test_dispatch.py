@@ -111,6 +111,10 @@ r = client.post("/api/notifications/dispatch-due", headers=HDR)
 check("unconfigured secret -> 401", r.status_code == 401, r.status_code)
 notif.settings.cron_secret = "test-cron-secret"
 
+# F2: non-ASCII secret must be rejected (401 via helper), not 500 (TypeError guard)
+check("non-ascii secret helper -> False", not notif._cron_secret_ok("sëcret"))
+check("correct secret helper -> True", notif._cron_secret_ok("test-cron-secret"))
+
 # G: bad tz in profile is tolerated (UTC fallback, no crash)
 db = TestingSession()
 b_id = db.query(U).filter(U.email == "b@test.com").first().id
@@ -130,6 +134,16 @@ r = client.put("/api/profile", headers=h, json={"reminder_tz": "Mars/Olympus"})
 check("bad tz -> 422", r.status_code == 422, r.status_code)
 r = client.put("/api/profile", headers=h, json={"reminder_time": "07:30", "reminder_tz": "America/Mexico_City"})
 check("good prefs -> 200 + echoed", r.status_code == 200 and r.json().get("reminder_time") == "07:30", r.status_code)
+
+# I: DB readiness endpoint (200 up / 503 down, without breaking liveness)
+r = client.get("/api/health/db")
+check("health/db 200 when DB up", r.status_code == 200 and r.json().get("db") == "ok", r.status_code)
+import backend.main as main_mod  # noqa: E402
+_orig_check = main_mod.check_db_connection
+main_mod.check_db_connection = lambda: False
+r = client.get("/api/health/db")
+check("health/db 503 when DB down", r.status_code == 503, r.status_code)
+main_mod.check_db_connection = _orig_check
 
 print(f"\n{len(PASS)} passed, {len(FAIL)} failed: {FAIL}")
 engine.dispose()
