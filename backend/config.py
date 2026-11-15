@@ -16,7 +16,10 @@ class Settings(BaseSettings):
     mp_access_token: str
     mp_public_key: str
     mp_webhook_secret: str = ""
-    mp_preapproval_plan_id: str = "pro_monthly"
+    mp_preapproval_plan_id: str = ""  # deprecated: Pro uses the no-plan flow
+    mp_portal_url: str = "https://www.mercadopago.com.mx/subscriptions"
+    mp_mock_checkout: bool = False  # dev-only fake checkout (never in prod)
+    backend_url: str = ""  # public backend URL for MP notification_url
 
     adsense_client_id: str = ""
     adsense_slot_banner: str = ""

@@ -1,40 +1,92 @@
 // Upgrade View
 async function renderUpgrade(app) {
+    const hash = window.location.hash.slice(1);
+    const query = new URLSearchParams(hash.split('?')[1] || '');
+    const search = new URLSearchParams(window.location.search);
+    const mockedCheckout = query.get('mock_checkout') === '1';
+    const returningFromCheckout = !mockedCheckout && (
+        query.get('status') === 'success'
+        || query.has('preapproval_id')
+        || search.has('preapproval_id')
+    );
+
+    let notice = '';
+    if (returningFromCheckout) {
+        // The MercadoPago webhook may arrive a few seconds after the redirect.
+        await app.checkAuth();
+        // Clean the query so a reload does not re-trigger this block.
+        window.history.replaceState({}, document.title, window.location.pathname + '#/upgrade');
+
+        if (app.state.tier === 'pro') {
+            notice = '<div class="alert" style="padding: 1rem; background: var(--success-background); color: var(--success-color); border-radius: 0.5rem; margin-bottom: 1rem;">Payment confirmed. Welcome to Pro!</div>';
+        } else {
+            notice = '<div class="alert" style="padding: 1rem; background: var(--muted-background); border-radius: 0.5rem; margin-bottom: 1rem;">Payment received. We are confirming your subscription with MercadoPago — this can take a few seconds.</div>';
+            setTimeout(async () => {
+                await app.checkAuth();
+                if (app.state.tier === 'pro') renderUpgrade(app);
+            }, 4000);
+        }
+    } else if (mockedCheckout) {
+        window.history.replaceState({}, document.title, window.location.pathname + '#/upgrade');
+        notice = '<div class="alert" style="padding: 1rem; background: var(--muted-background); border-radius: 0.5rem; margin-bottom: 1rem;">Dev mode: simulated checkout, no payment was made and Pro was not activated.</div>';
+    }
+
     const tier = app.state.tier;
-    const user = app.state.user;
-    
     const html = `
         <div class="upgrade-view" style="max-width: 700px; margin: 0 auto;">
             <header style="margin-bottom: 2rem; text-align: center;">
                 <h1>Upgrade to Pro</h1>
                 <p style="color: var(--muted-color);">Unlock the full SwimCoach experience</p>
             </header>
-            
+
+            ${notice}
             ${tier === 'pro' ? renderProActive(app) : renderUpgradeCards(app)}
         </div>
     `;
-    
+
     document.getElementById('app').innerHTML = html;
-    
+
     if (tier === 'pro') {
-        // Load billing portal link
+        const btn = document.getElementById('billing-portal-btn');
         try {
             const portal = await api.getBillingPortal();
-            document.getElementById('billing-portal-btn').href = portal.portal_url;
+            if (btn && portal.portal_url) btn.href = portal.portal_url;
         } catch (error) {
-            console.log('Could not load billing portal');
+            // MercadoPago has no per-subscription billing page; cancellation
+            // is handled by the button on this screen.
+            if (btn) btn.style.display = 'none';
         }
     }
 }
 
 function renderProActive(app) {
     const user = app.state.user;
+    const status = user.subscription_status;
+    const cancelled = status === 'cancelled';
+    const paused = status === 'paused';
+    const periodEnd = user.current_period_end
+        ? new Date(user.current_period_end).toLocaleDateString()
+        : null;
+
+    let statusNotice = '';
+    if (cancelled) {
+        statusNotice = `<p style="margin: 0 0 1rem; padding: 0.75rem; border-radius: 0.5rem; background: var(--muted-background); color: var(--muted-color);">
+            Subscription cancelled. Pro stays active${periodEnd ? ` until ${periodEnd}` : ' until the current period ends'}.
+        </p>`;
+    } else if (paused) {
+        statusNotice = `<p style="margin: 0 0 1rem; padding: 0.75rem; border-radius: 0.5rem; background: var(--muted-background); color: var(--muted-color);">
+            Subscription paused in MercadoPago. No charges are being made.
+        </p>`;
+    }
+
     return `
         <div class="card" style="text-align: center; padding: 2rem; background: var(--success-background); border-color: var(--success-color);">
             <div style="font-size: 4rem; margin-bottom: 1rem;">🌟</div>
             <h2 style="margin: 0 0 0.5rem; color: var(--success-color);">Pro Active!</h2>
             <p style="color: var(--muted-color); margin: 0 0 1rem;">Thanks for supporting SwimCoach</p>
-            
+
+            ${statusNotice}
+
             <div style="background: white; border-radius: 0.5rem; padding: 1rem; margin: 1rem 0; text-align: left;">
                 <h3 style="margin: 0 0 0.5rem;">Your Pro Features</h3>
                 <ul style="margin: 0; padding-left: 1.5rem; color: var(--muted-color);">
@@ -46,15 +98,13 @@ function renderProActive(app) {
                     <li>Priority support</li>
                 </ul>
             </div>
-            
+
             <div style="margin-top: 1.5rem;">
                 <a href="#" class="primary" id="billing-portal-btn" target="_blank" rel="noopener" style="text-decoration: none;">Manage Subscription</a>
-                <button class="secondary" style="margin-left: 0.5rem;" onclick="cancelSubscription()">Cancel Subscription</button>
+                ${cancelled ? '' : '<button class="secondary" style="margin-left: 0.5rem;" onclick="cancelSubscription()">Cancel Subscription</button>'}
             </div>
-            
-            <p style="margin: 1rem 0 0; font-size: 0.875rem; color: var(--muted-color);">
-                Current period ends: ${new Date(app.state.user.current_period_end).toLocaleDateString()}
-            </p>
+
+            ${periodEnd ? `<p style="margin: 1rem 0 0; font-size: 0.875rem; color: var(--muted-color);">Current period ends: ${periodEnd}</p>` : ''}
         </div>
     `;
 }
@@ -68,7 +118,7 @@ function renderUpgradeCards(app) {
                     <div style="font-size: 3rem; font-weight: bold; color: var(--muted-color);">$0</div>
                     <div style="color: var(--muted-color);">/month</div>
                 </div>
-                
+
                 <ul style="margin: 0; padding-left: 1.5rem; color: var(--muted-color);">
                     <li>Generate macrocycle plan</li>
                     <li>Swim + Strength sessions</li>
@@ -78,19 +128,19 @@ function renderUpgradeCards(app) {
                     <li>1 competition goal</li>
                     <li><strong>With ads</strong></li>
                 </ul>
-                
+
                 <button class="secondary" style="width: 100%; margin-top: 1.5rem;" disabled>Current Plan</button>
             </article>
-            
+
             <article class="card" style="position: relative; border: 2px solid var(--primary); padding: 2rem; background: var(--primary-background);">
                 <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 0.25rem 1rem; border-radius: 9999px; font-size: 0.75rem; font-weight: bold;">MOST POPULAR</div>
-                
+
                 <div style="text-align: center; margin-bottom: 1.5rem;">
                     <h3 style="margin: 0 0 0.5rem;">Pro</h3>
                     <div style="font-size: 3rem; font-weight: bold; color: var(--primary);">$100 MXN</div>
                     <div style="color: var(--muted-color);">/month</div>
                 </div>
-                
+
                 <ul style="margin: 0; padding-left: 1.5rem; color: var(--muted-color);">
                     <li>Everything in Free</li>
                     <li><strong>Unlimited</strong> feedback history</li>
@@ -102,11 +152,12 @@ function renderUpgradeCards(app) {
                     <li>Multiple competition goals (coming soon)</li>
                     <li>Priority email support</li>
                 </ul>
-                
+
                 <button class="primary" style="width: 100%; margin-top: 1.5rem; padding: 1rem; font-size: 1.125rem;" onclick="startCheckout()">Upgrade to Pro - $100 MXN/month</button>
+                <p style="margin: 0.5rem 0 0; font-size: 0.75rem; color: var(--muted-color);">Recurring monthly charge in MercadoPago until you cancel.</p>
             </article>
         </div>
-        
+
         <section style="margin-top: 2rem; padding: 1.5rem; background: var(--muted-background); border-radius: 0.5rem;">
             <h3 style="margin: 0 0 1rem;">Why Upgrade?</h3>
             <div class="grid" style="gap: 1rem;">
@@ -132,13 +183,13 @@ function renderUpgradeCards(app) {
                 </div>
             </div>
         </section>
-        
+
         <section style="margin-top: 2rem; padding: 1.5rem; background: var(--muted-background); border-radius: 0.5rem; text-align: center;">
             <h3 style="margin: 0 0 1rem;">FAQ</h3>
             <div style="text-align: left; max-width: 500px; margin: 0 auto;">
                 <details style="margin-bottom: 0.5rem;">
                     <summary style="cursor: pointer; font-weight: bold;">Can I cancel anytime?</summary>
-                    <p style="margin: 0.5rem 0 0; color: var(--muted-color);">Yes, cancel anytime from the billing portal. Access continues until period ends.</p>
+                    <p style="margin: 0.5rem 0 0; color: var(--muted-color);">Yes, cancel anytime from this page. Access continues until the period ends.</p>
                 </details>
                 <details style="margin-bottom: 0.5rem;">
                     <summary style="cursor: pointer; font-weight: bold;">What payment methods?</summary>
@@ -158,7 +209,8 @@ async function startCheckout() {
     if (btn) { btn.disabled = true; btn.textContent = 'Redirecting…'; }
     try {
         const data = await api.createCheckout();
-        // Redirect to MercadoPago checkout (or mock checkout in dev)
+        if (!data || !data.init_point) throw new Error('MercadoPago did not return a checkout URL');
+        // Redirect to MercadoPago (or the dev mock URL).
         window.location.href = data.init_point;
     } catch (error) {
         window.app.showError(error.message || 'Failed to start checkout');
@@ -181,29 +233,3 @@ async function cancelSubscription() {
 window.renderUpgrade = renderUpgrade;
 window.startCheckout = startCheckout;
 window.cancelSubscription = cancelSubscription;
-window.handleMockCheckoutReturn = handleMockCheckoutReturn;
-
-// Handle mock checkout return (development only)
-function handleMockCheckoutReturn() {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('mock_checkout') === '1' && urlParams.get('preapproval_id')) {
-        // Simulate successful upgrade
-        const preapprovalId = urlParams.get('preapproval_id');
-        app.showSuccess('Upgrade successful! Welcome to Pro!');
-        
-        // Update user tier in state
-        app.state.tier = 'pro';
-        app.state.user.subscription_tier = 'pro';
-        app.state.user.subscription_status = 'active';
-        app.state.user.current_period_end = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
-        
-        // Clean URL
-        window.history.replaceState({}, document.title, window.location.pathname + window.location.hash);
-        
-        // Re-render upgrade page
-        setTimeout(() => window.location.reload(), 1500);
-    }
-}
-
-// Call on page load
-document.addEventListener('DOMContentLoaded', handleMockCheckoutReturn);

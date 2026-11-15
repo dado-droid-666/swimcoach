@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from .config import get_settings
 from .database import get_db
-from .models import User, SubscriptionTier
+from .models import User, SubscriptionStatus, SubscriptionTier
 from .schemas import UserResponse, Token
 
 settings = get_settings()
@@ -58,6 +58,19 @@ def clear_auth_cookie(response: Response):
     response.delete_cookie(key="access_token", path="/", httponly=True, secure=settings.environment == "production")
 
 
+def _downgrade_if_expired(user: User, db: Session) -> None:
+    """Cancelled subscriptions keep Pro until the paid period ends."""
+    if (
+        user.subscription_tier == SubscriptionTier.PRO
+        and user.subscription_status
+        in (SubscriptionStatus.CANCELLED, SubscriptionStatus.PAUSED)
+        and user.current_period_end is not None
+        and user.current_period_end <= datetime.utcnow()
+    ):
+        user.subscription_tier = SubscriptionTier.FREE
+        db.commit()
+
+
 async def get_current_user(
     request: Request,
     response: Response,
@@ -82,6 +95,7 @@ async def get_current_user(
         clear_auth_cookie(response)
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
 
+    _downgrade_if_expired(user, db)
     return user
 
 

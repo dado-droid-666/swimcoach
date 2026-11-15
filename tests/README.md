@@ -8,6 +8,7 @@
 | `test_notifications.py` | Push endpoints isolated (subscribe/upsert/422/400, unsubscribe, vapid-key public, test gating 401/403/404; 21 checks, DB file removed after) | `.\venv\Scripts\python.exe tests/test_notifications.py` |
 | `test_dispatch.py` | Dispatch-due isolated (window/dedup/rest/secret/tz/schema + non-ASCII secret, health/db 200/503; 15 checks, VAPID absent by design → sent 0, DB file removed after) | `.\venv\Scripts\python.exe tests/test_dispatch.py` |
 | `test_generation_safety.py` | Plan generation atomicity (failed generator keeps old plan) + legacy NULL/string profile normalization; 13 checks, DB file removed after | `.\venv\Scripts\python.exe tests/test_generation_safety.py` |
+| `test_subscription.py` | MercadoPago Pro: webhook signature manifest, no-plan preapproval payload, cancel (one-L `canceled`), authorized payment renewal, dev-only mock, lazy downgrade; 68 checks, DB file removed after | `.\venv\Scripts\python.exe tests/test_subscription.py` |
 | `test_adaptive.py` | Unit funcs: recovery/adherence/planned-weeks/ML-clamp/effort-trend (in-memory sqlite) | `.\venv\Scripts\python.exe -c "import sys; sys.path.insert(0,'tests'); import test_adaptive as t; [getattr(t,n)() for n in dir(t) if n.startswith('test_')]; print('OK')"` |
 | `test_salo_mix.py` | Unit funcs: Salo MIX sets + composite segment integrity/scaling (18 tests, same runner pattern) | same pattern with `test_salo_mix` |
 

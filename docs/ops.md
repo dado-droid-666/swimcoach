@@ -82,6 +82,30 @@ Put both lines in Render dashboard → Environment (`VAPID_PUBLIC_KEY`,
    failures retry on the next tick inside the 30-min window.
 4. Rotate the secret like a password if ever exposed (Render env + cron job).
 
+### MercadoPago Pro (recurring $100 MXN/month)
+Flow: subscription **without an associated plan** (`POST /preapproval`,
+`status=pending`) → MercadoPago returns `init_point`; after payment the webhook
+re-fetches the resource from the MP API before granting access. No
+`MP_PREAPPROVAL_PLAN_ID` is needed (the setting is ignored).
+
+1. MP panel → **Your integrations** → app → **Webhooks**: URL
+   `https://swimcoach-ss5j.onrender.com/api/subscription/webhook`; enable
+   `subscription_preapproval`, `subscription_authorized_payment` and `payment`.
+   Copy the **secret signature** (`whsec_…`).
+2. Render → Environment: `MP_ACCESS_TOKEN` (`APP_USR-…` prod, `TEST-…` only
+   sandbox), `MP_PUBLIC_KEY`, `MP_WEBHOOK_SECRET=whsec_…` and (recommended)
+   `BACKEND_URL=https://swimcoach-ss5j.onrender.com`; it defaults to
+   `FRONTEND_URL` when empty. Redeploy.
+3. Sandbox test (never with the production token): use MP **test users**, buy
+   Pro from `/#/upgrade`, then verify in Supabase:
+   `select subscription_tier, subscription_status, current_period_end,
+   mp_preapproval_id from users where email='…';`
+4. Cancel from `/#/upgrade` → `PUT /preapproval/{id}` with
+   `{"status":"canceled"}`; Pro remains until `current_period_end` and
+   `get_current_user` downgrades lazily after that date.
+5. `/api/subscription/webhook/test` is dev-only (404 in production).
+   The webhook is idempotent and always re-reads MP, never the request body.
+
 ## Tests & CI
 - Suite: `python -m tests.test_final_all` (E2E; only expected 400/404) + unit
   funcs in `tests/test_adaptive.py`, `tests/test_salo_mix.py` (no pytest in venv).

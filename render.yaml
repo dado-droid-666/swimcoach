@@ -33,9 +33,9 @@ services:
         sync: false
       - key: MP_PUBLIC_KEY
         sync: false
-      - key: MP_WEBHOOK_SECRET  # empty = auto-plan mode (no signature check); whsec_… when selling
+      - key: MP_WEBHOOK_SECRET  # whsec_… from MP panel → Webhooks → secret signature
         sync: false
-      - key: MP_PREAPPROVAL_PLAN_ID  # pro_monthly dev; real plan id from MP dashboard in prod
+      - key: BACKEND_URL  # optional: MP notification_url (defaults to FRONTEND_URL)
         sync: false
       # UNWIRED (2026-10): backend ignores these; live slot IDs are hardcoded in
       # frontend (see .env.example + backend/services/attic_ads_service.py)

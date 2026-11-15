@@ -13,7 +13,8 @@
   factor ML suave en player.
 - AdSense real: `ca-pub-4540036176937342`, banner `7276396302`,
   contenido `2885278049` (meta de verificación puesta).
-- Pro a **$100 MXN/mes** (backend MXN + upgrade.js). Free trial 1 mes intacto.
+- Pro a **$100 MXN/mes** (backend MXN + upgrade.js), recurrente en MercadoPago.
+  Sin free trial: el primer cobro es al autorizar el checkout (decisión 15/11).
 - Equipo: metronome (sets ritmo + SPM), kettlebell_general + trx_general,
   mezcla round-robin por implemento + rotación semanal, split A/B/C
   (A=Pull+Core TRX, B=Legs+Hips KB, C=Stamina BW).
@@ -74,8 +75,8 @@
 1. Crear cuenta real + flujo completo en prod (perfil ya reparado).
 2. `npx supabase db push` (004 consentimiento) + `netlify deploy --prod`
    en entrenamiento-app.
-3. Plan Pro $100 MXN manual + webhook en mercadopago.com.mx cuando venda
-   (hoy: checkout funciona, webhook vacío, plan auto).
+3. MercadoPago: configurar en Render `MP_WEBHOOK_SECRET` + `BACKEND_URL` y
+   registrar el webhook; probar sandbox con credenciales TEST antes de cobrar.
 4. Revisar aprobación AdSense del sitio.
 5. Confirmar FRONTEND_URL = https://swimcoach-ss5j.onrender.com en Render.
 
@@ -354,12 +355,13 @@
 1. Cerrar Push Fase 1: toggle fresco, re-test, comparar huellas; podar
    suscripciones stale (`DELETE push_subscriptions` salvo la viva) y
    confirmar un push real a la hora configurada.
-2. Rotar password temporal de moconette (el valor viejo sigue en el historial
-   de git) y verificar login.
+2. ~~Rotar password temporal de moconette~~ → resuelto 15/11: la temporal es
+   nueva (no la expuesta en git).
 3. ~~Revisar `DATABASE_URL` en Render~~ → resuelto 15/11: se deja `5432`
    documentado (session pooler; funciona).
 4. AdSense: revisar estado/aprobación; si rechazaron, corregir el motivo.
-5. MercadoPago: webhook vacío; configurar solo si ya se va a vender el Pro.
+5. MercadoPago: configurar `MP_WEBHOOK_SECRET` + `BACKEND_URL` en Render y
+   probar sandbox (`TEST-`) antes de vender. Código ya corregido (ver 15/11).
 6. entrenamiento-app: `npx supabase db push` (004 consentimiento) +
    `netlify deploy --prod`.
 7. Confirmar `FRONTEND_URL` en Render =
@@ -392,9 +394,39 @@
   - `dispatch-due`: secreto comparado como bytes UTF-8; header no-ASCII
     devuelve **401** (antes `compare_digest` lanzaba TypeError → 500).
   - `tests/test_dispatch.py` ampliado (non-ASCII + health/db 200/503).
-- **moconette:** el usuario decidió quedarse con una temporal como password
-  definitiva. Verificar que sea una **nueva** (no la expuesta en git) y
-  rotarla si hay duda.
-- **Pendiente:** AdSense (estado/aprobación), MercadoPago (webhook cuando se
-  venda), entrenamiento-app (`supabase db push` 004 + Netlify) y opcional
-  limpiar baseline de `audit_ui`.
+- **moconette:** resuelto 15/11 — el usuario confirma que la temporal que dejó
+  como definitiva es **nueva** (no la expuesta en git). Se quita de pendientes.
+- **AdSense:** aviso de incumplimiento de políticas; el usuario solicitó
+  revisión el 15/11. Esperar ~2 días. Pendiente: capturar el motivo exacto y
+  corregir `/privacy` y `/terms` (hoy 404 como URL directa; solo
+  `/#/privacy` y `/#/terms`).
+## 15/11 — MercadoPago Pro: flujo sin plan + webhook firmado
+- **Flujo elegido:** suscripción **sin plan asociado** con pago pendiente.
+  `POST /preapproval` (`auto_recurring`, `status=pending`) → `init_point`.
+  Ya no se envía `preapproval_plan_id` (el setting queda ignorado) ni free
+  trial; el primer cobro es al autorizar.
+- **Bugs corregidos:**
+  - Firma HMAC sobre el manifiesto real
+    `id:<data.id>;request-id:<x-request-id>;ts:<ts>;` (antes HMAC del body).
+  - Eventos reales `subscription_preapproval` /
+    `subscription_authorized_payment` (antes `action` inexistentes).
+  - Cancelación `PUT /preapproval/{id}` `{"status":"canceled"}` (el SDK 2.1.0
+    no tiene `cancel()` y su `update()` arma mal la URI).
+  - `mp_preapproval_id` se guarda al crear el checkout (cancel/portal ya
+    funcionan aunque el webhook llegue tarde).
+  - Downgrade lazy al vencer `current_period_end` (solo canceladas).
+  - `/api/subscription/webhook/test` → 404 en producción; portal `.mx`.
+  - Mock de checkout solo con token placeholder, nunca con `TEST-` real.
+- **Seguridad:** el webhook siempre re-consulta el recurso a MP y no confía en
+  el body; sin secreto no se puede fabricar un Pro.
+- **Tests:** `tests/test_subscription.py` 68/68 (firma, payload sin plan,
+  webhook, cancelación, renovación, downgrade, mock dev).
+- **Falta en Render (usuario):** `MP_WEBHOOK_SECRET` (MP → Your integrations →
+  Webhooks → secret signature) y `BACKEND_URL=https://swimcoach-ss5j.onrender.com`.
+  El token actual es `APP_USR-` (producción): **no hacer compras de prueba**.
+- **Sandbox pendiente:** generar credenciales `TEST-` en MP y probar con
+  usuarios de prueba antes de vender.
+
+- **Pendiente:** MercadoPago (secret/`BACKEND_URL` + prueba sandbox),
+  entrenamiento-app (`supabase db push` 004 + Netlify) y opcional limpiar
+  baseline de `audit_ui`.
