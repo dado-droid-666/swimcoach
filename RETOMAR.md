@@ -460,7 +460,7 @@
   de cobrar real, agregar un campo de correo MP en el perfil/upgrade o exigir
   el mismo correo; si no, usuarios con otro correo no podrán suscribirse.
 
-## 17/11 (madrugada) — sandbox E2E: pago, webhook simulado y cancelación
+## 16/11 (noche) — sandbox E2E: pago, webhook simulado y cancelación
 
 - **Pago de prueba aprobado:** preapproval `b88509b73f0d49da8afa4c72a179e39d`
   quedó `authorized` (`payer_id` 3844390477, `collector_id` 3844602243), primer
