@@ -8,7 +8,7 @@ Flow: **subscription without an associated plan** (pending payment).
    `subscription_authorized_payment`). We never trust the notification body:
    the resource is re-fetched from the MercadoPago API and the user is updated
    from that response.
-3. Cancelling is `PUT /preapproval/{id}` with `{"status": "canceled"}`; Pro
+3. Cancelling is `PUT /preapproval/{id}` with `{"status": "cancelled"}`; Pro
    stays active until `current_period_end`.
 
 The MercadoPago Python SDK 2.1.0 has a broken `preapproval().update()` URI and
@@ -19,6 +19,7 @@ import hmac
 import logging
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Optional
+from urllib.parse import urlsplit, urlunsplit
 
 import requests
 from sqlalchemy.orm import Session
@@ -63,6 +64,29 @@ def _mock_enabled() -> bool:
     return not token or token.startswith("TEST-x") or token == "TEST-1234567890"
 
 
+def is_public_https_url(value: str) -> bool:
+    """MercadoPago only accepts public HTTPS URLs for redirects/webhooks."""
+    parts = urlsplit((value or "").strip())
+    return parts.scheme == "https" and bool(parts.netloc)
+
+
+def _back_url() -> Optional[str]:
+    """Normalized `back_url` for the MercadoPago checkout.
+
+    MercadoPago rejects `http://localhost` and any URL with a fragment. The SPA
+    uses hash routing, so the fragment is dropped and recovered from the query
+    params MercadoPago appends to the redirect.
+    """
+    raw = (settings.mp_back_url or settings.frontend_url or "").strip()
+    if not is_public_https_url(raw):
+        return None
+    parts = urlsplit(raw)
+    path = parts.path or "/"
+    if not path.endswith("/"):
+        path += "/"
+    return urlunsplit((parts.scheme, parts.netloc, path, "", ""))
+
+
 def _request(method: str, path: str, **kwargs) -> Optional[requests.Response]:
     try:
         response = requests.request(
@@ -91,11 +115,20 @@ def create_preapproval(
     user: User, notification_url: Optional[str] = None
 ) -> Optional[Dict[str, Any]]:
     """Create a pending subscription (no associated plan) and return MP's JSON."""
+    back_url = _back_url()
+    if not back_url:
+        logger.error(
+            "MercadoPago back_url must be a public HTTPS URL; set MP_BACK_URL "
+            "(got %r)",
+            settings.mp_back_url or settings.frontend_url,
+        )
+        return None
+
     payload: Dict[str, Any] = {
         "reason": "SwimCoach Pro",
         "external_reference": f"user_{user.id}",
         "payer_email": user.email,
-        "back_url": f"{settings.frontend_url.rstrip('/')}/#/upgrade?status=success",
+        "back_url": back_url,
         "status": "pending",
         "auto_recurring": {
             "frequency": 1,
@@ -105,7 +138,13 @@ def create_preapproval(
         },
     }
     if notification_url:
-        payload["notification_url"] = notification_url
+        if is_public_https_url(notification_url):
+            payload["notification_url"] = notification_url
+        else:
+            logger.warning(
+                "Ignoring non-HTTPS MercadoPago notification_url: %s",
+                notification_url,
+            )
 
     response = _request("POST", "/preapproval", json=payload)
     if response is None or response.status_code not in (200, 201):
@@ -162,17 +201,29 @@ def get_authorized_payment(payment_id: str) -> Optional[Dict[str, Any]]:
 
 
 def cancel_preapproval(preapproval_id: str) -> bool:
-    """Cancel a subscription. MercadoPago spells the status `canceled` (one L)."""
+    """Cancel a subscription.
+
+    MercadoPago's update endpoint expects `cancelled` (two Ls); sending
+    `canceled` returns 400 `Invalid preapproval status param`. The resource
+    then reports `cancelled` as well.
+    """
     response = _request(
-        "PUT", f"/preapproval/{preapproval_id}", json={"status": "canceled"}
+        "PUT", f"/preapproval/{preapproval_id}", json={"status": "cancelled"}
     )
     if response is None:
         return False
-    # Idempotent: already cancelled is a success for us.
     if response.status_code in (200, 201):
         return True
-    if response.status_code == 400 and "canceled" in response.text.lower():
-        return True
+    if response.status_code == 400:
+        # Idempotent: already cancelled is a success for us. Do NOT trust a
+        # 400 body containing the word "canceled": that is the API rejecting
+        # the old one-L spelling, not a confirmation.
+        preapproval = get_preapproval(preapproval_id)
+        if preapproval and str(preapproval.get("status", "")).lower() in (
+            "cancelled",
+            "canceled",
+        ):
+            return True
     return False
 
 
@@ -299,8 +350,10 @@ def _apply_preapproval(db: Session, preapproval: Dict[str, Any]) -> bool:
         user.subscription_status = SubscriptionStatus.PAUSED
         if next_payment:
             user.current_period_end = next_payment
-    elif status == "canceled":
+    elif status in ("cancelled", "canceled"):
         # Keep Pro until the paid period ends; auth.py downgrades lazily.
+        # MP's current API returns "cancelled" (two Ls); accept both spellings
+        # for older resources and webhook payloads.
         user.subscription_status = SubscriptionStatus.CANCELLED
         if next_payment:
             user.current_period_end = next_payment

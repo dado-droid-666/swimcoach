@@ -95,16 +95,55 @@ re-fetches the resource from the MP API before granting access. No
 2. Render → Environment: `MP_ACCESS_TOKEN` (`APP_USR-…` prod, `TEST-…` only
    sandbox), `MP_PUBLIC_KEY`, `MP_WEBHOOK_SECRET=whsec_…` and (recommended)
    `BACKEND_URL=https://swimcoach-ss5j.onrender.com`; it defaults to
-   `FRONTEND_URL` when empty. Redeploy.
+   `FRONTEND_URL` when empty. `MP_BACK_URL` is optional: it defaults to
+   `FRONTEND_URL`, must be HTTPS and cannot contain `#`. Redeploy.
 3. Sandbox test (never with the production token): use MP **test users**, buy
    Pro from `/#/upgrade`, then verify in Supabase:
    `select subscription_tier, subscription_status, current_period_end,
    mp_preapproval_id from users where email='…';`
+   The payer must be a **buyer** test account, different from the collector
+   (the account that owns the app). The email registered in SwimCoach must
+   match the buyer's MercadoPago email; otherwise MP returns
+   `Payer and collector cannot be the same user` or `User bad request`.
+   **Production limitation:** MP requires `payer_email` and validates it
+   against the paying account. Before charging real users, add an MP payer
+   email field to the profile/upgrade flow (or require the same email in both
+   accounts); a SwimCoach email that differs from the MP account cannot pay.
 4. Cancel from `/#/upgrade` → `PUT /preapproval/{id}` with
-   `{"status":"canceled"}`; Pro remains until `current_period_end` and
-   `get_current_user` downgrades lazily after that date.
+   `{"status":"cancelled"}` (two Ls; `canceled` is rejected with 400). Pro
+   remains until `current_period_end` and `get_current_user` downgrades lazily
+   after that date. Cancelling is idempotent: a 400 is treated as success only
+   when the resource is already `cancelled`.
 5. `/api/subscription/webhook/test` is dev-only (404 in production).
    The webhook is idempotent and always re-reads MP, never the request body.
+
+#### Local sandbox (no real charges)
+
+MercadoPago rejects `http://localhost` and any `back_url` containing `#`.
+For local testing use a public HTTPS tunnel and two different test accounts:
+
+1. Start the API on `127.0.0.1:8000` and a tunnel:
+   `cloudflared tunnel --url http://localhost:8000` (or ngrok).
+2. In `.env`:
+   `BACKEND_URL=https://<tunnel-host>`
+   `MP_BACK_URL=https://<tunnel-host>/`
+   `MP_WEBHOOK_SECRET=` (empty is OK locally; the webhook still re-fetches MP).
+   Restart uvicorn after changing `.env`.
+3. In SwimCoach register the **buyer** test account's email (not the
+   collector/app owner). MP validates `payer_email` against the account that
+   pays and rejects payer == collector.
+4. Open the **tunnel URL**, not localhost, so the session cookie and the
+   return redirect use the same host. Buy Pro from `/#/upgrade`.
+5. MP returns to `https://<tunnel-host>/?preapproval_id=...`; `app.js` routes
+   that to `/#/upgrade` automatically (the `back_url` cannot carry a hash).
+6. If the real webhook does not reach the tunnel, simulate it:
+   `POST /api/subscription/webhook/test` with
+   `{"type":"subscription_preapproval","data":{"id":"<preapproval_id>"}}`.
+7. Cancel with `{"status":"cancelled"}` (two Ls). Sending the old one-L
+   `canceled` returns 400 (`Invalid preapproval status param: canceled`); the
+   code verifies the resource before trusting a 400, so a rejected request is
+   never reported as success. Pending and authorized preapprovals can both be
+   cancelled.
 
 ## Tests & CI
 - Suite: `python -m tests.test_final_all` (E2E; only expected 400/404) + unit

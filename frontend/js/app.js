@@ -190,6 +190,24 @@ class App {
 
     // Routing
     handleRoute() {
+        // MercadoPago cannot redirect to a URL with a fragment, so it returns
+        // to the bare back_url with query params (e.g. ?preapproval_id=...).
+        // Send authenticated users to the upgrade view, which confirms the
+        // subscription and then cleans the query string. Wait until login if
+        // the return lands on a logged-out session.
+        const returnParams = new URLSearchParams(window.location.search);
+        const returningFromCheckout =
+            returnParams.has('preapproval_id')
+            || returnParams.get('status') === 'success';
+        if (
+            returningFromCheckout
+            && this.state.user
+            && !window.location.hash.startsWith('#/upgrade')
+        ) {
+            window.location.hash = '#/upgrade';
+            return;
+        }
+
         const hash = window.location.hash.slice(1) || '/';
         const [path, queryString] = hash.split('?');
         const query = new URLSearchParams(queryString);

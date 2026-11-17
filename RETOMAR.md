@@ -410,8 +410,8 @@
     `id:<data.id>;request-id:<x-request-id>;ts:<ts>;` (antes HMAC del body).
   - Eventos reales `subscription_preapproval` /
     `subscription_authorized_payment` (antes `action` inexistentes).
-  - Cancelación `PUT /preapproval/{id}` `{"status":"canceled"}` (el SDK 2.1.0
-    no tiene `cancel()` y su `update()` arma mal la URI).
+  - Cancelación `PUT /preapproval/{id}` `{"status":"cancelled"}` (dos L; el SDK
+    2.1.0 no tiene `cancel()` y su `update()` arma mal la URI).
   - `mp_preapproval_id` se guarda al crear el checkout (cancel/portal ya
     funcionan aunque el webhook llegue tarde).
   - Downgrade lazy al vencer `current_period_end` (solo canceladas).
@@ -426,6 +426,60 @@
   El token actual es `APP_USR-` (producción): **no hacer compras de prueba**.
 - **Sandbox pendiente:** generar credenciales `TEST-` en MP y probar con
   usuarios de prueba antes de vender.
+
+## 16/11 — MercadoPago sandbox: back_url, buyer y túnel
+
+- **Causa del 400:** MP rechaza `http://localhost` y cualquier `back_url` con
+  `#`. Se agregó `MP_BACK_URL` (HTTPS, sin fragmento); `back_url` se normaliza
+  a `https://host/`. El frontend detecta `?preapproval_id=...`/`status=success`
+  y enruta a `/#/upgrade` (el hash no puede ir en `back_url`).
+- **notification_url:** solo se envía si `BACKEND_URL`/`FRONTEND_URL` es HTTPS;
+  en local HTTP se omite y el webhook se simula con
+  `POST /api/subscription/webhook/test`.
+- **Token local:** es una cuenta de prueba (`/users/me` id 3844602243,
+  `@testuser.com`, site MLM) aunque el prefijo sea `APP_USR-`. No es producción.
+- **Comprador de prueba:** id 3844390477, usuario
+  `TESTUSER7803872007605846304`; MP aceptó como `payer_email`
+  `test_user_7803872007605846304@testuser.com`. Es distinto del collector
+  3844602243. La contraseña está en MP → Cuentas de prueba (no se guarda acá).
+- **Usuario local de prueba:** id 21, mismo email del comprador, perfil mínimo
+  creado para que `/#/upgrade` no mande a onboarding.
+- **Checkout:** `POST /api/subscription/checkout` devuelve 200 y crea un
+  preapproval `pending` (`payer_id` 3844390477, `collector_id` 3844602243).
+- **Túnel:** `cloudflared tunnel --url http://localhost:8000`; `.env` local
+  apunta `BACKEND_URL` y `MP_BACK_URL` al host temporal del túnel. La URL cambia
+  en cada arranque: si cambia, actualizar `.env` y reiniciar uvicorn.
+- **Webhook local:** `MP_WEBHOOK_SECRET=` vacío para que el sandbox entregue
+  notificaciones; el servicio igual re-consulta MP. En Render sigue pendiente
+  configurar el `whsec_...`.
+- **Tests:** `test_subscription.py` 78/78; regresión 13/21/15/13; E2E con
+  `MP_MOCK_CHECKOUT=1` solo falla lo esperado (400/404). Sin mock, el E2E falla
+  el checkout porque su email no es una cuenta MP real.
+- **Limitación para producción:** MP exige `payer_email` (probado sin él:
+  400 `payer_email is required`) y debe coincidir con la cuenta que paga. Antes
+  de cobrar real, agregar un campo de correo MP en el perfil/upgrade o exigir
+  el mismo correo; si no, usuarios con otro correo no podrán suscribirse.
+
+## 17/11 (madrugada) — sandbox E2E: pago, webhook simulado y cancelación
+
+- **Pago de prueba aprobado:** preapproval `b88509b73f0d49da8afa4c72a179e39d`
+  quedó `authorized` (`payer_id` 3844390477, `collector_id` 3844602243), primer
+  cobro de **100 MXN** aprobado (invoice `7034066102`, `processed/approved`);
+  próximo cobro `2026-12-16T22:12:24-04:00`.
+- **Webhook real:** no llegó al túnel quick de cloudflared (no se registró
+  `notification_url` en el preapproval de prueba). Se sincronizó con
+  `POST /api/subscription/webhook/test` → usuario `PRO/ACTIVE` hasta
+  `2026-12-17 02:12:24`. La entrega real queda para validar en Render.
+- **Bug de cancelación:** el código enviaba `{"status":"canceled"}` (una L) y
+  MP respondía 400; el backend lo trataba como éxito. Ahora envía `cancelled`
+  (dos L), ante un 400 re-consulta el recurso y solo acepta si ya está
+  `cancelled`/`canceled`; los webhooks aceptan ambas grafías.
+- **Cancelación verificada:** MP `cancelled`, local `PRO/CANCELLED` hasta
+  `2026-12-17`; segundo intento responde 200 (idempotente).
+- **Limpieza:** preapprovals `pending` de pruebas anteriores cancelados
+  (`1edeacbc…`, `f9e0902e…`, `f07c6909…`, `7d283754…`).
+- **Pendiente inmediato:** Render (`MP_WEBHOOK_SECRET`, `BACKEND_URL`, registrar
+  webhook) y resolver `payer_email` para producción.
 
 - **Pendiente:** MercadoPago (secret/`BACKEND_URL` + prueba sandbox),
   entrenamiento-app (`supabase db push` 004 + Netlify) y opcional limpiar

@@ -37,6 +37,8 @@ services:
         sync: false
       - key: BACKEND_URL  # optional: MP notification_url (defaults to FRONTEND_URL)
         sync: false
+      - key: MP_BACK_URL  # optional: HTTPS return URL, no # (defaults to FRONTEND_URL)
+        sync: false
       # UNWIRED (2026-10): backend ignores these; live slot IDs are hardcoded in
       # frontend (see .env.example + backend/services/attic_ads_service.py)
       - key: ADSENSE_CLIENT_ID

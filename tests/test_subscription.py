@@ -171,6 +171,9 @@ def fake_request(method, url, **kwargs):
 
 
 orig_request = mp.requests.request
+orig_back_url = mp.settings.mp_back_url
+orig_frontend_url = mp.settings.frontend_url
+mp.settings.mp_back_url = "https://swimcoach.test/return#fragment"
 mp.requests.request = fake_request
 try:
     created = mp.create_preapproval(
@@ -187,13 +190,41 @@ check("create: amount/currency", body.get("auto_recurring", {}).get("transaction
 check("create: no free_trial", "free_trial" not in body.get("auto_recurring", {}))
 check("create: no repetitions", "repetitions" not in body.get("auto_recurring", {}))
 check(
+    "create: back_url normalized HTTPS without fragment",
+    body.get("back_url") == "https://swimcoach.test/return/",
+)
+check("create: back_url has no fragment", "#" not in body.get("back_url", ""))
+check(
     "create: notification_url sent",
     body.get("notification_url") == "https://swimcoach.test/api/subscription/webhook",
 )
 check("create: external_reference", body.get("external_reference") == f"user_{uid}")
 
+# An HTTP webhook URL must never be sent to MercadoPago (unreachable/invalid).
+captured.clear()
+mp.requests.request = fake_request
+try:
+    mp.create_preapproval(
+        get_user(uid), "http://localhost:8000/api/subscription/webhook"
+    )
+finally:
+    mp.requests.request = orig_request
+http_body = captured.get("json", {})
+check(
+    "create: non-HTTPS notification_url omitted",
+    "notification_url" not in http_body,
+)
+
+# Without a public HTTPS URL there is no usable checkout: fail before MP.
+mp.settings.mp_back_url = ""
+mp.settings.frontend_url = "http://localhost:8000"
+rejected = mp.create_preapproval(get_user(uid))
+check("create: non-HTTPS back_url rejected", rejected is None)
+mp.settings.mp_back_url = orig_back_url
+mp.settings.frontend_url = orig_frontend_url
+
 # ---------------------------------------------------------------------------
-# cancel_preapproval uses PUT status=canceled (one L)
+# cancel_preapproval uses PUT status=cancelled (two Ls)
 # ---------------------------------------------------------------------------
 cancel_capture = {}
 
@@ -214,7 +245,34 @@ finally:
 
 check("cancel: returns true", cancelled is True)
 check("cancel: PUT /preapproval/{id}", cancel_capture.get("method") == "PUT" and cancel_capture.get("url", "").endswith("/preapproval/pre-cancel"))
-check("cancel: status canceled (one L)", cancel_capture.get("json") == {"status": "canceled"})
+check("cancel: status cancelled (two Ls)", cancel_capture.get("json") == {"status": "cancelled"})
+
+
+class Fake400:
+    status_code = 400
+    text = '{"message":"Invalid preapproval status param: canceled","status":400}'
+
+
+orig_get_pre = mp.get_preapproval
+orig_request = mp.requests.request
+mp.requests.request = lambda method, url, **kwargs: Fake400()
+mp.get_preapproval = lambda pid: {"id": pid, "status": "authorized"}
+try:
+    rejected = mp.cancel_preapproval("pre-cancel-400")
+finally:
+    mp.requests.request = orig_request
+    mp.get_preapproval = orig_get_pre
+check("cancel: 400 invalid status is not success", rejected is False)
+
+# Idempotent: a 400 is success only when the resource is already cancelled.
+mp.requests.request = lambda method, url, **kwargs: Fake400()
+mp.get_preapproval = lambda pid: {"id": pid, "status": "cancelled"}
+try:
+    already = mp.cancel_preapproval("pre-cancel-already")
+finally:
+    mp.requests.request = orig_request
+    mp.get_preapproval = orig_get_pre
+check("cancel: already cancelled is idempotent", already is True)
 
 # ---------------------------------------------------------------------------
 # Webhook: subscription_preapproval authorized
@@ -277,7 +335,7 @@ orig_get_pre = mp.get_preapproval
 mp.get_preapproval = lambda pid: {
     "id": pid,
     "external_reference": f"user_{uid}",
-    "status": "canceled",
+    "status": "cancelled",
     "next_payment_date": period_end.isoformat(),
 }
 try:
@@ -286,10 +344,35 @@ finally:
     mp.get_preapproval = orig_get_pre
 
 user = get_user(uid)
-check("webhook canceled: processed", ok is True)
-check("webhook canceled: keeps pro", user.subscription_tier == SubscriptionTier.PRO)
-check("webhook canceled: status cancelled", user.subscription_status == SubscriptionStatus.CANCELLED)
-check("webhook canceled: keeps period end", user.current_period_end is not None and abs((user.current_period_end - period_end).total_seconds()) < 2)
+check("webhook cancelled: processed", ok is True)
+check("webhook cancelled: keeps pro", user.subscription_tier == SubscriptionTier.PRO)
+check("webhook cancelled: status cancelled", user.subscription_status == SubscriptionStatus.CANCELLED)
+check("webhook cancelled: keeps period end", user.current_period_end is not None and abs((user.current_period_end - period_end).total_seconds()) < 2)
+
+# Older resources/webhook payloads may still use the one-L spelling.
+uid_one_l, headers_one_l = mkuser(
+    "cancelled-one-l@test.com",
+    tier=SubscriptionTier.PRO,
+    status=SubscriptionStatus.ACTIVE,
+    period_end=period_end,
+    preapproval_id="pre-cancelled-one-l",
+)
+mp.get_preapproval = lambda pid: {
+    "id": pid,
+    "external_reference": f"user_{uid_one_l}",
+    "status": "canceled",
+    "next_payment_date": period_end.isoformat(),
+}
+try:
+    ok_one_l = process(
+        {"type": "subscription_preapproval", "data": {"id": "pre-cancelled-one-l"}}
+    )
+finally:
+    mp.get_preapproval = orig_get_pre
+
+user_one_l = get_user(uid_one_l)
+check("webhook cancelled (one L): processed", ok_one_l is True)
+check("webhook cancelled (one L): status cancelled", user_one_l.subscription_status == SubscriptionStatus.CANCELLED)
 
 # ---------------------------------------------------------------------------
 # Webhook: subscription_authorized_payment approved extends the period
@@ -366,6 +449,12 @@ def fake_checkout(user, notification_url=None):
 
 
 orig_create_checkout = subroutes.create_mp_checkout
+orig_frontend = subroutes.settings.frontend_url
+orig_backend = subroutes.settings.backend_url
+
+# Public HTTPS frontend -> webhook registered.
+subroutes.settings.frontend_url = "https://swimcoach.test"
+subroutes.settings.backend_url = ""
 subroutes.create_mp_checkout = fake_checkout
 try:
     r = client.post("/api/subscription/checkout", headers=headers)
@@ -375,9 +464,48 @@ finally:
 user = get_user(uid)
 check("checkout route: 200", r.status_code == 200, r.text[:120])
 check("checkout route: init_point", r.json().get("init_point") == "https://mp.test/checkout")
-check("checkout route: notification_url", seen.get("notification_url", "").endswith("/api/subscription/webhook"))
+check(
+    "checkout route: notification_url",
+    seen.get("notification_url") == "https://swimcoach.test/api/subscription/webhook",
+)
 check("checkout route: preapproval persisted", user.mp_preapproval_id == "pre-checkout")
 check("checkout route: status pending", user.subscription_status == SubscriptionStatus.PENDING)
+
+# Local HTTP frontend -> do not register an unreachable webhook.
+uid_http, headers_http = mkuser("checkout-http@test.com")
+seen.clear()
+subroutes.settings.frontend_url = "http://localhost:8000"
+subroutes.settings.backend_url = ""
+subroutes.create_mp_checkout = fake_checkout
+try:
+    r_http = client.post("/api/subscription/checkout", headers=headers_http)
+finally:
+    subroutes.create_mp_checkout = orig_create_checkout
+check(
+    "checkout route: HTTP notification_url omitted",
+    r_http.status_code == 200 and seen.get("notification_url") is None,
+    r_http.text[:120],
+)
+
+# A public backend URL takes precedence over the frontend URL.
+uid_backend, headers_backend = mkuser("checkout-backend@test.com")
+seen.clear()
+subroutes.settings.frontend_url = "http://localhost:8000"
+subroutes.settings.backend_url = "https://api.swimcoach.test"
+subroutes.create_mp_checkout = fake_checkout
+try:
+    r_backend = client.post("/api/subscription/checkout", headers=headers_backend)
+finally:
+    subroutes.create_mp_checkout = orig_create_checkout
+    subroutes.settings.frontend_url = orig_frontend
+    subroutes.settings.backend_url = orig_backend
+check(
+    "checkout route: backend_url precedence",
+    r_backend.status_code == 200
+    and seen.get("notification_url")
+    == "https://api.swimcoach.test/api/subscription/webhook",
+    r_backend.text[:120],
+)
 
 uid, headers = mkuser(
     "already@test.com",

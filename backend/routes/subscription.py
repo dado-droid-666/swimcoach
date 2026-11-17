@@ -14,6 +14,7 @@ from backend.services.mercadopago_service import (
     cancel_preapproval,
     create_checkout as create_mp_checkout,
     get_billing_portal_url,
+    is_public_https_url,
     process_webhook,
     verify_webhook_signature,
 )
@@ -38,7 +39,14 @@ def create_checkout(
     base_url = (
         settings.backend_url or settings.frontend_url or str(request.base_url)
     ).rstrip("/")
-    notification_url = f"{base_url}/api/subscription/webhook"
+    # MercadoPago cannot reach localhost; only register the webhook when the
+    # backend has a public HTTPS URL. In local development the webhook can be
+    # simulated with POST /api/subscription/webhook/test.
+    notification_url = (
+        f"{base_url}/api/subscription/webhook"
+        if is_public_https_url(base_url)
+        else None
+    )
 
     checkout = create_mp_checkout(user, notification_url)
     if not checkout or not checkout.get("init_point"):

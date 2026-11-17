@@ -20,6 +20,10 @@ class Settings(BaseSettings):
     mp_portal_url: str = "https://www.mercadopago.com.mx/subscriptions"
     mp_mock_checkout: bool = False  # dev-only fake checkout (never in prod)
     backend_url: str = ""  # public backend URL for MP notification_url
+    # Public HTTPS URL MercadoPago redirects to after checkout. It cannot
+    # contain a fragment (#), so the SPA routes to /#/upgrade from the query
+    # params MercadoPago appends. Empty = use frontend_url.
+    mp_back_url: str = ""
 
     adsense_client_id: str = ""
     adsense_slot_banner: str = ""
